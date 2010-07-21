@@ -23,6 +23,8 @@ module Gren
         if (File.file?(fpath) &&
             fileRegexp.match(fpath) &&
             fpath !~ /(\.svn)|(\.git)|(CVS)/)       # .svn, .git ディレクトリは無視
+          # 行頭の./は削除
+          fpath.gsub!(/^.\//, "");
 
           # ファイルパスを表示
           if (@fpathDisp)
