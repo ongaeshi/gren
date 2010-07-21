@@ -25,7 +25,7 @@ module Gren
             fpath !~ /\.svn/)       # .svnディレクトリは無視
           # ファイルパスを表示
           if (@fpathDisp)
-            stdout.print "#{fpath}\n"
+            stdout.print "#{fpath}"
           end
 
           # 検索
@@ -33,10 +33,22 @@ module Gren
             file.each() { |line|
               line.chomp!
               if (patternRegexp.match(line))
-                stdout.print "#{fpath}:#{file.lineno}:#{line}\n"
+                if (!@fpathDisp)
+                  stdout.print "#{fpath}:#{file.lineno}:#{line}\n"
+                else
+                  # 隠しコマンド
+                  #   patternに"."を渡した時はFound patternを表示しない
+                  #   ファイル名一覧を取得する時等に便利
+                  stdout.print " ........ Found pattern." unless (@pattern == ".")
+                  break
+                end
               end
             }
           }
+
+          # 改行
+          stdout.puts if (@fpathDisp)
+
         end
       }
     end
@@ -61,7 +73,7 @@ module Gren
       # オプション解析
       opt = OptionParser.new("#{File.basename($0)} [option] pattern [dir] [file_pattern] [fpath]")
       opt.on('-i', '大文字と小文字を無視する') {|v| ignoreCase = true}
-      opt.on('-d', '検索対象に含めたファイルを表示') {|v| fpathDisp = true}
+      opt.on('-f', '検索対象に含めたファイルを表示') {|v| fpathDisp = true}
       opt.parse!(arguments)
 
       # 検索オブジェクトの生成
