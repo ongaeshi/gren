@@ -22,7 +22,8 @@ module Gren
       Find::find(@dir) { |fpath|
         if (File.file?(fpath) &&
             fileRegexp.match(fpath) &&
-            fpath !~ /\.svn/)       # .svnディレクトリは無視
+            fpath !~ /(\.svn)|(\.git)|(CVS)/)       # .svn, .git ディレクトリは無視
+
           # ファイルパスを表示
           if (@fpathDisp)
             stdout.print "#{fpath}"
