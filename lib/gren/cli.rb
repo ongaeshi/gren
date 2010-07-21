@@ -4,13 +4,18 @@ require 'optparse'
 
 module Gren
   class FindGrep
+    DEFAULT_DIR = '.'
+    DEFAULT_FILE_PATTERN = '(\.cpp$)|(\.c$)|(\.h$)|(\.hpp$)|(\.csv$)|(makefile$)|(makefile\.[0-9A-Za-z]+$)|(\.mk$)|(\.rb$)|(\.ags$)'
+    DEFAULT_FPATH_PATTERN = '(\.svn)|(\.git)|(CVS)'
+    
     attr_writer :ignoreCase
     attr_writer :fpathDisp
     
-    def initialize(pattern, dir, filePattern)
+    def initialize(pattern, dir = DEFAULT_DIR, filePattern = DEFAULT_FILE_PATTERN, fpathPattern = DEFAULT_FPATH_PATTERN)
       @pattern = pattern
       @dir = dir
       @filePattern = filePattern
+      @fpathPattern = fpathPattern
       @ignoreCase = false
       @fpathDisp = false
     end
@@ -22,7 +27,7 @@ module Gren
       Find::find(@dir) { |fpath|
         if (File.file?(fpath) &&
             fileRegexp.match(fpath) &&
-            fpath !~ /(\.svn)|(\.git)|(CVS)/)       # .svn, .git ディレクトリは無視
+            fpath !~ /#{@fpathPattern}/)
           # 行頭の./は削除
           fpath.gsub!(/^.\//, "");
 
@@ -65,9 +70,6 @@ module Gren
   end
 
   class CLI
-    DEFAULT_DIR = '.'
-    DEFAULT_FILE_PATTERN = '(\.cpp$)|(\.c$)|(\.h$)|(\.hpp$)|(\.csv$)|(makefile$)|(makefile\.[0-9A-Za-z]+$)|(\.mk$)|(\.rb$)|(\.ags$)'
-
     def self.execute(stdout, arguments=[])
       # オプション
       ignoreCase = false
@@ -84,17 +86,11 @@ module Gren
 
       case ARGV.length
       when 1:
-          findGrep = FindGrep.new(arguments[0],
-                                  DEFAULT_DIR,
-                                  DEFAULT_FILE_PATTERN)
+          findGrep = FindGrep.new(arguments[0])
       when 2:
-          findGrep = FindGrep.new(arguments[0],
-                                  arguments[1],
-                                  DEFAULT_FILE_PATTERN)
+          findGrep = FindGrep.new(arguments[0], arguments[1])
       when 3:
-          findGrep = FindGrep.new(arguments[0],
-                                  arguments[1],
-                                  arguments[2])
+          findGrep = FindGrep.new(arguments[0], arguments[1], arguments[2])
       end
       
       if (findGrep)
