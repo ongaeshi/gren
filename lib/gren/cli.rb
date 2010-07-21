@@ -77,8 +77,8 @@ module Gren
 
       # オプション解析
       opt = OptionParser.new("#{File.basename($0)} [option] pattern [dir] [file_pattern] [fpath]")
-      opt.on('-i', '大文字と小文字を無視する') {|v| ignoreCase = true}
-      opt.on('-f', '検索対象に含めたファイルを表示') {|v| fpathDisp = true}
+      opt.on('-i', 'Ignore case.') {|v| ignoreCase = true}
+      opt.on('-f', 'The searched file name is displayed.') {|v| fpathDisp = true}
       opt.parse!(arguments)
 
       # 検索オブジェクトの生成
