@@ -50,12 +50,16 @@ module Gren
   end
 
   class CLI
+    DEFAULT_DIR = '.'
+    DEFAULT_FILE_PATTERN = '(\.cpp$)|(\.c$)|(\.h$)|(\.hpp$)|(\.csv$)|(makefile$)|(makefile\.[0-9A-Za-z]+$)|(\.mk$)|(\.rb$)|(\.ags$)'
+
     def self.execute(stdout, arguments=[])
+      # オプション
       ignoreCase = false
       fpathDisp = false
 
       # オプション解析
-      opt = OptionParser.new("#{File.basename($0)} [option] pattern dir [file_pattern] [fpath]")
+      opt = OptionParser.new("#{File.basename($0)} [option] pattern [dir] [file_pattern] [fpath]")
       opt.on('-i', '大文字と小文字を無視する') {|v| ignoreCase = true}
       opt.on('-d', '検索対象に含めたファイルを表示') {|v| fpathDisp = true}
       opt.parse!(arguments)
@@ -63,25 +67,32 @@ module Gren
       # 検索オブジェクトの生成
       findGrep = nil
 
-      if (ARGV.length == 2)
-        findGrep = FindGrep.new(arguments[0],
-                                arguments[1],
-                                '(\.cpp$)|(\.c$)|(\.h$)|(\.hpp$)|(\.csv$)|(makefile$)|(makefile\.[0-9A-Za-z]+$)|(\.mk$)|(\.rb$)|(\.ags$)')
-      elsif (arguments.length == 3)
-        findGrep = FindGrep.new(arguments[0],
-                                arguments[1],
-                                arguments[2])
+      case ARGV.length
+      when 1:
+          findGrep = FindGrep.new(arguments[0],
+                                  DEFAULT_DIR,
+                                  DEFAULT_FILE_PATTERN)
+      when 2:
+          findGrep = FindGrep.new(arguments[0],
+                                  arguments[1],
+                                  DEFAULT_FILE_PATTERN)
+      when 3:
+          findGrep = FindGrep.new(arguments[0],
+                                  arguments[1],
+                                  arguments[2])
+      end
+      
+      if (findGrep)
+        # オプション設定
+        findGrep.ignoreCase = ignoreCase
+        findGrep.fpathDisp = fpathDisp
+        
+        # 検索
+        findGrep.searchAndPrint(stdout)
       else
         stdout.print opt.help
-        return
       end
 
-      # オプション設定
-      findGrep.ignoreCase = ignoreCase
-      findGrep.fpathDisp = fpathDisp
-
-      # 検索
-      findGrep.searchAndPrint(stdout)
     end
   end
 end
