@@ -4,14 +4,12 @@ require 'optparse'
 
 module Gren
   class FindGrep
-    DEFAULT_DIR = '.'
-    DEFAULT_FILE_PATTERN = '.'
     DEFAULT_FPATH_PATTERN = '(\.svn)|(\.git)|(CVS)|(\.o$)|(\.lo$)|(\.la$)|(^#.*#$)|(~$)|(^.#)|(^\.DS_Store$)|(\.bak$)|(\.BAK$)'
     
     attr_writer :ignoreCase
     attr_writer :fpathDisp
     
-    def initialize(pattern, dir = DEFAULT_DIR, filePattern = DEFAULT_FILE_PATTERN, fpathPattern = DEFAULT_FPATH_PATTERN)
+    def initialize(pattern, dir = '.', filePattern = '.', fpathPattern = DEFAULT_FPATH_PATTERN)
       @pattern = pattern
       @dir = dir
       @filePattern = filePattern
