@@ -5,7 +5,6 @@ require 'optparse'
 module Gren
   class FindGrep
     DEFAULT_DIR = '.'
-    #    DEFAULT_FILE_PATTERN = '(\.cpp$)|(\.c$)|(\.h$)|(\.hpp$)|(\.csv$)|(makefile$)|(makefile\.[0-9A-Za-z]+$)|(\.mk$)|(\.rb$)|(\.ags$)'
     DEFAULT_FILE_PATTERN = '.'
     DEFAULT_FPATH_PATTERN = '(\.svn)|(\.git)|(CVS)|(\.o$)|(\.lo$)|(\.la$)|(^#.*#$)|(~$)|(^.#)|(^\.DS_Store$)|(\.bak$)|(\.BAK$)'
     
