@@ -24,9 +24,10 @@ module Gren
     def searchAndPrint(stdout)
       fileRegexp = Regexp.new(@filePattern)
       patternRegexp = makePattenRegexp
-      
+
       Find::find(@dir) { |fpath|
         if (File.file?(fpath) &&
+            !binary?(fpath) &&
             fileRegexp.match(fpath) &&
             fpath !~ /#{@fpathPattern}/)
           # 行頭の./は削除
@@ -68,6 +69,11 @@ module Gren
       Regexp.new(@pattern, option)
     end
     private :makePattenRegexp
+
+    def binary?(file)
+      s = File.read(file, 1024) or return false
+      return s.index("\x00")
+    end
   end
 
   class CLI
