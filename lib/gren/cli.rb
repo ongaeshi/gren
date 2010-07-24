@@ -5,15 +5,16 @@ require 'optparse'
 module Gren
   class FindGrep
     DEFAULT_FPATH_PATTERN = '(\.svn)|(\.git)|(CVS)|(\.o$)|(\.lo$)|(\.la$)|(^#.*#$)|(~$)|(^.#)|(^\.DS_Store$)|(\.bak$)|(\.BAK$)'
+    IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
+    IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/
     
     attr_writer :ignoreCase
     attr_writer :fpathDisp
     
-    def initialize(pattern, dir = '.', filePattern = '.', fpathPattern = DEFAULT_FPATH_PATTERN)
+    def initialize(pattern, dir = '.', filePattern = '.')
       @pattern = pattern
       @dir = dir
       @filePattern = filePattern
-      @fpathPattern = fpathPattern
       @ignoreCase = false
       @fpathDisp = false
     end
@@ -23,11 +24,16 @@ module Gren
       patternRegexp = makePattenRegexp
 
       Find::find(@dir) { |fpath|
+        if (FileTest.directory?(fpath))
+          Find.prune if IGNORE_DIR.match File.basename(fpath)
+        end
+
         if (FileTest.file?(fpath) &&
             FileTest.readable?(fpath) &&
             !binary?(fpath) &&
             fileRegexp.match(fpath) &&
-            fpath !~ /#{@fpathPattern}/)
+            !IGNORE_FILE.match(File.basename(fpath)))
+
           # 行頭の./は削除
           fpath.gsub!(/^.\//, "");
 
