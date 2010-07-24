@@ -17,11 +17,10 @@ module Gren
       @fileRegexp = Regexp.new(filePattern)
       @ignoreCase = false
       @fpathDisp = false
+      @patternRegexp = makePattenRegexp
     end
 
     def searchAndPrint(stdout)
-      patternRegexp = makePattenRegexp
-
       Find::find(@dir) { |fpath|
         # 除外ディレクトリ
         Find.prune if ignoreDir?(fpath)
@@ -33,9 +32,16 @@ module Gren
         fpath.gsub!(/^.\//, "");
 
         # 検索
-        searchMain(stdout, fpath, patternRegexp)
+        searchMain(stdout, fpath)
       }
     end
+
+    def makePattenRegexp
+      option = 0
+      option |= Regexp::IGNORECASE if (@ignoreCase)
+      Regexp.new(@pattern, option)
+    end
+    private :makePattenRegexp
 
     def ignoreDir?(fpath)
       FileTest.directory?(fpath) &&
@@ -45,10 +51,10 @@ module Gren
 
     def readFile?(fpath)
       FileTest.file?(fpath) &&
+      @fileRegexp.match(fpath) &&        
+      !IGNORE_FILE.match(File.basename(fpath)) &&
       FileTest.readable?(fpath) &&
-      !binary?(fpath) &&
-      @fileRegexp.match(fpath) &&
-      !IGNORE_FILE.match(File.basename(fpath))
+      !binary?(fpath)
     end
     private :readFile?
 
@@ -57,14 +63,19 @@ module Gren
     end
     private :ignoreFile?
 
-    def searchMain(stdout, fpath, patternRegexp)
+    def binary?(file)
+      s = File.read(file, 1024) or return false
+      return s.index("\x00")
+    end
+
+    def searchMain(stdout, fpath)
       # ファイルパスを表示
       stdout.print "#{fpath}" if (@fpathDisp)
 
       open(fpath, "r") { |file| 
         file.each() { |line|
           line.chomp!
-          if (patternRegexp.match(line))
+          if (@patternRegexp.match(line))
             if (!@fpathDisp)
               stdout.print "#{fpath}:#{file.lineno}:#{line}\n"
             else
@@ -83,17 +94,6 @@ module Gren
     end
     private :searchMain
 
-    def makePattenRegexp
-      option = 0
-      option |= Regexp::IGNORECASE if (@ignoreCase)
-      Regexp.new(@pattern, option)
-    end
-    private :makePattenRegexp
-
-    def binary?(file)
-      s = File.read(file, 1024) or return false
-      return s.index("\x00")
-    end
   end
 
   class CLI
