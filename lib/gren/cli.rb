@@ -4,9 +4,9 @@ require 'optparse'
 
 module Gren
   class FindGrep
-    DEFAULT_FPATH_PATTERN = '(\.svn)|(\.git)|(CVS)|(\.o$)|(\.lo$)|(\.la$)|(^#.*#$)|(~$)|(^.#)|(^\.DS_Store$)|(\.bak$)|(\.BAK$)'
+#    DEFAULT_FPATH_PATTERN = '(\.svn)|(\.git)|(CVS)|(\.o$)|(\.lo$)|(\.la$)|(^#.*#$)|(~$)|(^.#)|(^\.DS_Store$)|(\.bak$)|(\.BAK$)'
     IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
-    IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/
+    IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/    
     
     attr_writer :ignoreCase
     attr_writer :fpathDisp
@@ -14,58 +14,74 @@ module Gren
     def initialize(pattern, dir = '.', filePattern = '.')
       @pattern = pattern
       @dir = dir
-      @filePattern = filePattern
+      @fileRegexp = Regexp.new(filePattern)
       @ignoreCase = false
       @fpathDisp = false
     end
 
     def searchAndPrint(stdout)
-      fileRegexp = Regexp.new(@filePattern)
       patternRegexp = makePattenRegexp
 
       Find::find(@dir) { |fpath|
-        if (FileTest.directory?(fpath))
-          Find.prune if IGNORE_DIR.match File.basename(fpath)
-        end
+        # 除外ディレクトリ
+        Find.prune if ignoreDir?(fpath)
 
-        if (FileTest.file?(fpath) &&
-            FileTest.readable?(fpath) &&
-            !binary?(fpath) &&
-            fileRegexp.match(fpath) &&
-            !IGNORE_FILE.match(File.basename(fpath)))
+        # 除外ファイル
+        next if ignoreFile?(fpath)
 
-          # 行頭の./は削除
-          fpath.gsub!(/^.\//, "");
+        # 行頭の./は削除
+        fpath.gsub!(/^.\//, "");
 
-          # ファイルパスを表示
-          if (@fpathDisp)
-            stdout.print "#{fpath}"
-          end
-
-          # 検索
-          open(fpath, "r") { |file| 
-            file.each() { |line|
-              line.chomp!
-              if (patternRegexp.match(line))
-                if (!@fpathDisp)
-                  stdout.print "#{fpath}:#{file.lineno}:#{line}\n"
-                else
-                  # 隠しコマンド
-                  #   patternに"."を渡した時はFound patternを表示しない
-                  #   ファイル名一覧を取得する時等に便利
-                  stdout.print " ........ Found pattern." unless (@pattern == ".")
-                  break
-                end
-              end
-            }
-          }
-
-          # 改行
-          stdout.puts if (@fpathDisp)
-
-        end
+        # 検索
+        searchMain(stdout, fpath, patternRegexp)
       }
     end
+
+    def ignoreDir?(fpath)
+      FileTest.directory?(fpath) &&
+      IGNORE_DIR.match(File.basename(fpath))
+    end
+    private :ignoreDir?
+
+    def readFile?(fpath)
+      FileTest.file?(fpath) &&
+      FileTest.readable?(fpath) &&
+      !binary?(fpath) &&
+      @fileRegexp.match(fpath) &&
+      !IGNORE_FILE.match(File.basename(fpath))
+    end
+    private :readFile?
+
+    def ignoreFile?(fpath)
+      !readFile?(fpath)
+    end
+    private :ignoreFile?
+
+    def searchMain(stdout, fpath, patternRegexp)
+      # ファイルパスを表示
+      stdout.print "#{fpath}" if (@fpathDisp)
+
+      open(fpath, "r") { |file| 
+        file.each() { |line|
+          line.chomp!
+          if (patternRegexp.match(line))
+            if (!@fpathDisp)
+              stdout.print "#{fpath}:#{file.lineno}:#{line}\n"
+            else
+              # 隠しコマンド
+              #   patternに"."を渡した時はFound patternを表示しない
+              #   ファイル名一覧を取得する時等に便利
+              stdout.print " ........ Found pattern." unless (@pattern == ".")
+              break
+            end
+          end
+        }
+      }
+
+      # 改行
+      stdout.puts if (@fpathDisp)
+    end
+    private :searchMain
 
     def makePattenRegexp
       option = 0
