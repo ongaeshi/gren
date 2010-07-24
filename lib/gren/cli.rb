@@ -23,7 +23,8 @@ module Gren
       patternRegexp = makePattenRegexp
 
       Find::find(@dir) { |fpath|
-        if (File.file?(fpath) &&
+        if (FileTest.file?(fpath) &&
+            FileTest.readable?(fpath) &&
             !binary?(fpath) &&
             fileRegexp.match(fpath) &&
             fpath !~ /#{@fpathPattern}/)
