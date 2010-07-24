@@ -12,17 +12,15 @@ module Gren
     def initialize(start_dir)
       @start_dir = File.expand_path(start_dir)
       @count, @search_count, @match_file, @match_count, @size = 0, 0, 0, 0, 0
-      @start_time = Process.times
+      @start_time = Time.now
     end
 
     def time_stop
-      @end_time = Process.times
+      @end_time = Time.now
     end
 
     def time
-      s = @start_time
-      e = @end_time
-      e.utime - s.utime + e.stime - s.stime
+      @end_time - @start_time 
     end
 
     def time_s
