@@ -8,10 +8,11 @@ module Gren
     attr_accessor :match_file
     attr_accessor :match_count
     attr_accessor :size
+    attr_accessor :search_size
 
     def initialize(start_dir)
       @start_dir = File.expand_path(start_dir)
-      @count, @search_count, @match_file, @match_count, @size = 0, 0, 0, 0, 0
+      @count, @search_count, @match_file, @match_count, @size, @search_size = 0, 0, 0, 0, 0, 0
       @start_time = Time.now
     end
 
@@ -44,19 +45,19 @@ module Gren
       (n * 10 ** d).round / 10.0 ** d
     end
 
-    def size_s
-      if (@size > 1024 * 1024)
-        round(@size / (1024 * 1024.0), 2).to_s + "MB"
-      elsif (@size > 1024)
-        round(@size / 1024.0, 2).to_s + "KB"
+    def size_s(size)
+      if (size > 1024 * 1024)
+        round(size / (1024 * 1024.0), 2).to_s + "MB"
+      elsif (size > 1024)
+        round(size / 1024.0, 2).to_s + "KB"
       else
-        @size.to_s + "Byte"
+        size.to_s + "Byte"
       end
     end
 
     def print(stdout)
-      stdout.puts "RESULT == #{@start_dir} (#{time_s}, #{size_s})"
-      stdout.puts "files : #{@search_count} search in #{@count} files"
+      stdout.puts "dir   : #{@start_dir} (#{time_s})"
+      stdout.puts "files : #{@search_count} in #{@count} (#{size_s(@search_size)} in #{size_s(@size)})"
       stdout.puts "match : #{@match_file} files, #{match_count} match"
     end
 

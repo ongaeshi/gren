@@ -31,11 +31,16 @@ module Gren
 
         @result.count += 1
         
+        # 読み込み不可ならば探索しない
+        next unless FileTest.readable?(fpath)
+        
+        @result.size += FileTest.size(fpath)
+
         # 除外ファイル
         next if ignoreFile?(fpath)
         
         @result.search_count += 1
-        @result.size += FileTest.size(fpath)
+        @result.search_size += FileTest.size(fpath)
 
         # 行頭の./は削除
         fpath.gsub!(/^.\//, "");
@@ -65,7 +70,6 @@ module Gren
     def readFile?(fpath)
       @fileRegexp.match(fpath) &&        
       !IGNORE_FILE.match(File.basename(fpath)) &&
-      FileTest.readable?(fpath) &&
       !binary?(fpath)
     end
     private :readFile?
