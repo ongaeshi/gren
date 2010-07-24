@@ -10,7 +10,7 @@ module Gren
     attr_accessor :size
 
     def initialize(start_dir)
-      @start_dir = start_dir
+      @start_dir = File.expand_path(start_dir)
       @count, @search_count, @match_file, @match_count, @size = 0, 0, 0, 0, 0
       @start_time = Process.times
     end
@@ -31,16 +31,18 @@ module Gren
 
     def size_s
       if (@size > 1024 * 1024)
-       (round(@size / (1024 * 1024.0), 2)).to_s + "MB"
+       (round(@size / (1024 * 1024.0), 2)).to_s + " MB"
       elsif (@size > 1024)
-        (round(@size / 1024.0, 2)).to_s + "KB"
+        (round(@size / 1024.0, 2)).to_s + " KB"
       else
-        @size.to_s + "Byte"
+        @size.to_s + " Byte"
       end
     end
 
     def print(stdout)
-      puts @count, @search_count, @match_file, @match_count, size_s, time
+      stdout.puts "RESULT == #{@start_dir} (#{time} sec, #{size_s})"
+      stdout.puts "files : #{@search_count} search in #{@count} files"
+      stdout.puts "match : #{@match_file} files, #{match_count} match"
     end
 
   end

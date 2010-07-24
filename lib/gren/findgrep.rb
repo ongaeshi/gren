@@ -45,6 +45,7 @@ module Gren
       }
       
       @result.time_stop
+      stdout.puts
       @result.print(stdout)
     end
 
