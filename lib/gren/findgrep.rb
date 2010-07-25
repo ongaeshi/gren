@@ -15,6 +15,7 @@ module Gren
       @option = option
       @fileRegexp = Regexp.new(option.filePattern)
       @patternRegexp = makePattenRegexp
+      @ignoreFile = Regexp.new(option.ignoreFile) if option.ignoreFile
       @ignoreDir = Regexp.new(option.ignoreDir) if option.ignoreDir
       @result = Result.new(@dir)
     end
@@ -66,15 +67,11 @@ module Gren
     end
     private :ignoreDir?
 
-    def readFile?(fpath)
-      @fileRegexp.match(fpath) &&        
-      !IGNORE_FILE.match(File.basename(fpath)) &&
-      !binary?(fpath)
-    end
-    private :readFile?
-
     def ignoreFile?(fpath)
-      !readFile?(fpath)
+      !@fileRegexp.match(fpath) ||
+      IGNORE_FILE.match(File.basename(fpath)) ||
+      (@ignoreFile && @ignoreFile.match(File.basename(fpath))) ||
+      binary?(fpath)
     end
     private :ignoreFile?
 
