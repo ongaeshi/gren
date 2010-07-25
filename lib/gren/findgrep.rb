@@ -26,7 +26,7 @@ module Gren
         
         # 除外ディレクトリ
         if ignoreDir?(fpath)
-          @result.prune_dirs << fpath_disp
+          @result.prune_dirs << fpath_disp if (@option.fpathDisp)
           Find.prune
         end
 
@@ -37,7 +37,7 @@ module Gren
         
         # 読み込み不可ならば探索しない
         unless FileTest.readable?(fpath)
-          @result.unreadable_files << fpath_disp
+          @result.unreadable_files << fpath_disp if (@option.fpathDisp)
           next
         end
         
@@ -45,7 +45,7 @@ module Gren
 
         # 除外ファイル
         if ignoreFile?(fpath)
-          @result.ignore_files << fpath_disp
+          @result.ignore_files << fpath_disp if (@option.fpathDisp)
           next
         end
         
@@ -59,6 +59,7 @@ module Gren
       @result.time_stop
       
       if (@option.fpathDisp)
+        stdout.puts
         stdout.puts "--- search --------"
         stdout.puts @result.search_files.join("\n")
         stdout.puts
@@ -107,7 +108,7 @@ module Gren
     end
 
     def searchMain(stdout, fpath, fpath_disp)
-      @result.search_files << fpath_disp
+      @result.search_files << fpath_disp if (@option.fpathDisp)
 
       open(fpath, "r") { |file|
         match_file = false
@@ -118,7 +119,7 @@ module Gren
 
             unless match_file
               @result.match_file += 1
-              @result.match_files << fpath_disp
+              @result.match_files << fpath_disp if (@option.fpathDisp)
               match_file = true
             end
 
