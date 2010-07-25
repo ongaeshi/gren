@@ -67,7 +67,7 @@ module Gren
     def print(stdout)
       stdout.puts "dir   : #{@start_dir} (#{time_s})"
       stdout.puts "files : #{@search_count} in #{@count} (#{size_s(@search_size)} in #{size_s(@size)})"
-      stdout.puts "match : #{@match_file} files, #{match_count} match"
+      stdout.puts "match : #{@match_file} files, #{match_count} hit"
     end
 
   end
