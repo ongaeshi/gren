@@ -98,7 +98,7 @@ module Gren
               # 隠しコマンド
               #   patternに"."を渡した時はFound patternを表示しない
               #   ファイル名一覧を取得する時等に便利
-              stdout.print " ........ Found pattern." unless (@pattern == ".")
+              stdout.print " ........ Found pattern." if (!match_file && @pattern != ".")
             end
 
             unless match_file
