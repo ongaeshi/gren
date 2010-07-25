@@ -46,16 +46,26 @@ module Gren
     end
 
     def size_s(size)
-      if (size > 1024 * 1024)
-        round(size / (1024 * 1024.0), 2).to_s + "MB"
-      elsif (size > 1024)
-        round(size / 1024.0, 2).to_s + "KB"
+      tb = 1024 ** 4
+      gb = 1024 ** 3
+      mb = 1024 ** 2
+      kb = 1024
+
+      if (size >= tb)
+        round(size / tb.prec_f, 2).to_s + "TB"
+      elsif (size >= gb)
+        round(size / gb.prec_f, 2).to_s + "GB"
+      elsif (size >= mb)
+        round(size / mb.prec_f, 2).to_s + "MB"
+      elsif (size >= kb)
+        round(size / kb.prec_f, 2).to_s + "KB"
       else
         size.to_s + "Byte"
       end
     end
 
     def print(stdout)
+      p size_s(1024 * 1023)
       stdout.puts "dir   : #{@start_dir} (#{time_s})"
       stdout.puts "files : #{@search_count} in #{@count} (#{size_s(@search_size)} in #{size_s(@size)})"
       stdout.puts "match : #{@match_file} files, #{match_count} match"
