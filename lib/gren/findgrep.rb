@@ -12,9 +12,8 @@ module Gren
     def initialize(pattern, dir, option)
       @pattern = pattern
       @dir = dir
+      @option = option
       @fileRegexp = Regexp.new(option.filePattern)
-      @ignoreCase = option.ignoreCase
-      @fpathDisp = option.fpathDisp
       @patternRegexp = makePattenRegexp
       @result = Result.new(@dir)
     end
@@ -54,7 +53,7 @@ module Gren
 
     def makePattenRegexp
       option = 0
-      option |= Regexp::IGNORECASE if (@ignoreCase)
+      option |= Regexp::IGNORECASE if (@option.ignoreCase)
       Regexp.new(@pattern, option)
     end
     private :makePattenRegexp
@@ -84,14 +83,14 @@ module Gren
 
     def searchMain(stdout, fpath)
       # ファイルパスを表示
-      stdout.print "#{fpath}" if (@fpathDisp)
+      stdout.print "#{fpath}" if (@option.fpathDisp)
 
       open(fpath, "r") { |file|
         match_file = false
         file.each() { |line|
           line.chomp!
           if (@patternRegexp.match(line))
-            if (!@fpathDisp)
+            if (!@option.fpathDisp)
               stdout.print "#{fpath}:#{file.lineno}:#{line}\n"
             else
               # 隠しコマンド
@@ -111,7 +110,7 @@ module Gren
       }
 
       # 改行
-      stdout.puts if (@fpathDisp)
+      stdout.puts if (@option.fpathDisp)
     end
     private :searchMain
 
