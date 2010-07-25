@@ -65,7 +65,6 @@ module Gren
     end
 
     def print(stdout)
-      p size_s(1024 * 1023)
       stdout.puts "dir   : #{@start_dir} (#{time_s})"
       stdout.puts "files : #{@search_count} in #{@count} (#{size_s(@search_size)} in #{size_s(@size)})"
       stdout.puts "match : #{@match_file} files, #{match_count} match"

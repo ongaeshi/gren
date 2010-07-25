@@ -4,7 +4,6 @@ require File.join(File.dirname(__FILE__), 'result')
 
 module Gren
   class FindGrep
-#    DEFAULT_FPATH_PATTERN = '(\.svn)|(\.git)|(CVS)|(\.o$)|(\.lo$)|(\.la$)|(^#.*#$)|(~$)|(^.#)|(^\.DS_Store$)|(\.bak$)|(\.BAK$)'
     IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
     IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/    
     
