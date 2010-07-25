@@ -118,7 +118,7 @@ module Gren
             stdout.puts "#{fpath_disp}:#{file.lineno}:#{line}"
 
             unless match_file
-              @result.match_file += 1
+              @result.match_file_count += 1
               @result.match_files << fpath_disp if (@option.fpathDisp)
               match_file = true
             end

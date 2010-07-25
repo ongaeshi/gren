@@ -5,7 +5,7 @@ module Gren
   class Result
     attr_accessor :count
     attr_accessor :search_count
-    attr_accessor :match_file
+    attr_accessor :match_file_count
     attr_accessor :match_count
     attr_accessor :size
     attr_accessor :search_size
@@ -18,7 +18,7 @@ module Gren
 
     def initialize(start_dir)
       @start_dir = File.expand_path(start_dir)
-      @count, @search_count, @match_file, @match_count, @size, @search_size = 0, 0, 0, 0, 0, 0
+      @count, @search_count, @match_file_count, @match_count, @size, @search_size = 0, 0, 0, 0, 0, 0
       @start_time = Time.now
       @search_files, @match_files, @unreadable_files, @prune_dirs, @ignore_files  = [], [], [], [], []
     end
@@ -74,7 +74,7 @@ module Gren
     def print(stdout)
       stdout.puts "dir   : #{@start_dir} (#{time_s})"
       stdout.puts "files : #{@search_count} in #{@count} (#{size_s(@search_size)} in #{size_s(@size)})"
-      stdout.puts "match : #{@match_file} files, #{match_count} hit"
+      stdout.puts "match : #{@match_file_count} files, #{match_count} hit"
     end
 
   end
