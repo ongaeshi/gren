@@ -62,18 +62,23 @@ module Gren
         stdout.puts
         stdout.puts "--- search --------"
         stdout.puts @result.search_files.join("\n")
+        stdout.puts "total: #{@result.search_files.count}"
         stdout.puts
         stdout.puts "--- match --------"
         stdout.puts @result.match_files.join("\n")
+        stdout.puts "total: #{@result.match_files.count}"
         stdout.puts
         stdout.puts "--- ignore-file --------"
         stdout.puts @result.ignore_files.join("\n")
+        stdout.puts "total: #{@result.ignore_files.count}"
         stdout.puts
         stdout.puts "--- ignore-dir --------"
         stdout.puts @result.prune_dirs.join("\n")
+        stdout.puts "total: #{@result.prune_dirs.count}"
         stdout.puts
         stdout.puts "--- unreadable --------"
         stdout.puts @result.unreadable_files.join("\n")
+        stdout.puts "total: #{@result.unreadable_files.count}"
       end
 
       stdout.puts
