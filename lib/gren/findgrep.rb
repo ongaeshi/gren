@@ -61,29 +61,28 @@ module Gren
       if (@option.fpathDisp)
         stdout.puts
         stdout.puts "--- search --------"
-        stdout.puts @result.search_files.join("\n")
-        stdout.puts "total: #{@result.search_files.count}"
-        stdout.puts
+        print_fpaths stdout, @result.search_files
         stdout.puts "--- match --------"
-        stdout.puts @result.match_files.join("\n")
-        stdout.puts "total: #{@result.match_files.count}"
-        stdout.puts
+        print_fpaths stdout, @result.match_files
         stdout.puts "--- ignore-file --------"
-        stdout.puts @result.ignore_files.join("\n")
-        stdout.puts "total: #{@result.ignore_files.count}"
-        stdout.puts
+        print_fpaths stdout, @result.ignore_files
         stdout.puts "--- ignore-dir --------"
-        stdout.puts @result.prune_dirs.join("\n")
-        stdout.puts "total: #{@result.prune_dirs.count}"
-        stdout.puts
+        print_fpaths stdout, @result.prune_dirs
         stdout.puts "--- unreadable --------"
-        stdout.puts @result.unreadable_files.join("\n")
-        stdout.puts "total: #{@result.unreadable_files.count}"
+        print_fpaths stdout, @result.unreadable_files
       end
 
       stdout.puts
       @result.print(stdout)
     end
+
+    def print_fpaths(stdout, data)
+      stdout.print data.join("\n")
+      stdout.puts if data.count > 0
+      stdout.puts "total: #{data.count}"
+      stdout.puts
+    end
+    private :print_fpaths
 
     def makePattenRegexp
       option = 0
