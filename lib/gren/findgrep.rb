@@ -15,6 +15,7 @@ module Gren
       @option = option
       @fileRegexp = Regexp.new(option.filePattern)
       @patternRegexp = makePattenRegexp
+      @ignoreDir = Regexp.new(option.ignoreDir) if option.ignoreDir
       @result = Result.new(@dir)
     end
 
@@ -60,7 +61,8 @@ module Gren
 
     def ignoreDir?(fpath)
       FileTest.directory?(fpath) &&
-      IGNORE_DIR.match(File.basename(fpath))
+      (IGNORE_DIR.match(File.basename(fpath)) ||
+       (@ignoreDir && @ignoreDir.match(File.basename(fpath))))
     end
     private :ignoreDir?
 
