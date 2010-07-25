@@ -30,19 +30,25 @@ module Gren
 
         @result.count += 1
         
+        # ファイルパスを表示
+        stdout.print "#{disppath(fpath).ljust(50)}" if (@option.fpathDisp)
+
         # 読み込み不可ならば探索しない
-        next unless FileTest.readable?(fpath)
+        unless FileTest.readable?(fpath)
+          stdout.puts " ........ Unreadable." if (@option.fpathDisp)
+          next
+        end
         
         @result.size += FileTest.size(fpath)
 
         # 除外ファイル
-        next if ignoreFile?(fpath)
+        if ignoreFile?(fpath)
+          stdout.puts " ........ Ignore file." if (@option.fpathDisp)
+          next
+        end
         
         @result.search_count += 1
         @result.search_size += FileTest.size(fpath)
-
-        # 行頭の./は削除
-        fpath.gsub!(/^.\//, "");
 
         # 検索
         searchMain(stdout, fpath)
@@ -81,16 +87,13 @@ module Gren
     end
 
     def searchMain(stdout, fpath)
-      # ファイルパスを表示
-      stdout.print "#{fpath}" if (@option.fpathDisp)
-
       open(fpath, "r") { |file|
         match_file = false
         file.each() { |line|
           line.chomp!
           if (@patternRegexp.match(line))
             if (!@option.fpathDisp)
-              stdout.print "#{fpath}:#{file.lineno}:#{line}\n"
+              stdout.puts "#{disppath(fpath)}:#{file.lineno}:#{line}"
             else
               # 隠しコマンド
               #   patternに"."を渡した時はFound patternを表示しない
@@ -112,6 +115,11 @@ module Gren
       stdout.puts if (@option.fpathDisp)
     end
     private :searchMain
+
+    def disppath(path)
+      # 行頭の./は削除
+      path.gsub(/^.\//, "")
+    end
 
   end
 end
