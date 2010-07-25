@@ -5,17 +5,16 @@ require File.join(File.dirname(__FILE__), 'result')
 module Gren
   class FindGrep
     IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
-    IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/    
+    IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/
     
-    attr_writer :ignoreCase
-    attr_writer :fpathDisp
+    Option = Struct.new(:ignoreCase, :fpathDisp, :filePattern, :ignoreFile, :ignoreDir)
     
-    def initialize(pattern, dir = '.', filePattern = '.')
+    def initialize(pattern, dir, option)
       @pattern = pattern
       @dir = dir
-      @fileRegexp = Regexp.new(filePattern)
-      @ignoreCase = false
-      @fpathDisp = false
+      @fileRegexp = Regexp.new(option.filePattern)
+      @ignoreCase = option.ignoreCase
+      @fpathDisp = option.fpathDisp
       @patternRegexp = makePattenRegexp
       @result = Result.new(@dir)
     end

@@ -6,13 +6,13 @@ module Gren
   class CLI
     def self.execute(stdout, arguments=[])
       # オプション
-      ignoreCase = false
-      fpathDisp = false
+      option = FindGrep::Option.new(false, false, ".")
 
       # オプション解析
-      opt = OptionParser.new("#{File.basename($0)} [option] pattern [dir] [filename_regexp]")
-      opt.on('-i', 'Ignore case.') {|v| ignoreCase = true}
-      opt.on('-f', 'The searched file name is displayed.') {|v| fpathDisp = true}
+      opt = OptionParser.new("#{File.basename($0)} [option] pattern [dir]")
+      opt.on('-i', '--ignore', 'Ignore case.') {|v| option.ignoreCase = true}
+      opt.on('-l', '--listing', 'The searched file name is displayed.') {|v| option.fpathDisp = true}
+      opt.on('-f REGEXP', '--file-regexp REGEXP', 'Search file regexp. (default: ".")') {|v| option.filePattern = v}
       opt.parse!(arguments)
 
       # 検索オブジェクトの生成
@@ -20,19 +20,12 @@ module Gren
 
       case ARGV.length
       when 1:
-          findGrep = FindGrep.new(arguments[0])
+          findGrep = FindGrep.new(arguments[0], '.', option)
       when 2:
-          findGrep = FindGrep.new(arguments[0], arguments[1])
-      when 3:
-          findGrep = FindGrep.new(arguments[0], arguments[1], arguments[2])
+          findGrep = FindGrep.new(arguments[0], arguments[1], option)
       end
       
       if (findGrep)
-        # オプション設定
-        findGrep.ignoreCase = ignoreCase
-        findGrep.fpathDisp = fpathDisp
-        
-        # 検索
         findGrep.searchAndPrint(stdout)
       else
         stdout.print opt.help
