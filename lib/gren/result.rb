@@ -9,11 +9,18 @@ module Gren
     attr_accessor :match_count
     attr_accessor :size
     attr_accessor :search_size
+    
+    attr_accessor :search_files
+    attr_accessor :match_files
+    attr_accessor :unreadable_files
+    attr_accessor :prune_dirs
+    attr_accessor :ignore_files
 
     def initialize(start_dir)
       @start_dir = File.expand_path(start_dir)
       @count, @search_count, @match_file, @match_count, @size, @search_size = 0, 0, 0, 0, 0, 0
       @start_time = Time.now
+      @search_files, @match_files, @unreadable_files, @prune_dirs, @ignore_files  = [], [], [], [], []
     end
 
     def time_stop

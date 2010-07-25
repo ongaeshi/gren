@@ -22,20 +22,22 @@ module Gren
 
     def searchAndPrint(stdout)
       Find::find(@dir) { |fpath|
+        fpath_disp = fpath.gsub(/^.\//, "")
+        
         # 除外ディレクトリ
-        Find.prune if ignoreDir?(fpath)
+        if ignoreDir?(fpath)
+          @result.prune_dirs << fpath_disp
+          Find.prune
+        end
 
         # ファイルでなければ探索しない
         next unless FileTest.file?(fpath)
 
         @result.count += 1
         
-        # ファイルパスを表示
-        stdout.print "#{disppath(fpath).ljust(50)}" if (@option.fpathDisp)
-
         # 読み込み不可ならば探索しない
         unless FileTest.readable?(fpath)
-          stdout.puts " ........ Unreadable." if (@option.fpathDisp)
+          @result.unreadable_files << fpath_disp
           next
         end
         
@@ -43,7 +45,7 @@ module Gren
 
         # 除外ファイル
         if ignoreFile?(fpath)
-          stdout.puts " ........ Ignore file." if (@option.fpathDisp)
+          @result.ignore_files << fpath_disp
           next
         end
         
@@ -51,10 +53,28 @@ module Gren
         @result.search_size += FileTest.size(fpath)
 
         # 検索
-        searchMain(stdout, fpath)
+        searchMain(stdout, fpath, fpath_disp)
       }
       
       @result.time_stop
+      
+      if (@option.fpathDisp)
+        stdout.puts "--- search --------"
+        stdout.puts @result.search_files.join("\n")
+        stdout.puts
+        stdout.puts "--- match --------"
+        stdout.puts @result.match_files.join("\n")
+        stdout.puts
+        stdout.puts "--- ignore-file --------"
+        stdout.puts @result.ignore_files.join("\n")
+        stdout.puts
+        stdout.puts "--- ignore-dir --------"
+        stdout.puts @result.prune_dirs.join("\n")
+        stdout.puts
+        stdout.puts "--- unreadable --------"
+        stdout.puts @result.unreadable_files.join("\n")
+      end
+
       stdout.puts
       @result.print(stdout)
     end
@@ -86,23 +106,19 @@ module Gren
       return s.index("\x00")
     end
 
-    def searchMain(stdout, fpath)
+    def searchMain(stdout, fpath, fpath_disp)
+      @result.search_files << fpath_disp
+
       open(fpath, "r") { |file|
         match_file = false
         file.each() { |line|
           line.chomp!
           if (@patternRegexp.match(line))
-            if (!@option.fpathDisp)
-              stdout.puts "#{disppath(fpath)}:#{file.lineno}:#{line}"
-            else
-              # 隠しコマンド
-              #   patternに"."を渡した時はFound patternを表示しない
-              #   ファイル名一覧を取得する時等に便利
-              stdout.print " ........ Found pattern." if (!match_file && @pattern != ".")
-            end
+            stdout.puts "#{fpath_disp}:#{file.lineno}:#{line}"
 
             unless match_file
               @result.match_file += 1
+              @result.match_files << fpath_disp
               match_file = true
             end
 
@@ -110,16 +126,8 @@ module Gren
           end
         }
       }
-
-      # 改行
-      stdout.puts if (@option.fpathDisp)
     end
     private :searchMain
-
-    def disppath(path)
-      # 行頭の./は削除
-      path.gsub(/^.\//, "")
-    end
 
   end
 end
