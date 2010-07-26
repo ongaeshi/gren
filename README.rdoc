@@ -1,48 +1,183 @@
-= gren
-
-* http://github.com/#{github_username}/#{project_name}
+= gren (grep next)
+http://github.com/ongaeshi/gren
 
 == DESCRIPTION:
+grenはgrepの置き換えを狙った次世代型grepツールです。
+特徴としては、
 
-FIX (describe your package)
-
-== FEATURES/PROBLEMS:
-
-* FIX (list of features or problems)
-
-== SYNOPSIS:
-
-  FIX (code sample of usage)
-
-== REQUIREMENTS:
-
-* FIX (list of requirements)
+* 指定ディレクトリ以下にある全てのファイルの中身を調べます
+* バイナリかテキストかをツールが自動で判断して検索してくれます
+** 対象設定(*.rbとか*/*.cpp)は指定しなくて構いません
+** README,README.jaのような特殊な拡張子のファイルも検索対象に含めます
+** .pngや.exeの中身は調べません。
+* *~, .svn, .git, CVS等はデフォルトで探索対象から除外します
+* 表示形式はgrepと同じです
+** emacsのgrep-mode等でそのまま使えます
 
 == INSTALL:
+RubyGemからインストールして下さい。
 
-* FIX (sudo gem install, anything else)
+ gem install gren
+
+== USAGE:
+ gren [option] pattern [dir]
+     -i, --ignore                     Ignore case.
+     -l, --listing                    The searched file name is displayed.
+     -f, --file-regexp REGEXP         Search file regexp. (default: ".")
+         --if, --ignore-file REGEXP   Ignore file pattern.
+         --id, --ignore-dir REGEXP    Ignore dir pattern.
+
+== SAMPLE:
+現在ディレクトリ以下で"FileTest"を検索
+ % gren FileTest
+ pkg/gren-0.0.5/lib/gren/findgrep.rb:34:        next unless FileTest.file?(fpath)
+ pkg/gren-0.0.5/lib/gren/findgrep.rb:39:        unless FileTest.readable?(fpath)
+ pkg/gren-0.0.5/lib/gren/findgrep.rb:44:        @result.size += FileTest.size(fpath)
+ pkg/gren-0.0.5/lib/gren/findgrep.rb:53:        @result.search_size += FileTest.size(fpath)
+ pkg/gren-0.0.5/lib/gren/findgrep.rb:95:      FileTest.directory?(fpath) &&
+ pkg/gren-0.0.4/lib/gren/findgrep.rb:34:        next unless FileTest.file?(fpath)
+ pkg/gren-0.0.4/lib/gren/findgrep.rb:39:        unless FileTest.readable?(fpath)
+ pkg/gren-0.0.4/lib/gren/findgrep.rb:44:        @result.size += FileTest.size(fpath)
+ pkg/gren-0.0.4/lib/gren/findgrep.rb:53:        @result.search_size += FileTest.size(fpath)
+ pkg/gren-0.0.4/lib/gren/findgrep.rb:95:      FileTest.directory?(fpath) &&
+ lib/gren/findgrep.rb:34:        next unless FileTest.file?(fpath)
+ lib/gren/findgrep.rb:39:        unless FileTest.readable?(fpath)
+ lib/gren/findgrep.rb:44:        @result.size += FileTest.size(fpath)
+ lib/gren/findgrep.rb:53:        @result.search_size += FileTest.size(fpath)
+ lib/gren/findgrep.rb:95:      FileTest.directory?(fpath) &&
+ 
+ dir   : /Users/ongaeshi/Documents/gren (0.01sec)
+ files : 49 in 53 (35.63KB in 61.53KB)
+ match : 3 files, 15 hit
+
+pkg/ディレクトリ以下で"FileTest"を検索
+ % gren FileTest pkg/
+ pkg/gren-0.0.5/lib/gren/findgrep.rb:34:        next unless FileTest.file?(fpath)
+ pkg/gren-0.0.5/lib/gren/findgrep.rb:39:        unless FileTest.readable?(fpath)
+ pkg/gren-0.0.5/lib/gren/findgrep.rb:44:        @result.size += FileTest.size(fpath)
+ pkg/gren-0.0.5/lib/gren/findgrep.rb:53:        @result.search_size += FileTest.size(fpath)
+ pkg/gren-0.0.5/lib/gren/findgrep.rb:95:      FileTest.directory?(fpath) &&
+ pkg/gren-0.0.4/lib/gren/findgrep.rb:34:        next unless FileTest.file?(fpath)
+ pkg/gren-0.0.4/lib/gren/findgrep.rb:39:        unless FileTest.readable?(fpath)
+ pkg/gren-0.0.4/lib/gren/findgrep.rb:44:        @result.size += FileTest.size(fpath)
+ pkg/gren-0.0.4/lib/gren/findgrep.rb:53:        @result.search_size += FileTest.size(fpath)
+ pkg/gren-0.0.4/lib/gren/findgrep.rb:95:      FileTest.directory?(fpath) &&
+ 
+ dir   : /Users/ongaeshi/Documents/gren/pkg (0.01sec)
+ files : 32 in 36 (22.64KB in 48.54KB)
+ match : 2 files, 10 hit
+
+pkg/ディレクトリ以下、.rbファイルに限定して"FILE"を検索(file : 32 in 36 → file : 14 in 36 になっていることに注目)
+ % gren FILE -f "\.rb$"
+ pkg/gren-0.0.5/test/test_helper.rb:3:require File.dirname(__FILE__) + '/../lib/gren'
+ .
+ .
+ .
+ pkg/gren-0.0.4/lib/gren/cli.rb:3:require File.join(File.dirname(__FILE__), 'findgrep')
+ 
+ dir   : /Users/ongaeshi/Documents/gren/pkg (0.1sec)
+ files : 14 in 36 (15.36KB in 48.54KB)
+ match : 12 files, 18 hit
+
+.rbファイルに限定して"FILE"を検索する、ただしpkg/ディレクトリ以下は探索対象から除外
+--id で指定されたディレクトリはそれ以下の探索自体がスキップされます
+ % gren FILE -f "\.rb$" --id pkg
+ test/test_helper.rb:3:require File.dirname(__FILE__) + '/../lib/gren'
+ test/test_gren_cli.rb:1:require File.join(File.dirname(__FILE__), "test_helper.rb")
+ test/test_gren.rb:1:require File.dirname(__FILE__) + '/test_helper.rb'
+ lib/gren.rb:1:$:.unshift(File.dirname(__FILE__)) unless
+ lib/gren.rb:2:  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
+ lib/gren/findgrep.rb:3:require File.join(File.dirname(__FILE__), 'result')
+ lib/gren/findgrep.rb:7:    IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
+ lib/gren/findgrep.rb:103:      IGNORE_FILE.match(File.basename(fpath)) ||
+ lib/gren/cli.rb:3:require File.join(File.dirname(__FILE__), 'findgrep')
+ 
+ dir   : /Users/ongaeshi/Documents/gren (0.01sec)
+ files : 7 in 17 (7.68KB in 11.32KB)
+ match : 6 files, 9 hit
+
+.rbファイルに限定して"FILE"を検索する、ただしpkgディレクトリ以下は探索対象から除外、test_*.rbという名前のファイルも除外
+ % gren FILE -f "\.rb$" --id pkg --if "test_.+\.rb$"
+ lib/gren.rb:1:$:.unshift(File.dirname(__FILE__)) unless
+ lib/gren.rb:2:  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
+ lib/gren/findgrep.rb:3:require File.join(File.dirname(__FILE__), 'result')
+ lib/gren/findgrep.rb:7:    IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
+ lib/gren/findgrep.rb:103:      IGNORE_FILE.match(File.basename(fpath)) ||
+ lib/gren/cli.rb:3:require File.join(File.dirname(__FILE__), 'findgrep')
+ 
+ dir   : /Users/ongaeshi/Documents/gren (0.0sec)
+ files : 4 in 17 (7.07KB in 11.32KB)
+ match : 3 files, 6 hit
+
+-iオプションを付けると大文字、小文字の違いを無視する
+ % gren FILE -i -f "\.rb$" --id pkg --if "test_.+\.rb$"
+ lib/gren.rb:1:$:.unshift(File.dirname(__FILE__)) unless
+ lib/gren.rb:2:  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
+ lib/gren/result.rb:8:    attr_accessor :match_file_count
+ .
+ .
+ .
+ lib/gren/cli.rb:16:      opt.on('--if REGEXP', '--ignore-file REGEXP', 'Ignore file pattern.') {|v| option.ignoreFile = v}
+ 
+ dir   : /Users/ongaeshi/Documents/gren (0.1sec)
+ files : 4 in 17 (7.07KB in 11.32KB)
+ match : 4 files, 53 hit
+
+-lでリスティングモード、探索時に辿ったファイル、マッチしたファイル、無視したファイル、無視したディレクトリ、読み込み禁止で読めなかったもの等が一覧出来る
+大量にテキストが出力される可能性があるので注意(リダイレクト推奨)
+ % gren FILE -l
+ test/test_helper.rb:3:require File.dirname(__FILE__) + '/../lib/gren'
+ .
+ .
+ 
+ --- search --------
+ test/test_helper.rb
+ test/test_gren_cli.rb
+ .
+ .
+ total: 49
+ 
+ --- match --------
+ test/test_helper.rb
+ test/test_gren_cli.rb
+ .
+ .
+ total: 30
+ 
+ --- ignore-file --------
+ pkg/gren-0.0.5.tgz
+ pkg/gren-0.0.5.gem
+ .
+ .
+ total: 4
+ 
+ --- ignore-dir --------
+ .git
+ total: 1
+ 
+ --- unreadable --------
+ total: 0
+ 
+ 
+ dir   : /Users/ongaeshi/Documents/gren (0.01sec)
+ files : 49 in 53 (33.96KB in 59.86KB)
+ match : 30 files, 42 hit
+
+おまけ : 自分のホームディレクトリでエゴサーチ(結構ヒットするなー)
+ % cd ~
+ % gren ongaeshi
+ .
+ .
+ .
+ 
+ dir   : /Users/ongaeshi (8m 52.45s)
+ files : 70237 in 153566 (713.45MB in 91.92GB)
+ match : 44 files, 162 hit
+
+== for Emacs:
+ (global-set-key "\C-x\C-g" 'grep-find) ; キーバインドはお好みで
+ ;(setq grep-find-command "gren ") ; for OSX
+ ;(setq grep-find-command "gren.bat ") ; for Windows
 
 == LICENSE:
-
-(The MIT License)
-
-Copyright (c) 2010 ongaeshi
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-'Software'), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+MIT License
