@@ -1,9 +1,12 @@
 = gren (grep next)
-http://github.com/ongaeshi/gren
+
+* http://github.com/ongaeshi/gren
 
 == DESCRIPTION:
 grenはgrepの置き換えを狙った次世代型grepツールです。
-特徴としては、
+
+== CONCEPT:
+grepと比べた時の特徴は、
 
 * 指定ディレクトリ以下にある全てのファイルの中身を調べます
 * バイナリかテキストかをツールが自動で判断して検索してくれます
