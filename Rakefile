@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # -*- ruby -*-
 
 require 'rubygems'
@@ -5,6 +6,7 @@ gem 'hoe', '>= 2.1.0'
 require 'hoe'
 require 'fileutils'
 require './lib/gren'
+require 'rake_rdoc_custom'
 
 Hoe.plugin :newgem
 # Hoe.plugin :website
@@ -18,40 +20,13 @@ $hoe = Hoe.spec 'gren' do
   self.rubyforge_name       = self.name # TODO this is default value
   # self.extra_deps         = [['activesupport','>= 2.0.2']]
 
-  self.readme_file = "README.rdoc"
+  # 本来はnewgemの中で設定されるべき(後で報告した方がいいかも)
   self.extra_rdoc_files << "README.rdoc"
-
-  spec_extras['rdoc_options'] = proc do |rdoc_options|
-    rdoc_options << "--charset utf8"
-  end
-
+  
+  # 本当はhoeの中でこう設定出来たら良い
+  # self.spec_extras[:rdoc_options] = ['-c', 'utf8']
 end
 
 require 'newgem/tasks'
 Dir['tasks/**/*.rake'].each { |t| load t }
-
-# TODO - want other tests/tasks run by default? Add them to the list
-# remove_task :default
-# task :default => [:spec, :features]
-
-Rake::RDocTask.class_eval { 
-  @@default_options = []
-  
-  class << self
-    def default_options
-      @@default_options
-    end
-    
-    def default_options=(options)
-      @@default_options = options
-    end
-  end
-  
-  alias :_option_list :option_list
-  def option_list
-    _option_list + @@default_options
-  end  
-}
-
-Rake::RDocTask.default_options = ['-c', "utf8"]
 
