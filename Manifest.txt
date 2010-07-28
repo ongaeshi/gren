@@ -6,6 +6,8 @@ Rakefile
 bin/gren
 lib/gren.rb
 lib/gren/cli.rb
+lib/gren/findgrep.rb
+lib/gren/result.rb
 script/console
 script/destroy
 script/generate

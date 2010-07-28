@@ -1,8 +1,12 @@
+# -*- coding: utf-8 -*-
+# -*- ruby -*-
+
 require 'rubygems'
 gem 'hoe', '>= 2.1.0'
 require 'hoe'
 require 'fileutils'
 require './lib/gren'
+require 'rake_rdoc_custom'
 
 Hoe.plugin :newgem
 # Hoe.plugin :website
@@ -16,11 +20,13 @@ $hoe = Hoe.spec 'gren' do
   self.rubyforge_name       = self.name # TODO this is default value
   # self.extra_deps         = [['activesupport','>= 2.0.2']]
 
+  # 本来はnewgemの中で設定されるべき(後で報告した方がいいかも)
+  self.extra_rdoc_files << "README.rdoc"
+  
+  # 本当はhoeの中でこう設定出来たら良い
+  # self.spec_extras[:rdoc_options] = ['-c', 'utf8']
 end
 
 require 'newgem/tasks'
 Dir['tasks/**/*.rake'].each { |t| load t }
 
-# TODO - want other tests/tasks run by default? Add them to the list
-# remove_task :default
-# task :default => [:spec, :features]
