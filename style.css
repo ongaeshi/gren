@@ -149,7 +149,8 @@ body {
 /* -- 見出し -- */
 h2,h3,h4,h5,h6 {
   font-size: 1.2em;
-  margin-bottom: 1.5em;
+  margin-top: 1.5em;
+  margin-bottom: 1.0em;
   padding: 5px 0 5px 5px;
   border-left: 10px solid #000000;
   border-bottom: 1px solid #000000;
