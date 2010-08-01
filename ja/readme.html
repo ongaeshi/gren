@@ -39,11 +39,12 @@
 <pre>
 % gren --help
 gren [option] pattern [dir]
-    -i, --ignore                     Ignore case.
-    -l, --listing                    The searched file name is displayed.
-    -f, --file-regexp REGEXP         Search file regexp. (default: &quot;.&quot;)
-        --if, --ignore-file REGEXP   Ignore file pattern.
-        --id, --ignore-dir REGEXP    Ignore dir pattern.
+    -i, --ignore                     大文字小文字の違いを無視します。
+    -l, --listing                    リスティングモードになります、探索対象となったファイルの一覧を表示します。
+    -f, --file-regexp REGEXP         探索対象となるファイルの正規表現 (default: ".")
+        --if, --ignore-file REGEXP   探索対象から外すファイルの正規表現
+        --id, --ignore-dir REGEXP    探索対象から外すディレクトリの正規表現
+                                     --id で指定されたディレクトリはそれ以下の探索自体がスキップされます
 </pre>
 
 <h2>現在ディレクトリ以下で&quot;FileTest&quot;を検索</h2>
