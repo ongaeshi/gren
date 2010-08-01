@@ -179,6 +179,17 @@ h3,h4,h5,h6 { margin-top: 2.5em; }
 #contents ol { margin: 1em 0 1em 30px; }
 #contents li { margin-bottom: 0.5em; }
 
+/* -- preタグ -- */
+#contents pre {
+    border: 1px solid #dedede;
+    margin-bottom: 5px;
+    padding-left: 5px;
+    background-color: #ccffff;
+    font-weight: inherit;
+    margin-top: 5px;
+    padding-top: 5px;
+}
+
 /* ---------------------------------------- #sidebar内の指定 */
 
 /* -- カテゴリタイトル -- */
