@@ -1,5 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="ja">
+
 <head>
 <meta http-equiv="Content-Style-Type" content="text/css">
 <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -9,6 +10,7 @@
 <title>gren - gren is a next grep tool.</title>
 <link rel="stylesheet" href="../style.css" type="text/css" media="screen,tv">
 </head>
+
 <body>
 <div id="wrapper">
 <div id="header">
@@ -25,8 +27,8 @@
   <li><a href="index.html">Home</a></li>
   <li><a href="feature.html">特徴</a></li>
   <li><a href="download.html">ダウンロード</a></li>
+  <li><a href="firststep.html">使い方</a></li>
   <li><a href="history.html">更新履歴</a></li>
-  <li><a href="sitemap.html">サイトマップ</a></li>
 </ul>
 </div><!-- / globalnavi end -->
 
@@ -35,39 +37,72 @@
 <!-- <p class="topic-path"><a href="index.html">Home</a> &gt; 無料テンプレート</p> -->
 
 <!-- コンテンツ ここから -->
-<h2>*** 見出し ***</h2>
+<p><img style="width: 561px; height: 329px;" alt="openning" src="../img/openning.png"></p>
+
+<h2>指定フォルダ以下の全てのファイルの中身を簡単に検索出来ます</h2>
+<div>
+<pre>
+% pwd
+/Users/ongaeshi/Documents/gren FileTest
+% gren FileTest # grenフォルダ以下にある全てのテキストで書かれたファイルを検索
+lib/gren/findgrep.rb:34:        next unless FileTest.file?(fpath)
+lib/gren/findgrep.rb:39:        unless FileTest.readable?(fpath)
+lib/gren/findgrep.rb:44:        @result.size += FileTest.size(fpath)
+lib/gren/findgrep.rb:53:        @result.search_size += FileTest.size(fpath)
+lib/gren/findgrep.rb:95:      FileTest.directory?(fpath) &&
+
+dir   : /Users/ongaeshi/Documents/gren (0.0sec)
+files : 8 in 18 (7.9KB in 18.52KB)
+match : 1 files, 5 hit
+</pre>
+</div>
+
+<h2>バイナリかテキストかをツールが自動で判断して検索してくれます</h2>
+<ol>
+<li>ファイルの内容から、テキストファイルかバイナリファイルかを自動で判定します
+<li>grepのようにわざわざ対象設定(*.rbとか*/*.cpp)を指定しなくても大丈夫です
+<li>新しい拡張子が出てきた時に、findする対象を増やす必要はもうありません
+</ol>
+
+<h2>指定フォルダ以下の全てのテキストファイルを簡単に検索</h2>
 <p>*** テキスト ***</p>
 <p>*** テキスト ***</p>
 <p>*** テキスト ***</p>
+
+<h2>指定フォルダ以下の全てのテキストファイルを簡単に検索</h2>
+<p>*** テキスト ***</p>
+<p>*** テキスト ***</p>
+<p>*** テキスト ***</p>
+
 <!-- コンテンツ ここまで -->
 </div><!-- / contents end -->
 
 <div id="sidebar">
+
 <!-- サイドバー ここから -->
-<p class="sidetitle">*** カテゴリ ***</p>
+<p class="sidetitle">Download</p>
+<p>RubyGemで開発しています。</p>
+<pre>
+  gem install gren
+</pre>
+<p>ruby 1.8.7で動作確認済み</p>
+<p>gemは<a href="http://rubygems.org/gems/gren/">RubyGems</a>に置いてあります</p>
+<p>ソースコードは<a href="http://github.com/ongaeshi/gren">github</a></p>
+
+<p class="sidetitle">更新情報</p>
 <ul class="localnavi">
-  <li><a href="index.html">Home</a></li>
-  <li><a href="#">*** リンク ***</a></li>
-  <li><a href="#">*** リンク ***</a></li>
-  <li><a href="#">*** リンク ***</a></li>
-  <li><a href="#">*** リンク ***</a></li>
+<li><p>2010/08/xx ホームページ作成</p>
+<li><p>2010/07/28 v0.0.6</p>
+<li><p>2010/07/24 v0.0.5</p>
 </ul>
 
-<p class="sidetitle">*** カテゴリ ***</p>
-<ul class="localnavi">
-  <li><a href="#">*** リンク ***</a></li>
-  <li><a href="#">*** リンク ***</a></li>
-  <li><a href="#">*** リンク ***</a></li>
-  <li><a href="#">*** リンク ***</a></li>
-  <li><a href="#">*** リンク ***</a></li>
-</ul>
 <!-- サイドバー ここまで -->
 </div><!-- / sidebar end -->
 <div id="footer">
+
 <!-- コピーライト -->
-<p>Copyright &copy; *** 著作権表記 ***. All Rights Reserved.</p>
+<p>Copyright © *** 著作権表記 ***. All Rights Reserved.</p>
 <p id="cds">CSS Template <a href="http://www.css-designsample.com/">CSSデザインサンプル</a></p>
 </div><!-- / footer end -->
 </div><!-- / wrapper end -->
-</body>
-</html>
+</body></html>
