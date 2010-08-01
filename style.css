@@ -206,6 +206,13 @@ h3,h4,h5,h6 { margin-top: 2.5em; }
   border-bottom: 1px solid #ff0000;
 }
 
+div.infobox {
+  height: 5em;
+  overflow: auto;
+/*  border: red 1px dashed; */
+  border-style: groove;
+}
+
 /* ---------------------------------------- #footer内の指定 */
 #footer p { text-align: center; }
 
