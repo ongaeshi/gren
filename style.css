@@ -230,6 +230,17 @@ div.infobox {
   border-style: groove;
 }
 
+/* -- preタグ -- */
+#sidebar pre {
+    border: 1px solid #dedede;
+    margin-bottom: 5px;
+    padding-left: 5px;
+    background-color: #ccffff;
+    font-weight: inherit;
+    margin-top: 5px;
+    padding-top: 5px;
+}
+
 /* ---------------------------------------- #footer内の指定 */
 #footer p { text-align: center; }
 

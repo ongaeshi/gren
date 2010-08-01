@@ -38,18 +38,18 @@
         <h2>指定フォルダ以下の全てのファイルの中身を簡単に検索出来ます</h2>
         <div>
           <pre>
-            % pwd
-            /Users/ongaeshi/Documents/gren FileTest
-            % gren FileTest # grenフォルダ以下にある全てのテキストで書かれたファイルを検索
-            lib/gren/findgrep.rb:34:        next unless FileTest.file?(fpath)
-            lib/gren/findgrep.rb:39:        unless FileTest.readable?(fpath)
-            lib/gren/findgrep.rb:44:        @result.size += FileTest.size(fpath)
-            lib/gren/findgrep.rb:53:        @result.search_size += FileTest.size(fpath)
-            lib/gren/findgrep.rb:95:      FileTest.directory?(fpath) &&
+% pwd
+/Users/ongaeshi/Documents/gren FileTest
+% gren FileTest # grenフォルダ以下にある全てのテキストで書かれたファイルを検索
+lib/gren/findgrep.rb:34:        next unless FileTest.file?(fpath)
+lib/gren/findgrep.rb:39:        unless FileTest.readable?(fpath)
+lib/gren/findgrep.rb:44:        @result.size += FileTest.size(fpath)
+lib/gren/findgrep.rb:53:        @result.search_size += FileTest.size(fpath)
+lib/gren/findgrep.rb:95:      FileTest.directory?(fpath) &&
 
-            dir   : /Users/ongaeshi/Documents/gren (0.0sec)
-            files : 8 in 18 (7.9KB in 18.52KB)
-            match : 1 files, 5 hit
+dir   : /Users/ongaeshi/Documents/gren (0.0sec)
+files : 8 in 18 (7.9KB in 18.52KB)
+match : 1 files, 5 hit
           </pre>
         </div>
 
@@ -74,9 +74,9 @@
 
       <div id="sidebar">
         <p class="sidetitle">Download</p>
-        <p>RubyGemで開発しています。</p>
+        <p>gemでインストール</p>
         <pre>
-          gem install gren
+gem install gren
         </pre>
         <p>ruby 1.8.7で動作確認済み</p>
         <p>gemは<a href="http://rubygems.org/gems/gren/">RubyGems</a>に置いてあります</p>
