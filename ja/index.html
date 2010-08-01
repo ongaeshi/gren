@@ -34,41 +34,32 @@
 
       <div id="contents">
         <p><img style="width: 561px; height: 329px;" alt="openning" src="../img/openning.png"></p>
+        <p><big style="color: rgb(255, 110, 29); font-weight: bold;"><big><big>gren</big></big></big>は<big style="font-weight: bold;">grepの置き換え</big>を目指して作った<big style="color: rgb(255, 32, 25); font-weight: bold;">コマンドラインツール</big>です。</p>
+        <p>以下のような特徴をもっています。</p>
 
-        <h2>指定フォルダ以下の全てのファイルの中身を簡単に検索出来ます</h2>
-        <div>
-          <pre>
-% pwd
-/Users/ongaeshi/Documents/gren FileTest
-% gren FileTest # grenフォルダ以下にある全てのテキストで書かれたファイルを検索
-lib/gren/findgrep.rb:34:        next unless FileTest.file?(fpath)
-lib/gren/findgrep.rb:39:        unless FileTest.readable?(fpath)
-lib/gren/findgrep.rb:44:        @result.size += FileTest.size(fpath)
-lib/gren/findgrep.rb:53:        @result.search_size += FileTest.size(fpath)
-lib/gren/findgrep.rb:95:      FileTest.directory?(fpath) &&
+        <h2>基本はfind+grep</h2>
+指定ディレクトリ以下にある全てのファイルの中身を調べます。
+<pre>
+gren 検索文字列 [検索するディレクトリ]
+</pre>
 
-dir   : /Users/ongaeshi/Documents/gren (0.0sec)
-files : 8 in 18 (7.9KB in 18.52KB)
-match : 1 files, 5 hit
-          </pre>
-        </div>
+でOKです。<br>
 
-        <h2>バイナリかテキストかをツールが自動で判断して検索してくれます</h2>
-        <ol>
-          <li>ファイルの内容から、テキストファイルかバイナリファイルかを自動で判定します
-          <li>grepのようにわざわざ対象設定(*.rbとか*/*.cpp)を指定しなくても大丈夫です
-          <li>新しい拡張子が出てきた時に、findする対象を増やす必要はもうありません
-        </ol>
+        <h2>ユーザーが指定する項目を最小限に</h2>
+        <ul>
+          <li>バイナリかテキストかをツールが自動で判断します
+            <ol>
+              <li>*.rbとか、*/*.cppは必要ありません
+              <li>README,README.jaのような特殊な拡張子のファイルも検索対象に含めます
+              <li>.pngや.exeの中身は調べません。
+            </ol>
+          <li>デフォルトで設定されている除外ディレクトリ
+            <ul>
+              <li>*~, .svn, .git, CVS等は探索対象から除外します 
+            </ul>
+        </ul>
 
-        <h2>指定フォルダ以下の全てのテキストファイルを簡単に検索</h2>
-        <p>*** テキスト ***</p>
-        <p>*** テキスト ***</p>
-        <p>*** テキスト ***</p>
-
-        <h2>指定フォルダ以下の全てのテキストファイルを簡単に検索</h2>
-        <p>*** テキスト ***</p>
-        <p>*** テキスト ***</p>
-        <p>*** テキスト ***</p>
+        <big><big><a href="feature.html">続きを読む</a></big></big>
 
       </div><!-- / contents end -->
 
