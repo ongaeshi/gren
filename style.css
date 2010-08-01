@@ -62,6 +62,11 @@ body {
   padding: 4em 10px 2em;
 }
 
+#contents_wide {
+  padding: 4em 29px 4em 30px;
+  border-right: 1px solid #cccccc;
+}
+
 #footer {
   clear: both;
   padding: 0.5em 0 1em;
@@ -232,6 +237,62 @@ div.infobox {
 
 /* -- preタグ -- */
 #sidebar pre {
+    border: 1px solid #dedede;
+    margin-bottom: 5px;
+    padding-left: 5px;
+    background-color: #ccffff;
+    font-weight: inherit;
+    margin-top: 5px;
+    padding-top: 5px;
+}
+
+/* ---------------------------------------- #contents_wide内の指定 */
+#contents_wide h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  padding: 5px 0 5px 5px;
+}
+
+/* -- 見出し -- */
+h2,h3,h4,h5,h6 {
+  font-size: 1.2em;
+  margin-bottom: 1.5em;
+  padding: 5px 0 5px 5px;
+  border-left: 10px solid #000000;
+  border-bottom: 1px solid #000000;
+}
+
+h3,h4,h5,h6 { margin-top: 2.5em; }
+
+/* -- 文字 -- */
+#contents_wide p {
+  line-height: 1.6em;
+  margin-bottom: 0.5em;
+}
+
+/* -- パン屑リスト -- */
+#contents_wide .topic-path {
+  line-height: 1em;
+  margin-bottom: 2em;
+}
+
+/* -- 以下 リスト関係 -- */
+#contents_wide dl { margin: 1em 0; }
+
+#contents_wide dt {
+  margin-bottom: 0.5em;
+  font-weight: bold;
+  border-bottom: 1px dotted #666666;
+}
+
+#contents_wide dd { margin-bottom: 2em; }
+
+#contents_wide ul { margin: 1em 0 1em 20px; }
+#contents_wide ol { margin: 1em 0 1em 30px; }
+#contents_wide li { margin-bottom: 0.5em; }
+
+/* -- preタグ -- */
+#contents_wide pre {
     border: 1px solid #dedede;
     margin-bottom: 5px;
     padding-left: 5px;
