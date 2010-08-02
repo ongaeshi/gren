@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 require 'find'
 require File.join(File.dirname(__FILE__), 'result')
+require 'rubygems'
+require 'termcolor'
 
 module Gren
   class FindGrep
     IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
     IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/
     
-    Option = Struct.new(:ignoreCase, :fpathDisp, :filePattern, :ignoreFile, :ignoreDir)
+    Option = Struct.new(:ignoreCase, :colorHighlight, :fpathDisp, :filePattern, :ignoreFile, :ignoreDir)
     
     def initialize(pattern, dir, option)
       @pattern = pattern
@@ -118,8 +120,15 @@ module Gren
         match_file = false
         file.each() { |line|
           line.chomp!
-          if (@patternRegexp.match(line))
-            stdout.puts "#{fpath_disp}:#{file.lineno}:#{line}"
+          
+          if (match_data = @patternRegexp.match(line))
+            unless (@option.colorHighlight)
+              stdout.puts "#{fpath_disp}:#{file.lineno}:#{line}"
+            else
+              str = "<34>#{fpath_disp}:#{file.lineno}</34>:"
+              str += line.gsub!(match_data[0], '<42>\&</42>')
+              stdout.puts TermColor.parse(str)
+            end
 
             unless match_file
               @result.match_file_count += 1
