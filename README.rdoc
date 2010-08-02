@@ -1,25 +1,18 @@
 = gren (grep next)
 
-* http://github.com/ongaeshi/gren
+http://ongaeshi.github.com/gren
 
 == DESCRIPTION:
-grenはgrepの置き換えを狙った次世代型grepツールです。
+gren is a next grep tool.
 
 == CONCEPT:
-grepと比べた時の特徴は、
 
-* 指定ディレクトリ以下にある全てのファイルの中身を調べます
-* バイナリかテキストかをツールが自動で判断して検索してくれます
-  * 対象設定(*.rbとか*/*.cpp)は指定しなくて構いません
-  * README,README.jaのような特殊な拡張子のファイルも検索対象に含めます
-  * .pngや.exeの中身は調べません。
-* *~, .svn, .git, CVS等はデフォルトで探索対象から除外します
-* 表示形式はgrepと同じです
-  * emacsのgrep-mode等でそのまま使えます
+* The basis is find+grep.
+* The item that the user specifies to the minimum
+  * The binary or the text or the tool judges it from the automatic operation. 
+* Convenient retrieval result
 
 == INSTALL:
-RubyGemからインストールして下さい。
-
  gem install gren
 
 == USAGE:
@@ -31,7 +24,7 @@ RubyGemからインストールして下さい。
          --id, --ignore-dir REGEXP    Ignore dir pattern.
 
 == SAMPLE:
-=== 現在ディレクトリ以下で"FileTest"を検索
+=== "FileTest" is retrieved below the present directory. 
  % gren FileTest
  pkg/gren-0.0.5/lib/gren/findgrep.rb:34:        next unless FileTest.file?(fpath)
  pkg/gren-0.0.5/lib/gren/findgrep.rb:39:        unless FileTest.readable?(fpath)
@@ -53,7 +46,7 @@ RubyGemからインストールして下さい。
  files : 49 in 53 (35.63KB in 61.53KB)
  match : 3 files, 15 hit
 
-=== pkg/ディレクトリ以下で"FileTest"を検索
+=== "FileTest" is retrieved below the directory pkg/
  % gren FileTest pkg/
  pkg/gren-0.0.5/lib/gren/findgrep.rb:34:        next unless FileTest.file?(fpath)
  pkg/gren-0.0.5/lib/gren/findgrep.rb:39:        unless FileTest.readable?(fpath)
@@ -70,7 +63,7 @@ RubyGemからインストールして下さい。
  files : 32 in 36 (22.64KB in 48.54KB)
  match : 2 files, 10 hit
 
-=== pkg/ディレクトリ以下、.rbファイルに限定して"FILE"を検索(file : 32 in 36 → file : 14 in 36 になっていることに注目)
+=== Below the directory pkg/. It limits to the rb file and "FILE" is retrieved, that is, (file: 32 in 36 → file: 14 It is paid attention that it is in 36. )
  % gren FILE -f "\.rb$"
  pkg/gren-0.0.5/test/test_helper.rb:3:require File.dirname(__FILE__) + '/../lib/gren'
  .
@@ -82,8 +75,7 @@ RubyGemからインストールして下さい。
  files : 14 in 36 (15.36KB in 48.54KB)
  match : 12 files, 18 hit
 
-=== .rbファイルに限定して"FILE"を検索する、ただしpkg/ディレクトリ以下は探索対象から除外
- --id で指定されたディレクトリはそれ以下の探索自体がスキップされます
+=== --id ignore directory
  % gren FILE -f "\.rb$" --id pkg
  test/test_helper.rb:3:require File.dirname(__FILE__) + '/../lib/gren'
  test/test_gren_cli.rb:1:require File.join(File.dirname(__FILE__), "test_helper.rb")
@@ -99,7 +91,7 @@ RubyGemからインストールして下さい。
  files : 7 in 17 (7.68KB in 11.32KB)
  match : 6 files, 9 hit
 
-=== .rbファイルに限定して"FILE"を検索する、ただしpkgディレクトリ以下は探索対象から除外、test_*.rbという名前のファイルも除外
+=== --if ignore files
  % gren FILE -f "\.rb$" --id pkg --if "test_.+\.rb$"
  lib/gren.rb:1:$:.unshift(File.dirname(__FILE__)) unless
  lib/gren.rb:2:  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
@@ -112,7 +104,7 @@ RubyGemからインストールして下さい。
  files : 4 in 17 (7.07KB in 11.32KB)
  match : 3 files, 6 hit
 
-=== -iオプションを付けると大文字、小文字の違いを無視する
+=== -i ignore case
  % gren FILE -i -f "\.rb$" --id pkg --if "test_.+\.rb$"
  lib/gren.rb:1:$:.unshift(File.dirname(__FILE__)) unless
  lib/gren.rb:2:  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
@@ -126,8 +118,7 @@ RubyGemからインストールして下さい。
  files : 4 in 17 (7.07KB in 11.32KB)
  match : 4 files, 53 hit
 
-=== -lでリスティングモード、探索時に辿ったファイル、マッチしたファイル、無視したファイル、無視したディレクトリ、読み込み禁止で読めなかったもの等が一覧出来る
-大量にテキストが出力される可能性があるので注意(リダイレクト推奨)
+=== -l listing mode.
  % gren FILE -l
  test/test_helper.rb:3:require File.dirname(__FILE__) + '/../lib/gren'
  .
@@ -166,7 +157,7 @@ RubyGemからインストールして下さい。
  files : 49 in 53 (33.96KB in 59.86KB)
  match : 30 files, 42 hit
 
-=== おまけ : 自分のホームディレクトリでエゴサーチ(結構ヒットするなー)
+=== The extra: It ego searches by my home directory
  % cd ~
  % gren ongaeshi
  .
@@ -178,9 +169,13 @@ RubyGemからインストールして下さい。
  match : 44 files, 162 hit
 
 == for Emacs:
- (global-set-key "\C-x\C-g" 'grep-find) ; キーバインドはお好みで
- ;(setq grep-find-command "gren ") ; for OSX
- ;(setq grep-find-command "gren.bat ") ; for Windows
+for OSX
+ (global-set-key "\C-x\C-g" 'grep-find) ; your favarite key
+ (setq grep-find-command "gren ")
+
+for Windows
+ (global-set-key "\C-x\C-g" 'grep-find) ; your favarite key
+ (setq grep-find-command "gren.bat ")
 
 == LICENSE:
 MIT License
