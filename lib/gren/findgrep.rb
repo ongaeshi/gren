@@ -74,7 +74,12 @@ module Gren
         print_fpaths stdout, @result.unreadable_files
       end
 
-      stdout.puts
+      unless (@option.colorHighlight)
+        stdout.puts
+      else
+        stdout.puts TermColor.parse("<7>------------------------------------------------------------</7>")
+      end
+
       @result.print(stdout)
     end
 
