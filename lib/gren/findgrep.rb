@@ -130,12 +130,12 @@ module Gren
             unless (@option.colorHighlight)
               stdout.puts "#{fpath_disp}:#{file.lineno}:#{line}"
             else
-              str = "<34>#{fpath_disp}:#{file.lineno}</34>:"
-              str += line.gsub!(match_data[0], '<42>\&</42>')
+              header = "#{fpath_disp}:#{file.lineno}"
+                
               begin
-                stdout.puts TermColor.parse(str)
+                stdout.puts TermColor.parse("<34>#{header}</34>:") + coloring(line, match_data[0])
               rescue REXML::ParseException
-                stdout.puts str
+                stdout.puts header + line
               end
             end
 
@@ -151,6 +151,10 @@ module Gren
       }
     end
     private :searchMain
+
+    def coloring(line, m)
+      line.split(m).join(TermColor.parse("<42>#{m}</42>"))
+    end
 
   end
 end
