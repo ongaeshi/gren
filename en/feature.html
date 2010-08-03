@@ -30,19 +30,18 @@
       </div><!-- / globalnavi end -->
 
       <div id="contents" class="left_column">
-        <h1>特徴</h1>
+        <h1>Feature</h1>
 
-        <h2>基本はfind+grep</h2>
-指定ディレクトリ以下にある全てのファイルの中身を調べます。
+        <h2>The basis is find+grep. </h2>
+Contents of all files below a specified directory are examined. 
 <pre>
-gren 検索文字列 [検索するディレクトリ]
+gren pattern [dir]
 </pre>
-
-でOKです。<br>
+OK.<br>
 
 <pre>
 % pwd
-/Users/ongaeshi/Documents/gren # 現在位置のFileTestと書かれたテキストを検索します
+/Users/ongaeshi/Documents/gren # Presently FileTest of position the text which is written is searched
 % gren FileTest 
 lib/gren/findgrep.rb:34:        next unless FileTest.file?(fpath)
 lib/gren/findgrep.rb:39:        unless FileTest.readable?(fpath)
@@ -55,25 +54,25 @@ files : 8 in 18 (7.9KB in 18.52KB)
 match : 1 files, 5 hit
 </pre>
 
-        <h2>ユーザーが指定する項目を最小限に</h2>
-        <h3>バイナリかテキストかをツールが自動で判断します</h3>
+        <h2>The entry which the user specifies in minimum</h2>
+        <h3>The tool being whether binary or the text automatic, it judges</h3>
         <ol>
-          <li><em class="fname">*.rb</em>や<em class="fname">*/*.cpp</em>のような指定は<em class="rbold">必要ありません</em>
-          <li><em class="fname">README</em>,<em class="fname">README.ja</em>のような特殊な拡張子でも<em class="rbold">検索対象に含めます</em>
-          <li><em class="fname">.png</em>や<em class="fname">.exe</em>の中身は<em class="rbold">調べません。</em>
+          <li>The specification like <em class="fname">*.rb</em> and <em class="fname">*/*.cpp</em> is not necessary
+          <li>It includes to the retrieval object even with the special extension like <em class="fname">README</em> and <em class="fname">README.ja</em>
+          <li>You do not inspect the content of <em class="fname">.png</em> and <em class="fname">.exe</em>.
         </ol>
-        <h3>デフォルトで除外ディレクトリが設定されています</h3>
+        <h3>The exclusion directory is configurated with default</h3>
         <ul>
-          <li><em class="fname">*~</em>, <em class="fname">.svn</em>, <em class="fname">.git</em>, <em class="fname">CVS</em>等は<em class="rbold">探索対象から除外します</em>
+          <li><em class="fname">*~</em>, <em class="fname">.svn</em>, <em class="fname">.git</em> and <em class="fname">CVS</em> etc exclude from the search object
         </ul>
 
-        <h2>便利な検索結果</h2>
+        <h2>Convenient search result</h2>
         <p><img alt="result" src="../img/result.png"></p>
-        検索を開始したディレクトリ(Path)、かかった時間(Time)、ファイル数(Files)、ファイルサイズ(Size)、マッチしたファイル数とヒット数(Matches)等が表示されます。
+        The directory (Path) which starts search, the time (Time) when it caught, the number (Files) of files, file size (Size) and the number of files and the number (Matches) etc of hits which match are displayed.
   
-        <h2>grepとの互換性</h2>
-        <p>基本的な表示形式はgrepと同じ形を保っており、emacsのgrep-mode等でgrepの代わりに使うことが出来ます。</p>
-        <p>.emacsに以下の記述を追加すると、grep-findの代わりに使えます。</p>
+        <h2>The compatibility of grep</h2>
+        <p>Basic display format maintains the same shape, as grep can use in place of grep with such as grep-mode of emacs.</p>
+        <p>When description below is added to .emacs, you can use in place of grep-find.</p>
 Mac OS X
 <pre>
 (global-set-key "\C-x\C-g" 'grep-find) ; your favarite key !! 
@@ -86,9 +85,9 @@ Windows
 </pre>
         
 
-        <h2>豊富なオプション</h2>
-        <p>検索時間を短縮したり、探索対象を絞り込むことが出来ます。</p>
-        <p>詳しくは<a href="readme.html">使い方</a></li>を参照して下さい。</p>
+        <h2>Abundant option</h2>
+        <p>It is possible to compact retrieval time, to squeeze the search object.</p>
+        <p>Details <a href="readme.html"> method of using </a>please access .</p>
 
       </div><!-- / contents end -->
 
