@@ -127,7 +127,11 @@ module Gren
             else
               str = "<34>#{fpath_disp}:#{file.lineno}</34>:"
               str += line.gsub!(match_data[0], '<42>\&</42>')
-              stdout.puts TermColor.parse(str)
+              begin
+                stdout.puts TermColor.parse(str)
+              rescue REXML::ParseException
+                stdout.puts str
+              end
             end
 
             unless match_file
