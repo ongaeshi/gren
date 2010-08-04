@@ -9,13 +9,13 @@ module Gren
     IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
     IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/
     
-    Option = Struct.new(:ignoreCase, :colorHighlight, :fpathDisp, :filePattern, :ignoreFiles, :ignoreDirs)
+    Option = Struct.new(:ignoreCase, :colorHighlight, :fpathDisp, :filePatterns, :ignoreFiles, :ignoreDirs)
     
     def initialize(pattern, dir, option)
       @pattern = pattern
       @dir = dir
       @option = option
-      @fileRegexp = Regexp.new(option.filePattern)
+      @filePatterns = strs2regs(option.filePatterns)
       @patternRegexp = makePattenRegexp
       @ignoreFiles = strs2regs(option.ignoreFiles)
       @ignoreDirs = strs2regs(option.ignoreDirs)
@@ -116,12 +116,18 @@ module Gren
     private :ignoreDirUser?
 
     def ignoreFile?(fpath)
-      !@fileRegexp.match(fpath) ||
+      !correctFileUser?(fpath) ||
       IGNORE_FILE.match(File.basename(fpath)) ||
       ignoreFileUser?(fpath) ||
       binary?(fpath)
     end
     private :ignoreFile?
+
+    def correctFileUser?(fpath)
+      @filePatterns.empty? ||
+      @filePatterns.any? {|v| v.match File.basename(fpath) }
+    end
+    private :correctFileUser?
 
     def ignoreFileUser?(fpath)
       @ignoreFiles.any? {|v| v.match File.basename(fpath) }
