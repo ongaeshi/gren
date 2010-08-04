@@ -19,19 +19,24 @@ module Gren
                         :ignoreFiles,
                         :ignoreDirs)
     
-    def initialize(pattern, option)
-      @pattern = pattern
+    def initialize(patterns, option)
       @option = option
+      @patternRegexps = strs2regs(patterns, @option.ignoreCase)
       @filePatterns = strs2regs(option.filePatterns)
-      @patternRegexp = makePattenRegexp
       @ignoreFiles = strs2regs(option.ignoreFiles)
       @ignoreDirs = strs2regs(option.ignoreDirs)
       @result = Result.new(option.directory)
     end
 
-    def strs2regs(strs)
+    def strs2regs(strs, ignore = false)
       regs = []
-      strs.each {|v| regs << Regexp.new(v) }
+
+      strs.each do |v|
+        option = 0
+        option |= Regexp::IGNORECASE if (ignore)
+        regs << Regexp.new(v, option)
+      end
+
       regs
     end
 
@@ -106,13 +111,6 @@ module Gren
     end
     private :print_fpaths
 
-    def makePattenRegexp
-      option = 0
-      option |= Regexp::IGNORECASE if (@option.ignoreCase)
-      Regexp.new(@pattern, option)
-    end
-    private :makePattenRegexp
-
     def ignoreDir?(fpath)
       FileTest.directory?(fpath) &&
       (IGNORE_DIR.match(File.basename(fpath)) || ignoreDirUser?(fpath))
@@ -155,15 +153,17 @@ module Gren
         match_file = false
         file.each() { |line|
           line.chomp!
-          
-          if (match_data = @patternRegexp.match(line))
+
+          result, match_datas = match?(line)
+
+          if ( result )
             unless (@option.colorHighlight)
               stdout.puts "#{fpath_disp}:#{file.lineno}:#{line}"
             else
               header = "#{fpath_disp}:#{file.lineno}"
                 
               begin
-                stdout.puts TermColor.parse("<34>#{header}</34>:") + coloring(line, match_data[0])
+                stdout.puts TermColor.parse("<34>#{header}</34>:") + coloring(line, match_datas)
               rescue REXML::ParseException
                 stdout.puts header + line
               end
@@ -182,9 +182,20 @@ module Gren
     end
     private :searchMain
 
-    def coloring(line, m)
-      line.split(m).join(TermColor.parse("<42>#{m}</42>"))
+    def match?(line)
+      match_datas = []
+      @patternRegexps.each {|v| match_datas << v.match(line)}
+      return match_datas.all?, match_datas
     end
+    private :match?
+
+    def coloring(line, match_datas)
+      match_datas.each do |m|
+        line = line.split(m[0]).join(TermColor.parse("<42>#{m[0]}</42>"))
+      end
+      line
+    end
+    private :coloring
 
   end
 end

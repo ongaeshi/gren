@@ -23,14 +23,8 @@ module Gren
       opt.parse!(arguments)
 
       # 検索オブジェクトの生成
-      findGrep = nil
-
-      case ARGV.length
-      when 1:
-          findGrep = FindGrep.new(arguments[0], option)
-      end
-      
-      if (findGrep)
+      if (ARGV.size > 0)
+        findGrep = FindGrep.new(arguments, option)
         findGrep.searchAndPrint(stdout)
       else
         stdout.print opt.help
