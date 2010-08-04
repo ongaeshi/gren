@@ -6,10 +6,13 @@ module Gren
   class CLI
     def self.execute(stdout, arguments=[])
       # オプション
-      option = FindGrep::Option.new(false, false, false, false, [], [], [])
+      option = FindGrep::Option.new(".", 0, false, false, false, false, [], [], [])
 
       # オプション解析
-      opt = OptionParser.new("#{File.basename($0)} [option] pattern [dir]")
+      opt = OptionParser.new("#{File.basename($0)} [option] pattern")
+      opt.on('-d DIR', '--directory DIR', 'Start directory. (deafult:".")') {|v| option.directory = v}
+      opt.on('--depth DEPTH', 'Limit search depth. ') {|v| option.depth = v.to_i}
+      opt.on('--this', '"--depth 1"') {|v| option.depth = 1}
       opt.on('-i', '--ignore', 'Ignore case.') {|v| option.ignoreCase = true}
       opt.on('-s', '--silent', 'Silent. Display match line only.') {|v| option.isSilent = true}
       opt.on('--debug', 'Debug display.') {|v| option.debugMode = true}
@@ -24,9 +27,7 @@ module Gren
 
       case ARGV.length
       when 1:
-          findGrep = FindGrep.new(arguments[0], '.', option)
-      when 2:
-          findGrep = FindGrep.new(arguments[0], arguments[1], option)
+          findGrep = FindGrep.new(arguments[0], option)
       end
       
       if (findGrep)

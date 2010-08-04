@@ -9,17 +9,24 @@ module Gren
     IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
     IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/
     
-    Option = Struct.new(:ignoreCase, :colorHighlight, :isSilent, :debugMode, :filePatterns, :ignoreFiles, :ignoreDirs)
+    Option = Struct.new(:directory,
+                        :depth,
+                        :ignoreCase,
+                        :colorHighlight,
+                        :isSilent,
+                        :debugMode,
+                        :filePatterns,
+                        :ignoreFiles,
+                        :ignoreDirs)
     
-    def initialize(pattern, dir, option)
+    def initialize(pattern, option)
       @pattern = pattern
-      @dir = dir
       @option = option
       @filePatterns = strs2regs(option.filePatterns)
       @patternRegexp = makePattenRegexp
       @ignoreFiles = strs2regs(option.ignoreFiles)
       @ignoreDirs = strs2regs(option.ignoreDirs)
-      @result = Result.new(@dir)
+      @result = Result.new(option.directory)
     end
 
     def strs2regs(strs)
@@ -29,7 +36,7 @@ module Gren
     end
 
     def searchAndPrint(stdout)
-      Find::find(@dir) { |fpath|
+      Find::find(@option.directory) { |fpath|
         fpath_disp = fpath.gsub(/^.\//, "")
         
         # 除外ディレクトリ
