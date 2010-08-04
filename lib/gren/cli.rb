@@ -11,7 +11,7 @@ module Gren
       # オプション解析
       opt = OptionParser.new("#{File.basename($0)} [option] pattern [dir]")
       opt.on('-i', '--ignore', 'Ignore case.') {|v| option.ignoreCase = true}
-      opt.on('-l', '--listing', 'The searched file name is displayed.') {|v| option.fpathDisp = true}
+      opt.on('--debug', 'Debug display.') {|v| option.debugMode = true}
       opt.on('-c', 'Color highlight.') {|v| option.colorHighlight = true}
       opt.on('-f REGEXP', '--file-regexp REGEXP', 'Search file regexp. (Enable multiple call)') {|v| option.filePatterns << v}
       opt.on('--if REGEXP', '--ignore-file REGEXP', 'Ignore file pattern. (Enable multiple call)') {|v| option.ignoreFiles << v}

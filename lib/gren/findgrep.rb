@@ -9,7 +9,7 @@ module Gren
     IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
     IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/
     
-    Option = Struct.new(:ignoreCase, :colorHighlight, :fpathDisp, :filePatterns, :ignoreFiles, :ignoreDirs)
+    Option = Struct.new(:ignoreCase, :colorHighlight, :debugMode, :filePatterns, :ignoreFiles, :ignoreDirs)
     
     def initialize(pattern, dir, option)
       @pattern = pattern
@@ -34,7 +34,7 @@ module Gren
         
         # 除外ディレクトリ
         if ignoreDir?(fpath)
-          @result.prune_dirs << fpath_disp if (@option.fpathDisp)
+          @result.prune_dirs << fpath_disp if (@option.debugMode)
           Find.prune
         end
 
@@ -45,7 +45,7 @@ module Gren
         
         # 読み込み不可ならば探索しない
         unless FileTest.readable?(fpath)
-          @result.unreadable_files << fpath_disp if (@option.fpathDisp)
+          @result.unreadable_files << fpath_disp if (@option.debugMode)
           next
         end
         
@@ -53,7 +53,7 @@ module Gren
 
         # 除外ファイル
         if ignoreFile?(fpath)
-          @result.ignore_files << fpath_disp if (@option.fpathDisp)
+          @result.ignore_files << fpath_disp if (@option.debugMode)
           next
         end
         
@@ -66,7 +66,7 @@ module Gren
       
       @result.time_stop
       
-      if (@option.fpathDisp)
+      if (@option.debugMode)
         stdout.puts
         stdout.puts "--- search --------"
         print_fpaths stdout, @result.search_files
@@ -140,7 +140,7 @@ module Gren
     end
 
     def searchMain(stdout, fpath, fpath_disp)
-      @result.search_files << fpath_disp if (@option.fpathDisp)
+      @result.search_files << fpath_disp if (@option.debugMode)
 
       open(fpath, "r") { |file|
         match_file = false
@@ -162,7 +162,7 @@ module Gren
 
             unless match_file
               @result.match_file_count += 1
-              @result.match_files << fpath_disp if (@option.fpathDisp)
+              @result.match_files << fpath_disp if (@option.debugMode)
               match_file = true
             end
 
