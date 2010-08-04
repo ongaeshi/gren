@@ -41,41 +41,8 @@ module Gren
     end
 
     def searchAndPrint(stdout)
-      Find::find(@option.directory) { |fpath|
-        fpath_disp = fpath.gsub(/^.\//, "")
-        
-        # 除外ディレクトリ
-        if ignoreDir?(fpath)
-          @result.prune_dirs << fpath_disp if (@option.debugMode)
-          Find.prune
-        end
+      searchAndPrintIN(stdout, @option.directory, 0)
 
-        # ファイルでなければ探索しない
-        next unless FileTest.file?(fpath)
-
-        @result.count += 1
-        
-        # 読み込み不可ならば探索しない
-        unless FileTest.readable?(fpath)
-          @result.unreadable_files << fpath_disp if (@option.debugMode)
-          next
-        end
-        
-        @result.size += FileTest.size(fpath)
-
-        # 除外ファイル
-        if ignoreFile?(fpath)
-          @result.ignore_files << fpath_disp if (@option.debugMode)
-          next
-        end
-        
-        @result.search_count += 1
-        @result.search_size += FileTest.size(fpath)
-
-        # 検索
-        searchMain(stdout, fpath, fpath_disp)
-      }
-      
       @result.time_stop
       
       unless (@option.isSilent)
@@ -102,6 +69,54 @@ module Gren
         @result.print(stdout)
       end
     end
+
+    def searchAndPrintIN(stdout, dir, depth)
+      if (@option.depth == -1 || depth > @option.depth)
+        return
+      end
+      
+      Dir.foreach(dir) do |name|
+        if name != '.' and name != '..' then
+          fpath = File.join(dir,name)
+          fpath_disp = fpath.gsub(/^.\//, "")
+          
+          # 除外ディレクトリ
+          if ignoreDir?(fpath)
+            @result.prune_dirs << fpath_disp if (@option.debugMode)
+            next;
+          end
+
+          # ファイルでなければ次のディレクトリへ
+          unless FileTest.file?(fpath)
+            searchAndPrintIN(stdout, fpath, depth + 1)
+            next;
+          end
+
+          @result.count += 1
+          
+          # 読み込み不可ならば探索しない
+          unless FileTest.readable?(fpath)
+            @result.unreadable_files << fpath_disp if (@option.debugMode)
+            next
+          end
+          
+          @result.size += FileTest.size(fpath)
+
+          # 除外ファイル
+          if ignoreFile?(fpath)
+            @result.ignore_files << fpath_disp if (@option.debugMode)
+            next
+          end
+          
+          @result.search_count += 1
+          @result.search_size += FileTest.size(fpath)
+
+          # 検索
+          searchMain(stdout, fpath, fpath_disp)
+        end
+      end
+    end
+    private :searchAndPrintIN
 
     def print_fpaths(stdout, data)
       stdout.print data.join("\n")
