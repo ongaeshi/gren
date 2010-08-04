@@ -9,7 +9,7 @@ module Gren
     IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
     IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/
     
-    Option = Struct.new(:ignoreCase, :colorHighlight, :debugMode, :filePatterns, :ignoreFiles, :ignoreDirs)
+    Option = Struct.new(:ignoreCase, :colorHighlight, :isSilent, :debugMode, :filePatterns, :ignoreFiles, :ignoreDirs)
     
     def initialize(pattern, dir, option)
       @pattern = pattern
@@ -66,27 +66,29 @@ module Gren
       
       @result.time_stop
       
-      if (@option.debugMode)
-        stdout.puts
-        stdout.puts "--- search --------"
-        print_fpaths stdout, @result.search_files
-        stdout.puts "--- match --------"
-        print_fpaths stdout, @result.match_files
-        stdout.puts "--- ignore-file --------"
-        print_fpaths stdout, @result.ignore_files
-        stdout.puts "--- ignore-dir --------"
-        print_fpaths stdout, @result.prune_dirs
-        stdout.puts "--- unreadable --------"
-        print_fpaths stdout, @result.unreadable_files
-      end
+      unless (@option.isSilent)
+        if (@option.debugMode)
+          stdout.puts
+          stdout.puts "--- search --------"
+          print_fpaths stdout, @result.search_files
+          stdout.puts "--- match --------"
+          print_fpaths stdout, @result.match_files
+          stdout.puts "--- ignore-file --------"
+          print_fpaths stdout, @result.ignore_files
+          stdout.puts "--- ignore-dir --------"
+          print_fpaths stdout, @result.prune_dirs
+          stdout.puts "--- unreadable --------"
+          print_fpaths stdout, @result.unreadable_files
+        end
 
-      unless (@option.colorHighlight)
-        stdout.puts
-      else
-        stdout.puts TermColor.parse("<7>------------------------------------------------------------</7>")
-      end
+        unless (@option.colorHighlight)
+          stdout.puts
+        else
+          stdout.puts TermColor.parse("<7>------------------------------------------------------------</7>")
+        end
 
-      @result.print(stdout)
+        @result.print(stdout)
+      end
     end
 
     def print_fpaths(stdout, data)
