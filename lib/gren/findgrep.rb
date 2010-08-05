@@ -71,49 +71,35 @@ module Gren
     end
 
     def searchAndPrintIN(stdout, dir, depth)
-      if (@option.depth == -1 || depth > @option.depth)
+      if (@option.depth != -1 && depth > @option.depth)
         return
       end
       
       Dir.foreach(dir) do |name|
-        if name != '.' and name != '..' then
-          fpath = File.join(dir,name)
-          fpath_disp = fpath.gsub(/^.\//, "")
+        next if (name == '.' || name == '..')
           
-          # 除外ディレクトリ
-          if ignoreDir?(fpath)
-            @result.prune_dirs << fpath_disp if (@option.debugMode)
-            next;
-          end
-
-          # ファイルでなければ次のディレクトリへ
-          unless FileTest.file?(fpath)
-            searchAndPrintIN(stdout, fpath, depth + 1)
-            next;
-          end
-
-          @result.count += 1
-          
-          # 読み込み不可ならば探索しない
-          unless FileTest.readable?(fpath)
-            @result.unreadable_files << fpath_disp if (@option.debugMode)
-            next
-          end
-          
-          @result.size += FileTest.size(fpath)
-
-          # 除外ファイル
-          if ignoreFile?(fpath)
-            @result.ignore_files << fpath_disp if (@option.debugMode)
-            next
-          end
-          
-          @result.search_count += 1
-          @result.search_size += FileTest.size(fpath)
-
-          # 検索
-          searchMain(stdout, fpath, fpath_disp)
+        fpath = File.join(dir,name)
+        fpath_disp = fpath.gsub(/^.\//, "")
+        
+        # 除外ディレクトリならばパス
+        if ignoreDir?(fpath)
+          @result.prune_dirs << fpath_disp if (@option.debugMode)
+          next;
         end
+
+        # 読み込み不可ならばパス
+        unless FileTest.readable?(fpath)
+          @result.unreadable_files << fpath_disp if (@option.debugMode)
+          next
+        end
+
+        # ファイルならば中身を探索、ディレクトリならば再帰
+        case File.ftype(fpath)
+        when "directory"
+          searchAndPrintIN(stdout, fpath, depth + 1)
+        when "file"
+          searchFile(stdout, fpath, fpath_disp)
+        end          
       end
     end
     private :searchAndPrintIN
@@ -161,7 +147,20 @@ module Gren
       return s.index("\x00")
     end
 
-    def searchMain(stdout, fpath, fpath_disp)
+    def searchFile(stdout, fpath, fpath_disp)
+      @result.count += 1
+      @result.size += FileTest.size(fpath)
+
+      # 除外ファイル
+      if ignoreFile?(fpath)
+        @result.ignore_files << fpath_disp if (@option.debugMode)
+        return
+      end
+      
+      @result.search_count += 1
+      @result.search_size += FileTest.size(fpath)
+
+      # 検索本体
       @result.search_files << fpath_disp if (@option.debugMode)
 
       open(fpath, "r") { |file|
@@ -195,7 +194,7 @@ module Gren
         }
       }
     end
-    private :searchMain
+    private :searchFile
 
     def match?(line)
       match_datas = []
