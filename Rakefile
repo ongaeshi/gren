@@ -18,7 +18,9 @@ $hoe = Hoe.spec 'gren' do
   self.developer 'ongaeshi', 'ongaeshi0621@gmail.com'
   self.post_install_message = 'PostInstall.txt' # TODO remove if post-install message not required
   self.rubyforge_name       = self.name # TODO this is default value
-  # self.extra_deps         = [['activesupport','>= 2.0.2']]
+
+  # 必要とするgem
+  self.extra_deps         = [['termcolor','>= 1.2.0']]
 
   # 本来はnewgemの中で設定されるべき(後で報告した方がいいかも)
   self.extra_rdoc_files << "README.rdoc"
