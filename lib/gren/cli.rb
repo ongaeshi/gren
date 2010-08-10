@@ -16,7 +16,7 @@ module Gren
       opt.on('-i', '--ignore', 'Ignore case.') {|v| option.ignoreCase = true}
       opt.on('-s', '--silent', 'Silent. Display match line only.') {|v| option.isSilent = true}
       opt.on('--debug', 'Debug display.') {|v| option.debugMode = true}
-      opt.on('-c', 'Color highlight.') {|v| option.colorHighlight = true}
+      opt.on('-c', '--color', 'Color highlight.') {|v| option.colorHighlight = true}
       opt.on('-f REGEXP', '--file-regexp REGEXP', 'Search file regexp. (Enable multiple call)') {|v| option.filePatterns << v}
       opt.on('--if REGEXP', '--ignore-file REGEXP', 'Ignore file pattern. (Enable multiple call)') {|v| option.ignoreFiles << v}
       opt.on('--id REGEXP', '--ignore-dir REGEXP', 'Ignore dir pattern. (Enable multiple call)') {|v| option.ignoreDirs << v}
