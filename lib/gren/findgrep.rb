@@ -234,7 +234,14 @@ module Gren
     def match?(line)
       match_datas = []
       @patternRegexps.each {|v| match_datas << v.match(line)}
-      return match_datas.all?, match_datas
+
+      sub_matchs = []
+      @subRegexps.each {|v| sub_matchs << v.match(line)}
+
+      or_matchs = []
+      @orRegexps.each {|v| or_matchs << v.match(line)}
+
+      return match_datas.all? && !sub_matchs.any? && (or_matchs.empty? || or_matchs.any?), match_datas + or_matchs
     end
     private :match?
 
