@@ -241,7 +241,11 @@ module Gren
       or_matchs = []
       @orRegexps.each {|v| or_matchs << v.match(line)}
 
-      return match_datas.all? && !sub_matchs.any? && (or_matchs.empty? || or_matchs.any?), match_datas + or_matchs
+      result = match_datas.all? && !sub_matchs.any? && (or_matchs.empty? || or_matchs.any?)
+      result_match = match_datas + or_matchs
+      result_match.delete(nil)
+
+      return result, result_match
     end
     private :match?
 
