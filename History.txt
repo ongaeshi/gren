@@ -6,6 +6,12 @@ Commin soon!!
   英語にする
   文章を綺麗にする
 
+=== 0.1.3 2010/08/11
+
+* 自動エンコードに対応
+  * ファイルの文字コードがばらばらでも、自動的にシェルで使用している文字コードにあわせてくれるようにした
+  * -e, --encode ENCODE              Specify encode(none, auto, jis, sjis, euc, ascii, utf8, utf16). Default is "auto"
+
 === 0.1.2 2010/08/05
 
 * Bug fix.
