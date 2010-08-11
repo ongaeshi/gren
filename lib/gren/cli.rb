@@ -10,6 +10,8 @@ module Gren
 
       # オプション解析
       opt = OptionParser.new("#{File.basename($0)} [option] pattern")
+      opt.on('--sub PATTERN', 'Keyword is not included.') {|v| option.keywordsSub << v}
+      opt.on('--or PATTERN', 'Either of keyword is contained.') {|v| option.keywordsOr << v}
       opt.on('-d DIR', '--directory DIR', 'Start directory. (deafult:".")') {|v| option.directory = v}
       opt.on('--depth DEPTH', 'Limit search depth. ') {|v| option.depth = v.to_i}
       opt.on('--this', '"--depth 0"') {|v| option.depth = 0}

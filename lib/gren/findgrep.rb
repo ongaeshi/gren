@@ -11,7 +11,9 @@ module Gren
     IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
     IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/
     
-    Option = Struct.new(:directory,
+    Option = Struct.new(:keywordsSub,
+                        :keywordsOr,
+                        :directory,
                         :depth,
                         :ignoreCase,
                         :colorHighlight,
@@ -22,7 +24,9 @@ module Gren
                         :ignoreDirs,
                         :kcode)
 
-    DEFAULT_OPTION = Option.new(".",
+    DEFAULT_OPTION = Option.new([],
+                                [],
+                                ".",
                                 -1,
                                 false,
                                 false,
@@ -36,6 +40,8 @@ module Gren
     def initialize(patterns, option)
       @option = option
       @patternRegexps = strs2regs(patterns, @option.ignoreCase)
+      @subRegexps = strs2regs(option.keywordsSub, @option.ignoreCase)
+      @orRegexps = strs2regs(option.keywordsOr, @option.ignoreCase)
       @filePatterns = strs2regs(option.filePatterns)
       @ignoreFiles = strs2regs(option.ignoreFiles)
       @ignoreDirs = strs2regs(option.ignoreDirs)
