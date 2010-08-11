@@ -3,6 +3,8 @@ require 'find'
 require File.join(File.dirname(__FILE__), 'result')
 require 'rubygems'
 require 'termcolor'
+require 'kconv'
+require File.join(File.dirname(__FILE__), '../platform')
 
 module Gren
   class FindGrep
@@ -17,7 +19,19 @@ module Gren
                         :debugMode,
                         :filePatterns,
                         :ignoreFiles,
-                        :ignoreDirs)
+                        :ignoreDirs,
+                        :kcode)
+
+    DEFAULT_OPTION = Option.new(".",
+                                -1,
+                                false,
+                                false,
+                                false,
+                                false,
+                                [],
+                                [],
+                                [],
+                                Platform.get_shell_kcode)
     
     def initialize(patterns, option)
       @option = option
@@ -165,16 +179,15 @@ module Gren
 
       open(fpath, "r") { |file|
         match_file = false
-        file.each() { |line|
-          line.chomp!
 
+        file2data(file).each_with_index { |line, index|
           result, match_datas = match?(line)
 
           if ( result )
             unless (@option.colorHighlight)
-              stdout.puts "#{fpath_disp}:#{file.lineno}:#{line}"
+              stdout.puts "#{fpath_disp}:#{index + 1}:#{line}"
             else
-              header = "#{fpath_disp}:#{file.lineno}"
+              header = "#{fpath_disp}:#{index + 1}"
                 
               begin
                 stdout.puts TermColor.parse("<34>#{header}</34>:") + coloring(line, match_datas)
@@ -195,6 +208,22 @@ module Gren
       }
     end
     private :searchFile
+
+    def file2data(file)
+        data = file.read
+
+        if (@option.kcode != Kconv::NOCONV)
+          file_kcode = Kconv::guess(data)
+
+          if (file_kcode != @option.kcode)
+#            puts "encode!! #{fpath} : #{@option.kcode} <- #{file_kcode}"
+            data = data.kconv(@option.kcode, file_kcode)
+          end
+        end
+
+        data = data.split("\n");
+    end
+    private :file2data
 
     def match?(line)
       match_datas = []
