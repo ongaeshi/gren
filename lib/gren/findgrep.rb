@@ -11,7 +11,9 @@ module Gren
     IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
     IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/
     
-    Option = Struct.new(:directory,
+    Option = Struct.new(:keywordsSub,
+                        :keywordsOr,
+                        :directory,
                         :depth,
                         :ignoreCase,
                         :colorHighlight,
@@ -22,7 +24,9 @@ module Gren
                         :ignoreDirs,
                         :kcode)
 
-    DEFAULT_OPTION = Option.new(".",
+    DEFAULT_OPTION = Option.new([],
+                                [],
+                                ".",
                                 -1,
                                 false,
                                 false,
@@ -36,6 +40,8 @@ module Gren
     def initialize(patterns, option)
       @option = option
       @patternRegexps = strs2regs(patterns, @option.ignoreCase)
+      @subRegexps = strs2regs(option.keywordsSub, @option.ignoreCase)
+      @orRegexps = strs2regs(option.keywordsOr, @option.ignoreCase)
       @filePatterns = strs2regs(option.filePatterns)
       @ignoreFiles = strs2regs(option.ignoreFiles)
       @ignoreDirs = strs2regs(option.ignoreDirs)
@@ -228,7 +234,18 @@ module Gren
     def match?(line)
       match_datas = []
       @patternRegexps.each {|v| match_datas << v.match(line)}
-      return match_datas.all?, match_datas
+
+      sub_matchs = []
+      @subRegexps.each {|v| sub_matchs << v.match(line)}
+
+      or_matchs = []
+      @orRegexps.each {|v| or_matchs << v.match(line)}
+
+      result = match_datas.all? && !sub_matchs.any? && (or_matchs.empty? || or_matchs.any?)
+      result_match = match_datas + or_matchs
+      result_match.delete(nil)
+
+      return result, result_match
     end
     private :match?
 
