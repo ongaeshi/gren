@@ -8,6 +8,8 @@ lib/gren.rb
 lib/gren/cli.rb
 lib/gren/findgrep.rb
 lib/gren/result.rb
+lib/platform.rb
+rake_rdoc_custom.rb
 script/console
 script/destroy
 script/generate
