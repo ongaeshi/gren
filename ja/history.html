@@ -35,6 +35,44 @@
       <div id="contents" class="left_column">
         <h1>更新履歴</h1>
 
+        <h2>2010/08/13</h2>
+        <ul>
+          <li>v0.1.3
+	    <ul>
+	      <li><a href="http://d.hatena.ne.jp/tuto0621/20100814/1281759855">0.1.3は文字コード類推検索と、絞込み検索機能を追加 - おんがえしの日記</a>
+	      <li> 含まれない検索、OR検索に対応
+		<ul>
+		  <li> --subで指定したキーワードは''含まれない''
+		  <li> --orで指定したキーワードは''いずれかを含む''
+		</ul>
+	      <li> 自動エンコードに対応
+		<ul>
+		  <li> ファイルの文字コードがばらばらでも、自動的にシェルで使用している文字コードにあわせてくれるようにした
+		  <li> -e, --encode ENCODE              Specify encode(none, auto, jis, sjis, euc, ascii, utf8, utf16). Default is "auto"
+		</ul>
+	    </ul>
+        </ul>
+
+        <h2>2010/08/05</h2>
+        <ul>
+          <li>v0.1.2
+	  <ul>
+	    <li> Bug fix.
+	    <li> 読み込み禁止ディレクトリがあるとハングアップする問題を修正
+	  </ul>
+        </ul>
+
+        <h2>2010/08/04</h2>
+        <ul>
+          <li>v0.1.1
+	  <ul>
+	    <li> --depth, --this(== "--depth 0")、探索する階層数を指定出来るように
+	    <li> -sでサイレントモード、マッチした行のみを表示する
+	    <li> -f, --if, --idオプションを何個でも設定出来るように
+	    <li> -cで色付き表示
+	  </ul>
+        </ul>
+
         <h2>2010/08/02</h2>
         <ul>
           <li>v0.1.0
@@ -67,6 +105,9 @@ gem install gren
         <p class="sidetitle">更新情報</p>
         <div class="infobox">
           <ul>
+            <li>2010/08/13 v0.1.3 - <a href="http://d.hatena.ne.jp/tuto0621/20100814/1281759855">blog</a>
+            <li>2010/08/05 v0.1.2
+            <li>2010/08/04 v0.1.1
             <li>2010/08/02 ホームページ作成
             <li>2010/07/29 v0.0.6
             <li>2010/07/29 githubにUP
