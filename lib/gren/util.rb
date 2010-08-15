@@ -26,10 +26,9 @@ module Gren
 
     def self.coloring(line, match_datas)
       match_datas.each do |m|
-        line = line.split(m[0]).join(TermColor.parse("<42>#{m[0]}</42>"))
+        line = line.split(m[0]).join(HighLine::ON_GREEN + m[0] + HighLine::CLEAR)
       end
       
-      # <<snip>>にはTermColorが使えなかったのでHighLineで直接記述
       line = line.split(DELIMITER).join(HighLine::ON_CYAN + DELIMITER + HighLine::CLEAR)
 
       line

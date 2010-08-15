@@ -84,7 +84,7 @@ module Gren
         unless (@option.colorHighlight)
           stdout.puts
         else
-          stdout.puts TermColor.parse("<7>------------------------------------------------------------</7>")
+          stdout.puts HighLine::REVERSE + "------------------------------------------------------------" + HighLine::CLEAR
         end
 
         @result.print(stdout)
@@ -197,11 +197,7 @@ module Gren
             unless (@option.colorHighlight)
               stdout.puts header + line
             else
-              begin
-                stdout.puts TermColor.parse("<34>#{header}</34>:") + Util::coloring(line, match_datas)
-              rescue REXML::ParseException
-                stdout.puts header + line
-              end
+              stdout.puts HighLine::BLUE + header + HighLine::CLEAR + Util::coloring(line, match_datas)
             end
 
             unless match_file
