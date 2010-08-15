@@ -28,6 +28,10 @@ module Gren
       match_datas.each do |m|
         line = line.split(m[0]).join(TermColor.parse("<42>#{m[0]}</42>"))
       end
+      
+      # <<snip>>にはTermColorが使えなかったのでHighLineで直接記述
+      line = line.split(DELIMITER).join(HighLine::ON_CYAN + DELIMITER + HighLine::CLEAR)
+
       line
     end
   end
