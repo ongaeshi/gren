@@ -16,8 +16,9 @@ class StringSnip
 
     # snip
     p @ranges
-    @ranges = @ranges.map {|i| index_conv(@str, i.begin)..index_conv(@str, i.end)}
-    @ranges = @ranges.sort_by{|i| i.begin}
+    @ranges = StringSnip::ranges_conv(@ranges, @str)
+    @ranges = StringSnip::ranges_sort(@ranges)
+    @ranges = StringSnip::ranges_compound(@ranges)
     p @ranges
 
     results = []
@@ -25,18 +26,25 @@ class StringSnip
     return results.join(@delimiter)
   end
 
-  def index_conv(str, value)
+  def self.ranges_conv(ranges, str)
+    ranges.map {|i| index_conv(str, i.begin)..index_conv(str, i.end)}
+  end
+
+  def self.index_conv(str, value)
     if (value < 0)
       str.size + value
     else
       value
     end
   end
-  private :index_conv
 
-  def substr(index)
-    @str[@ranges[index]]
+  def self.ranges_sort(ranges)
+    ranges.sort_by{|i| i.begin}
   end
+
+  def self.ranges_compound(ranges)
+  end
+
 end
 
 
