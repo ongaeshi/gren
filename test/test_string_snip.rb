@@ -4,6 +4,17 @@ require File.dirname(__FILE__) + '/../lib/string_snip'
 class TestStringSnip < Test::Unit::TestCase
   def setup
   end
+
+  def test_ranges_compound
+    ranges = [0..7, 8..232, 121..150, 248..255]
+    assert_equal(StringSnip.ranges_compound(ranges), [0..232, 248..255])
+
+    ranges = [10..20, 22..30, 33..40]
+    assert_equal(StringSnip.ranges_compound(ranges), [10..20, 22..30, 33..40])
+
+    ranges = [10..30, 20..30, 30..40]
+    assert_equal(StringSnip.ranges_compound(ranges), [10..40])
+  end
   
   def test_string_snip
     str = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789|123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789|12345678901234567890123456789012345678901234567890123456"

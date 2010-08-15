@@ -15,11 +15,9 @@ class StringSnip
     return @str if (@str.size <= @size)
 
     # snip
-    p @ranges
     @ranges = StringSnip::ranges_conv(@ranges, @str)
     @ranges = StringSnip::ranges_sort(@ranges)
     @ranges = StringSnip::ranges_compound(@ranges)
-    p @ranges
 
     results = []
     @ranges.each {|r| results << @str[r] }
@@ -43,6 +41,19 @@ class StringSnip
   end
 
   def self.ranges_compound(ranges)
+    result = []
+    
+    index = 0
+    while (ranges.size > 0)
+      if (ranges.size > 1 && ranges[0].end + 1 >= ranges[1].begin)
+        v1, v2 = ranges.shift(2)
+        ranges.unshift v1.begin..((v1.end > v2.end) ? v1.end : v2.end)
+      else
+        result << ranges.shift
+      end
+    end
+
+    result
   end
 
 end
