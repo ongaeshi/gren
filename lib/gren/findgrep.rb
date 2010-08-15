@@ -23,7 +23,8 @@ module Gren
                         :filePatterns,
                         :ignoreFiles,
                         :ignoreDirs,
-                        :kcode)
+                        :kcode,
+                        :noSnip)
 
     DEFAULT_OPTION = Option.new([],
                                 [],
@@ -36,7 +37,8 @@ module Gren
                                 [],
                                 [],
                                 [],
-                                Platform.get_shell_kcode)
+                                Platform.get_shell_kcode,
+                                false)
     
     def initialize(patterns, option)
       @option = option
@@ -192,7 +194,7 @@ module Gren
 
           if ( result )
             header = "#{fpath_disp}:#{index + 1}"
-            line = Util::snip(line, match_datas);
+            line = Util::snip(line, match_datas) unless (@option.noSnip)
 
             unless (@option.colorHighlight)
               stdout.puts header + line
