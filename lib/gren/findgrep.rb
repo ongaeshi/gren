@@ -191,15 +191,14 @@ module Gren
           result, match_datas = match?(line)
 
           if ( result )
+            header = "#{fpath_disp}:#{index + 1}"
+            line = Util::snip(line, match_datas);
+
             unless (@option.colorHighlight)
-              line = Util::snip(line, match_datas);
-#              stdout.puts "#{line.size} : #{line}"
-              stdout.puts "#{fpath_disp}:#{index + 1}:#{line}"
+              stdout.puts header + line
             else
-              header = "#{fpath_disp}:#{index + 1}"
-                
               begin
-                stdout.puts TermColor.parse("<34>#{header}</34>:") + coloring(line, match_datas)
+                stdout.puts TermColor.parse("<34>#{header}</34>:") + Util::coloring(line, match_datas)
               rescue REXML::ParseException
                 stdout.puts header + line
               end
@@ -251,14 +250,5 @@ module Gren
       return result, result_match
     end
     private :match?
-
-    def coloring(line, match_datas)
-      match_datas.each do |m|
-        line = line.split(m[0]).join(TermColor.parse("<42>#{m[0]}</42>"))
-      end
-      line
-    end
-    private :coloring
-
   end
 end

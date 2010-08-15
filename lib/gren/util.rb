@@ -5,8 +5,8 @@ require File.join(File.dirname(__FILE__), '../string_snip')
 module Gren
   class Util
     MAX_LINE_SIZE = 256
-    HEADER_SIZE = 16
-    MARGIN_SIZE = 16
+    HEADER_SIZE = 32
+    MARGIN_SIZE = 32
     DELIMITER = '<<snip>>'
 
     def self.snip(str, match_datas)
@@ -22,6 +22,13 @@ module Gren
 
       snipper = StringSnip.new(MAX_LINE_SIZE, DELIMITER)
       return snipper.snip(str, ranges)
+    end
+
+    def self.coloring(line, match_datas)
+      match_datas.each do |m|
+        line = line.split(m[0]).join(TermColor.parse("<42>#{m[0]}</42>"))
+      end
+      line
     end
   end
 end
