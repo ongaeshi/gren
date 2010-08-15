@@ -10,6 +10,8 @@ module Gren
   class FindGrep
     IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
     IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/
+
+    MAX_LINE_SIZE = 256
     
     Option = Struct.new(:keywordsSub,
                         :keywordsOr,
@@ -191,6 +193,10 @@ module Gren
 
           if ( result )
             unless (@option.colorHighlight)
+              if (line.size > MAX_LINE_SIZE)
+                line = line[0, MAX_LINE_SIZE]
+              end
+#              stdout.puts "#{line.size} : #{line}"
               stdout.puts "#{fpath_disp}:#{index + 1}:#{line}"
             else
               header = "#{fpath_disp}:#{index + 1}"
