@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/test_helper.rb'
-require File.dirname(__FILE__) + '/../lib/string_snip'
 
 class TestStringSnip < Test::Unit::TestCase
   def setup
@@ -23,9 +22,8 @@ class TestStringSnip < Test::Unit::TestCase
     snip_str = snipper.snip(str, [0..7, -8..-1])
     assert_equal(snip_str, str)
 
-    snipper = StringSnip.new(128)
-    snip_str = snipper.snip(str, [-8..-1, 8..232, 121..150, 0..7])
-#    assert_equal(snip_str, "12345678<<snip>>90123456")
-
+    snipper = StringSnip.new(64)
+    snip_str = snipper.snip(str, [-8..-1, 10..20, 0..7])
+    assert_equal(snip_str, "12345678<<snip>>12345678901<<snip>>90123456")
   end
 end

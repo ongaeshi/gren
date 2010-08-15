@@ -19,6 +19,7 @@ class StringSnip
     @ranges = StringSnip::ranges_sort(@ranges)
     @ranges = StringSnip::ranges_compound(@ranges)
 
+    # result
     results = []
     @ranges.each {|r| results << @str[r] }
     return results.join(@delimiter)
@@ -55,7 +56,6 @@ class StringSnip
 
     result
   end
-
 end
 
 

@@ -192,7 +192,7 @@ module Gren
 
           if ( result )
             unless (@option.colorHighlight)
-              line = Util::snip(line);
+              line = Util::snip(line, match_datas);
 #              stdout.puts "#{line.size} : #{line}"
               stdout.puts "#{fpath_disp}:#{index + 1}:#{line}"
             else

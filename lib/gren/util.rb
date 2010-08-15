@@ -1,25 +1,27 @@
 # -*- coding: utf-8 -*-
 
+require File.join(File.dirname(__FILE__), '../string_snip')
+
 module Gren
   class Util
     MAX_LINE_SIZE = 256
-    MARGIN_SIZE = 8
+    HEADER_SIZE = 16
+    MARGIN_SIZE = 16
     DELIMITER = '<<snip>>'
 
     def self.snip(str, match_datas)
       return str if (str.size <= MAX_LINE_SIZE)
 
-#      p match_datas[0]
-#      p str.split(match_datas[0][0])
-#      p match_datas[0].pre_match, match_datas[0].post_match
-#      p match_datas[0].begin(0), match_datas[0].end(0)
-      return str[0..7] + DELIMITER + str[64..128] + DELIMITER + str[-8..-1]
+      ranges = []
+      ranges << (0..HEADER_SIZE-1)
+      ranges << (-HEADER_SIZE..-1)
 
-#      match_datas.each do |m|
-#        line = line.split(m[0]).join("<42>#{m[0]}</42>"))
-#      end
+      match_datas.each do |m|
+        ranges << (m.begin(0)-MARGIN_SIZE..m.end(0)+MARGIN_SIZE)
+      end
 
-#      return str[0, MAX_LINE_SIZE]
+      snipper = StringSnip.new(MAX_LINE_SIZE, DELIMITER)
+      return snipper.snip(str, ranges)
     end
   end
 end
