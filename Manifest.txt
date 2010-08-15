@@ -10,10 +10,13 @@ lib/gren/findgrep.rb
 lib/gren/result.rb
 lib/gren/util.rb
 lib/platform.rb
+lib/string_snip.rb
 rake_rdoc_custom.rb
 script/console
 script/destroy
 script/generate
 test/test_gren.rb
 test/test_gren_cli.rb
+test/test_gren_util.rb
 test/test_helper.rb
+test/test_string_snip.rb

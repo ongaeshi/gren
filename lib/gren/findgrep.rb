@@ -193,7 +193,7 @@ module Gren
           result, match_datas = match?(line)
 
           if ( result )
-            header = "#{fpath_disp}:#{index + 1}"
+            header = "#{fpath_disp}:#{index + 1}:"
             line = Util::snip(line, match_datas) unless (@option.noSnip)
 
             unless (@option.colorHighlight)
