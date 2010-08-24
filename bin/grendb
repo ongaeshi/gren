@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+#
+#  Created on 2010-8-25.
+#  Copyright (c) 2010. All rights reserved.
+
+require 'rubygems'
+require File.expand_path(File.dirname(__FILE__) + "/../lib/gren")
+require "grendb/cli"
+
+Grendb::CLI.execute(STDOUT, ARGV)

@@ -4,11 +4,13 @@ PostInstall.txt
 README.rdoc
 Rakefile
 bin/gren
+bin/grendb
 lib/gren.rb
 lib/gren/cli.rb
 lib/gren/findgrep.rb
 lib/gren/result.rb
 lib/gren/util.rb
+lib/grendb/cli.rb
 lib/platform.rb
 lib/string_snip.rb
 rake_rdoc_custom.rb
@@ -18,5 +20,6 @@ script/generate
 test/test_gren.rb
 test/test_gren_cli.rb
 test/test_gren_util.rb
+test/test_grendb_cli.rb
 test/test_helper.rb
 test/test_string_snip.rb
