@@ -7,27 +7,23 @@ module Grendb
 
       opt = OptionParser.new <<EOF
 #{File.basename($0)} COMMAND [ARGS]
---- subcommand ---
         new                          Create new database.
         add                          Add files.
         update                       Update database.
-
---- option -------
 EOF
-      opt.on('--db [DATABASE]', 'Database file path. (default is ".gren/default.db")') { |v| puts "--db : " + v.inspect }
 
       subparsers = Hash.new {|h,k|
         $stderr.puts "no such subcommand: #{k}"
+
         exit 1
       }
       
-      subparsers['new'] = OptionParser.new
-      subparsers['new'].on('-i V') {|v| puts "-i :" + v.inspect}
+      subparsers['new'] = OptionParser.new("#{File.basename($0)} new [DATABASE_FILE]")
       
-      subparsers['add'] = OptionParser.new
-      subparsers['add'].on('--abc') {|v| puts "-i :" + v.inspect}
+      subparsers['add'] = OptionParser.new("#{File.basename($0)} add DIR1 DIR2 ...")
+      subparsers['add'].on('--db [DATABASE]', 'Database file path. (default is ".gren/default.db")') { |v| puts "--db : " + v.inspect }
 
-      subparsers['update'] = OptionParser.new
+      subparsers['update'] = OptionParser.new("#{File.basename($0)} update [DATABASE_FILE]")
 
       opt.order!(arguments)
       subcommand = arguments.shift 
