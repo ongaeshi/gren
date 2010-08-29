@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+require 'yaml'
+
 require 'pathname'
 
 base_directory = Pathname(__FILE__).dirname + ".."
@@ -10,29 +12,23 @@ require 'rubygems'
 require 'groonga'
 
 module Grendb
-  DEFAULT_DB = '~/.gren/default.db'
-  
   class Grendb
-    def self.command_new(dbfile)
-      dbfile ||= DEFAULT_DB
-      puts "[new] #{dbfile}"
-      create(dbfile)
-      update(dbfile)
+    def initialize(input_yaml)
+      @output_db = input_yaml.sub(/\.yaml$/, ".db")
+      @src = YAML.load(open(input_yaml).read())
+      db_create(@output_db)
     end
 
-    def self.command_add(dbfile, dirs)
-      dbfile ||= DEFAULT_DB
-      puts "[add] #{dbfile}, [#{dirs.join(", ")}]"
+    def update
+      db_open(@output_db)
+      
+      @src["directory"].each do |dir|
+        db_add_dir(dir)
+      end
     end
 
-    def self.command_update(dbfile)
-      dbfile ||= DEFAULT_DB
-      puts "[update] #{dbfile}"
-      open(dbfile)
-    end
-
-    def self.create(dbfile)
-      dbfile = Pathname(File.expand_path(dbfile))
+    def db_create(filename)
+      dbfile = Pathname(File.expand_path(filename))
       dbdir = dbfile.dirname
       dbdir.mkpath unless dbdir.exist?
       
@@ -52,28 +48,29 @@ module Grendb
             table.index("documents.content")
           end
         end
-        puts "  create : #{dbfile.to_s} created."
+        puts "create  : #{dbfile.to_s} created."
       else
-        puts "  warning : #{dbfile.to_s} already exist!!"
+        puts "message : #{dbfile.to_s} already exist."
       end
     end
-
-    def self.open(dbfile)
-      dbfile = Pathname(File.expand_path(dbfile))
+    private :db_create
+      
+    def db_open(filename)
+      dbfile = Pathname(File.expand_path(filename))
       
       if dbfile.exist?
         Groonga::Database.open(dbfile.to_s)
-        puts "  open : #{dbfile}"
+        puts "open    : #{dbfile} open."
       else
-        raise "  error : #{dbfile.to_s} not found!!"
+        raise "error    : #{dbfile.to_s} not found!!"
       end
     end
+    private :db_open
 
-    def self.openif(dbfile)
+    def db_add_dir(dirname)
+      puts dirname
     end
+    private :db_add_dir
 
-    def self.update(dbfile)
-    end
-    
   end
 end
