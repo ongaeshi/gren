@@ -75,7 +75,30 @@ module Grendb
     private :db_add_dir
 
     def db_add_file(stdout, filename)
-      puts filename
+      # 格納するデータ
+      values = {
+        :path => filename,
+        :content => open(filename).read
+      }
+      
+      # 既に登録されているファイルならばそれを上書き、そうでなければ新規レコードを作成
+      documents = Groonga::Context.default["documents"]
+      _documents = documents.select do |record|
+        record["path"] == values[:path]
+      end
+      
+      if _documents.size.zero?
+        document = documents.add
+      else
+        document = _documents.to_a[0].key
+      end
+      
+      # データベースに格納
+      values.each do |key, value|
+        puts value if (key == :path)
+        document[key] = value
+      end
+
     end
 
     def searchDirectory(stdout, dir, depth)
