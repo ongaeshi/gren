@@ -11,6 +11,8 @@ $LOAD_PATH.unshift((base_directory + "lib").to_s)
 require 'rubygems'
 require 'groonga'
 
+require File.join(File.dirname(__FILE__), '../grenfiletest')
+
 module Grendb
   class Grendb
     def initialize(input_yaml)
@@ -23,7 +25,7 @@ module Grendb
       db_open(@output_db)
       
       @src["directory"].each do |dir|
-        db_add_dir(dir)
+        db_add_dir(File.expand_path(dir))
       end
     end
 
@@ -68,9 +70,50 @@ module Grendb
     private :db_open
 
     def db_add_dir(dirname)
-      puts dirname
+      searchDirectory(STDOUT, dirname, 0)
     end
     private :db_add_dir
+
+    def db_add_file(stdout, filename)
+      puts filename
+    end
+
+    def searchDirectory(stdout, dir, depth)
+      Dir.foreach(dir) do |name|
+        next if (name == '.' || name == '..')
+          
+        fpath = File.join(dir,name)
+        fpath_disp = fpath.gsub(/^.\//, "")
+        
+        # 除外ディレクトリならばパス
+        next if ignoreDir?(fpath)
+
+        # 読み込み不可ならばパス
+        next unless FileTest.readable?(fpath)
+
+        # ファイルならば中身を探索、ディレクトリならば再帰
+        case File.ftype(fpath)
+        when "directory"
+          searchDirectory(stdout, fpath, depth + 1)
+        when "file"
+          unless ignoreFile?(fpath)
+            db_add_file(stdout, fpath)
+          end
+        end          
+      end
+    end
+
+    def ignoreDir?(fpath)
+      FileTest.directory?(fpath) &&
+      GrenFileTest::ignoreDir?(fpath)
+    end
+    private :ignoreDir?
+
+    def ignoreFile?(fpath)
+      GrenFileTest::ignoreFile?(fpath) ||
+      GrenFileTest::binary?(fpath)
+    end
+    private :ignoreFile?
 
   end
 end
