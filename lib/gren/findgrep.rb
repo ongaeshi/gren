@@ -5,6 +5,7 @@ require 'rubygems'
 require 'termcolor'
 require 'kconv'
 require File.join(File.dirname(__FILE__), '../platform')
+require File.join(File.dirname(__FILE__), '../grenfiletest')
 require File.join(File.dirname(__FILE__), 'util')
 
 module Gren
@@ -137,7 +138,7 @@ module Gren
 
     def ignoreDir?(fpath)
       FileTest.directory?(fpath) &&
-      (IGNORE_DIR.match(File.basename(fpath)) || ignoreDirUser?(fpath))
+      (GrenFileTest::ignoreDir?(File.basename(fpath)) || ignoreDirUser?(fpath))
     end
     private :ignoreDir?
 
@@ -148,9 +149,9 @@ module Gren
 
     def ignoreFile?(fpath)
       !correctFileUser?(fpath) ||
-      IGNORE_FILE.match(File.basename(fpath)) ||
+      GrenFileTest::ignoreFile?(fpath) ||
       ignoreFileUser?(fpath) ||
-      binary?(fpath)
+      GrenFileTest::binary?(fpath)
     end
     private :ignoreFile?
 
@@ -164,11 +165,6 @@ module Gren
       @ignoreFiles.any? {|v| v.match File.basename(fpath) }
     end
     private :ignoreFileUser?
-
-    def binary?(file)
-      s = File.read(file, 1024) or return false
-      return s.index("\x00")
-    end
 
     def searchFile(stdout, fpath, fpath_disp)
       @result.count += 1
