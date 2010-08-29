@@ -52,6 +52,8 @@ EOF
         else
           stdout.puts subparsers['update'].help
         end
+      else
+        stdout.puts opt.help
       end
     end
   end
