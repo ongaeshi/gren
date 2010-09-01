@@ -25,7 +25,8 @@ module Gren
                         :ignoreFiles,
                         :ignoreDirs,
                         :kcode,
-                        :noSnip)
+                        :noSnip,
+                        :dbFile)
 
     DEFAULT_OPTION = Option.new([],
                                 [],
@@ -39,7 +40,8 @@ module Gren
                                 [],
                                 [],
                                 Platform.get_shell_kcode,
-                                false)
+                                false,
+                                nil)
     
     def initialize(patterns, option)
       @option = option

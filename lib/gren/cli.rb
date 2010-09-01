@@ -24,6 +24,7 @@ module Gren
       opt.on('--id REGEXP', '--ignore-dir REGEXP', 'Ignore dir pattern. (Enable multiple call)') {|v| option.ignoreDirs << v}
       opt.on('-e ENCODE', '--encode ENCODE', 'Specify encode(none, auto, jis, sjis, euc, ascii, utf8, utf16). Default is "auto"') {|v| setupEncodeOption(option, v) }
       opt.on('--no-snip', 'There being a long line, it does not snip.') {|v| option.noSnip = true }
+      opt.on('--db [GREN_DB_FILE]', 'Search from the grendb database.') {|v| option.dbFile = v }
       opt.parse!(arguments)
 
       # 検索オブジェクトの生成
