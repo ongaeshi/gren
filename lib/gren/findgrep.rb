@@ -7,6 +7,7 @@ require 'kconv'
 require File.join(File.dirname(__FILE__), '../platform')
 require File.join(File.dirname(__FILE__), '../grenfiletest')
 require File.join(File.dirname(__FILE__), 'util')
+require 'groonga'
 
 module Gren
   class FindGrep
@@ -44,6 +45,7 @@ module Gren
                                 nil)
     
     def initialize(patterns, option)
+      @patterns = patterns
       @option = option
       @patternRegexps = strs2regs(patterns, @option.ignoreCase)
       @subRegexps = strs2regs(option.keywordsSub, @option.ignoreCase)
@@ -67,7 +69,11 @@ module Gren
     end
 
     def searchAndPrint(stdout)
-      searchAndPrintIN(stdout, @option.directory, 0)
+      unless (@option.dbFile)
+        searchFromDir(stdout, @option.directory, 0)
+      else
+        searchFromDB(stdout, @option.directory)
+      end
 
       @result.time_stop
       
@@ -96,7 +102,43 @@ module Gren
       end
     end
 
-    def searchAndPrintIN(stdout, dir, depth)
+    def searchFromDB(stdout, dir)
+      # データベース開く
+      dbfile = Pathname(File.expand_path(@option.dbFile))
+      
+      if dbfile.exist?
+        Groonga::Database.open(dbfile.to_s)
+        puts "open    : #{dbfile} open."
+      else
+        raise "error    : #{dbfile.to_s} not found!!"
+      end
+      
+      # ドキュメントを検索
+      documents = Groonga::Context.default["documents"]
+      
+      # 全てのパターンを検索
+      records = documents.select do |record|
+        expression = nil
+        @patterns.each do |word|
+          sub_expression = record.content =~ word
+          if expression.nil?
+            expression = sub_expression
+          else
+            expression &= sub_expression
+          end
+        end
+        expression
+      end
+
+      # 検索にヒットしたファイルを実際に検索
+      records.each do |record|
+        if FileTest.exist? record.path
+          searchFile(stdout, record.path, record.path)
+        end
+      end
+    end
+
+    def searchFromDir(stdout, dir, depth)
       if (@option.depth != -1 && depth > @option.depth)
         return
       end
@@ -122,13 +164,13 @@ module Gren
         # ファイルならば中身を探索、ディレクトリならば再帰
         case File.ftype(fpath)
         when "directory"
-          searchAndPrintIN(stdout, fpath, depth + 1)
+          searchFromDir(stdout, fpath, depth + 1)
         when "file"
           searchFile(stdout, fpath, fpath_disp)
         end          
       end
     end
-    private :searchAndPrintIN
+    private :searchFromDir
 
     def print_fpaths(stdout, data)
       stdout.print data.join("\n")
