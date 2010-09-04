@@ -119,6 +119,8 @@ module Gren
       # 全てのパターンを検索
       records = documents.select do |record|
         expression = nil
+
+        # キーワード
         @patterns.each do |word|
           sub_expression = record.content =~ word
           if expression.nil?
@@ -127,8 +129,18 @@ module Gren
             expression &= sub_expression
           end
         end
+        
+        # パス
+        unless (dir == ".")
+          expression &= record.path =~ dir
+        end
+        
+        # 検索方法
         expression
       end
+      
+      # データベースにヒット
+      stdout.puts "Found   : #{records.size} records."
 
       # 検索にヒットしたファイルを実際に検索
       records.each do |record|
