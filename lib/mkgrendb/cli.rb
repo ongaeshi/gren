@@ -1,42 +1,19 @@
+# -*- coding: utf-8 -*-
 require 'optparse'
+require File.join(File.dirname(__FILE__), 'grendb')
 
 module Mkgrendb
   class CLI
     def self.execute(stdout, arguments=[])
+      opt = OptionParser.new "#{File.basename($0)} INPUT_YAML1 [INPUT_YAML2 ...]"
 
-      # NOTE: the option -p/--path= is given as an example, and should be replaced in your application.
-
-      options = {
-        :path     => '~'
-      }
-      mandatory_options = %w(  )
-
-      parser = OptionParser.new do |opts|
-        opts.banner = <<-BANNER.gsub(/^          /,'')
-          This application is wonderful because...
-
-          Usage: #{File.basename($0)} [options]
-
-          Options are:
-        BANNER
-        opts.separator ""
-        opts.on("-p", "--path PATH", String,
-                "This is a sample message.",
-                "For multiple lines, add more strings.",
-                "Default: ~") { |arg| options[:path] = arg }
-        opts.on("-h", "--help",
-                "Show this help message.") { stdout.puts opts; exit }
-        opts.parse!(arguments)
-
-        if mandatory_options && mandatory_options.find { |option| options[option.to_sym].nil? }
-          stdout.puts opts; exit
-        end
+      if (arguments.size >= 1)
+        # @todo 複数個引数に対応
+        obj = Grendb.new(arguments[0])
+        obj.update
+      else
+        stdout.puts opt.help
       end
-
-      path = options[:path]
-
-      # do stuff
-      stdout.puts "To update this executable, look in lib/mkgrendb/cli.rb"
     end
   end
 end
