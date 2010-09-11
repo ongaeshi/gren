@@ -6,7 +6,7 @@ require 'termcolor'
 require 'kconv'
 require File.join(File.dirname(__FILE__), '../common/platform')
 require File.join(File.dirname(__FILE__), '../common/grenfiletest')
-require File.join(File.dirname(__FILE__), 'util')
+require File.join(File.dirname(__FILE__), '../common/grensnip')
 require 'groonga'
 
 module FindGrep
@@ -243,12 +243,12 @@ module FindGrep
 
           if ( result )
             header = "#{fpath_disp}:#{index + 1}:"
-            line = Util::snip(line, match_datas) unless (@option.noSnip)
+            line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
 
             unless (@option.colorHighlight)
               stdout.puts header + line
             else
-              stdout.puts HighLine::BLUE + header + HighLine::CLEAR + Util::coloring(line, match_datas)
+              stdout.puts HighLine::BLUE + header + HighLine::CLEAR + GrenSnip::coloring(line, match_datas)
             end
 
             unless match_file
