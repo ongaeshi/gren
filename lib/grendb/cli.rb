@@ -7,6 +7,7 @@ module Grendb
     def self.execute(stdout, arguments=[])
       # オプション
       option = FindGrep::FindGrep::DEFAULT_OPTION
+      option.dbFile = ENV['GRENDB_DEFAULT_DB']
 
       # オプション解析
       opt = OptionParser.new("#{File.basename($0)} [option] keyword1 [keyword2 ...]")
@@ -18,11 +19,13 @@ module Grendb
       opt.parse!(arguments)
 
       # 検索オブジェクトの生成
-      if (arguments.size > 0 || option.keywordsOr.size > 0)
+      if (option.dbFile && (arguments.size > 0 || option.keywordsOr.size > 0))
         findGrep = FindGrep::FindGrep.new(arguments, option)
         findGrep.searchAndPrint(stdout)
       else
         stdout.print opt.help
+        stdout.puts
+        stdout.puts "please set GREN DATABSE FILE!! (--db option, or set ENV['GRENDB_DEFAULT_DB'].)" unless option.dbFile
       end
 
     end
