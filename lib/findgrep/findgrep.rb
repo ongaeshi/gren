@@ -47,7 +47,7 @@ module FindGrep
       @patternRegexps = strs2regs(patterns, @option.ignoreCase)
       @subRegexps = strs2regs(option.keywordsSub, @option.ignoreCase)
       @orRegexps = strs2regs(option.keywordsOr, @option.ignoreCase)
-      @filePatterns = strs2regs(option.filePatterns)
+      @filePatterns = (!@option.dbFile) ? strs2regs(option.filePatterns) : []
       @ignoreFiles = strs2regs(option.ignoreFiles)
       @ignoreDirs = strs2regs(option.ignoreDirs)
       @result = Result.new(option.directory)
@@ -128,8 +128,13 @@ module FindGrep
         end
         
         # パス
-        unless (dir == ".")
-          expression &= record.path =~ dir
+        @option.filePatterns.each do |word|
+          sub_expression = record.path =~ word
+          if expression.nil?
+            expression = sub_expression
+          else
+            expression &= sub_expression
+          end
         end
         
         # 検索方法
