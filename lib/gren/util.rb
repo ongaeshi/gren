@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-require File.join(File.dirname(__FILE__), '../string_snip')
+require File.join(File.dirname(__FILE__), '../common/string_snip')
 
 module Gren
   class Util

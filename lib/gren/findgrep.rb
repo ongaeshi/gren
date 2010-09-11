@@ -4,8 +4,8 @@ require File.join(File.dirname(__FILE__), 'result')
 require 'rubygems'
 require 'termcolor'
 require 'kconv'
-require File.join(File.dirname(__FILE__), '../platform')
-require File.join(File.dirname(__FILE__), '../grenfiletest')
+require File.join(File.dirname(__FILE__), '../common/platform')
+require File.join(File.dirname(__FILE__), '../common/grenfiletest')
 require File.join(File.dirname(__FILE__), 'util')
 require 'groonga'
 

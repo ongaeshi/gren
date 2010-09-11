@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'optparse'
-require File.join(File.dirname(__FILE__), 'grendb')
+require File.join(File.dirname(__FILE__), 'mkgrendb')
 
 module Mkgrendb
   class CLI
@@ -9,7 +9,7 @@ module Mkgrendb
 
       if (arguments.size >= 1)
         # @todo 複数個引数に対応
-        obj = Grendb.new(arguments[0])
+        obj = Mkgrendb.new(arguments[0])
         obj.update
       else
         stdout.puts opt.help

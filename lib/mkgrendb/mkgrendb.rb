@@ -11,10 +11,10 @@ $LOAD_PATH.unshift((base_directory + "lib").to_s)
 require 'rubygems'
 require 'groonga'
 
-require File.join(File.dirname(__FILE__), '../grenfiletest')
+require File.join(File.dirname(__FILE__), '../common/grenfiletest')
 
 module Mkgrendb
-  class Grendb
+  class Mkgrendb
     def initialize(input_yaml)
       @output_db = input_yaml.sub(/\.yaml$/, ".db")
       @src = YAML.load(open(input_yaml).read())
