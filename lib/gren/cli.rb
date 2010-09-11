@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 require 'optparse'
-require File.join(File.dirname(__FILE__), 'findgrep')
+require File.join(File.dirname(__FILE__), '../findgrep/findgrep')
 
 module Gren
   class CLI
     def self.execute(stdout, arguments=[])
       # オプション
-      option = FindGrep::DEFAULT_OPTION
+      option = FindGrep::FindGrep::DEFAULT_OPTION
 
       # オプション解析
       opt = OptionParser.new("#{File.basename($0)} [option] pattern")
@@ -28,7 +28,7 @@ module Gren
 
       # 検索オブジェクトの生成
       if (arguments.size > 0 || option.keywordsOr.size > 0)
-        findGrep = FindGrep.new(arguments, option)
+        findGrep = FindGrep::FindGrep.new(arguments, option)
         findGrep.searchAndPrint(stdout)
       else
         stdout.print opt.help

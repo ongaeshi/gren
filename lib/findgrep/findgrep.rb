@@ -9,11 +9,8 @@ require File.join(File.dirname(__FILE__), '../common/grenfiletest')
 require File.join(File.dirname(__FILE__), 'util')
 require 'groonga'
 
-module Gren
+module FindGrep
   class FindGrep
-    IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
-    IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/
-
     Option = Struct.new(:keywordsSub,
                         :keywordsOr,
                         :directory,

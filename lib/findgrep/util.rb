@@ -2,7 +2,7 @@
 
 require File.join(File.dirname(__FILE__), '../common/string_snip')
 
-module Gren
+module FindGrep
   class Util
     MAX_LINE_SIZE = 256
     HEADER_SIZE = 32
