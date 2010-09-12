@@ -11,7 +11,7 @@ require 'groonga'
 
 module FindGrep
   class FindGrep
-    Option = Struct.new(:keywordsSub,
+    Option = Struct.new(:keywordsNot,
                         :keywordsOr,
                         :directory,
                         :depth,
@@ -45,7 +45,7 @@ module FindGrep
       @patterns = patterns
       @option = option
       @patternRegexps = strs2regs(patterns, @option.ignoreCase)
-      @subRegexps = strs2regs(option.keywordsSub, @option.ignoreCase)
+      @subRegexps = strs2regs(option.keywordsNot, @option.ignoreCase)
       @orRegexps = strs2regs(option.keywordsOr, @option.ignoreCase)
       @filePatterns = (!@option.dbFile) ? strs2regs(option.filePatterns) : []
       @ignoreFiles = strs2regs(option.ignoreFiles)
