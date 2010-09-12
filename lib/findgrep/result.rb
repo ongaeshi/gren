@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'find'
 
-module Gren
+module FindGrep
   class Result
     attr_accessor :count
     attr_accessor :search_count
