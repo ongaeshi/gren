@@ -7,13 +7,13 @@ bin/gren
 bin/grendb
 bin/mkgrendb
 lib/common/grenfiletest.rb
+lib/common/grensnip.rb
 lib/common/platform.rb
 lib/common/string_snip.rb
+lib/findgrep/findgrep.rb
+lib/findgrep/result.rb
 lib/gren.rb
 lib/gren/cli.rb
-lib/gren/findgrep.rb
-lib/gren/result.rb
-lib/gren/util.rb
 lib/grendb/cli.rb
 lib/mkgrendb/cli.rb
 lib/mkgrendb/mkgrendb.rb
