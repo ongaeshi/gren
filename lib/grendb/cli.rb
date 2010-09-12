@@ -12,9 +12,10 @@ module Grendb
       # オプション解析
       opt = OptionParser.new("#{File.basename($0)} [option] keyword1 [keyword2 ...]")
       opt.on('--db [GREN_DB_FILE]', 'Search from the grendb database.') {|v| option.dbFile = v }
-      opt.on('-f KEYWORD', '--file-regexp KEYWORD', 'Path keyword. (Enable multiple call)') {|v| option.filePatterns << v}
-      opt.on('--if KEYWORD', '--ignore-file KEYWORD', 'Ignore path keyword. (Enable multiple call)') {|v| option.ignoreFiles << v}
+      opt.on('-f KEYWORD', '--file-keyword KEYWORD', 'Path keyword. (Enable multiple call)') {|v| option.filePatterns << v}
       opt.on('-i', '--ignore', 'Ignore case.') {|v| option.ignoreCase = true}
+      opt.on('-c', '--color', 'Color highlight.') {|v| option.colorHighlight = true}
+      opt.on('--no-snip', 'There being a long line, it does not snip.') {|v| option.noSnip = true }
 
       opt.parse!(arguments)
 

@@ -136,7 +136,7 @@ module FindGrep
             expression &= sub_expression
           end
         end
-        
+
         # 検索方法
         expression
       end
