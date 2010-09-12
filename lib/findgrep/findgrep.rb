@@ -4,14 +4,13 @@ require File.join(File.dirname(__FILE__), 'result')
 require 'rubygems'
 require 'termcolor'
 require 'kconv'
-require File.join(File.dirname(__FILE__), '../platform')
-require File.join(File.dirname(__FILE__), 'util')
+require File.join(File.dirname(__FILE__), '../common/platform')
+require File.join(File.dirname(__FILE__), '../common/grenfiletest')
+require File.join(File.dirname(__FILE__), '../common/grensnip')
+require 'groonga'
 
-module Gren
+module FindGrep
   class FindGrep
-    IGNORE_FILE = /(\A#.*#\Z)|(~\Z)|(\A\.#)/
-    IGNORE_DIR = /(\A\.svn\Z)|(\A\.git\Z)|(\ACVS\Z)/
-
     Option = Struct.new(:keywordsSub,
                         :keywordsOr,
                         :directory,
@@ -24,7 +23,8 @@ module Gren
                         :ignoreFiles,
                         :ignoreDirs,
                         :kcode,
-                        :noSnip)
+                        :noSnip,
+                        :dbFile)
 
     DEFAULT_OPTION = Option.new([],
                                 [],
@@ -38,14 +38,16 @@ module Gren
                                 [],
                                 [],
                                 Platform.get_shell_kcode,
-                                false)
+                                false,
+                                nil)
     
     def initialize(patterns, option)
+      @patterns = patterns
       @option = option
       @patternRegexps = strs2regs(patterns, @option.ignoreCase)
       @subRegexps = strs2regs(option.keywordsSub, @option.ignoreCase)
       @orRegexps = strs2regs(option.keywordsOr, @option.ignoreCase)
-      @filePatterns = strs2regs(option.filePatterns)
+      @filePatterns = (!@option.dbFile) ? strs2regs(option.filePatterns) : []
       @ignoreFiles = strs2regs(option.ignoreFiles)
       @ignoreDirs = strs2regs(option.ignoreDirs)
       @result = Result.new(option.directory)
@@ -64,7 +66,11 @@ module Gren
     end
 
     def searchAndPrint(stdout)
-      searchAndPrintIN(stdout, @option.directory, 0)
+      unless (@option.dbFile)
+        searchFromDir(stdout, @option.directory, 0)
+      else
+        searchFromDB(stdout, @option.directory)
+      end
 
       @result.time_stop
       
@@ -93,7 +99,60 @@ module Gren
       end
     end
 
-    def searchAndPrintIN(stdout, dir, depth)
+    def searchFromDB(stdout, dir)
+      # データベース開く
+      dbfile = Pathname(File.expand_path(@option.dbFile))
+      
+      if dbfile.exist?
+        Groonga::Database.open(dbfile.to_s)
+        puts "open    : #{dbfile} open."
+      else
+        raise "error    : #{dbfile.to_s} not found!!"
+      end
+      
+      # ドキュメントを検索
+      documents = Groonga::Context.default["documents"]
+      
+      # 全てのパターンを検索
+      records = documents.select do |record|
+        expression = nil
+
+        # キーワード
+        @patterns.each do |word|
+          sub_expression = record.content =~ word
+          if expression.nil?
+            expression = sub_expression
+          else
+            expression &= sub_expression
+          end
+        end
+        
+        # パス
+        @option.filePatterns.each do |word|
+          sub_expression = record.path =~ word
+          if expression.nil?
+            expression = sub_expression
+          else
+            expression &= sub_expression
+          end
+        end
+
+        # 検索方法
+        expression
+      end
+      
+      # データベースにヒット
+      stdout.puts "Found   : #{records.size} records."
+
+      # 検索にヒットしたファイルを実際に検索
+      records.each do |record|
+        if FileTest.exist? record.path
+          searchFile(stdout, record.path, record.path)
+        end
+      end
+    end
+
+    def searchFromDir(stdout, dir, depth)
       if (@option.depth != -1 && depth > @option.depth)
         return
       end
@@ -119,13 +178,13 @@ module Gren
         # ファイルならば中身を探索、ディレクトリならば再帰
         case File.ftype(fpath)
         when "directory"
-          searchAndPrintIN(stdout, fpath, depth + 1)
+          searchFromDir(stdout, fpath, depth + 1)
         when "file"
           searchFile(stdout, fpath, fpath_disp)
         end          
       end
     end
-    private :searchAndPrintIN
+    private :searchFromDir
 
     def print_fpaths(stdout, data)
       stdout.print data.join("\n")
@@ -137,7 +196,7 @@ module Gren
 
     def ignoreDir?(fpath)
       FileTest.directory?(fpath) &&
-      (IGNORE_DIR.match(File.basename(fpath)) || ignoreDirUser?(fpath))
+      (GrenFileTest::ignoreDir?(File.basename(fpath)) || ignoreDirUser?(fpath))
     end
     private :ignoreDir?
 
@@ -148,9 +207,9 @@ module Gren
 
     def ignoreFile?(fpath)
       !correctFileUser?(fpath) ||
-      IGNORE_FILE.match(File.basename(fpath)) ||
+      GrenFileTest::ignoreFile?(fpath) ||
       ignoreFileUser?(fpath) ||
-      binary?(fpath)
+      GrenFileTest::binary?(fpath)
     end
     private :ignoreFile?
 
@@ -164,11 +223,6 @@ module Gren
       @ignoreFiles.any? {|v| v.match File.basename(fpath) }
     end
     private :ignoreFileUser?
-
-    def binary?(file)
-      s = File.read(file, 1024) or return false
-      return s.index("\x00")
-    end
 
     def searchFile(stdout, fpath, fpath_disp)
       @result.count += 1
@@ -194,12 +248,12 @@ module Gren
 
           if ( result )
             header = "#{fpath_disp}:#{index + 1}:"
-            line = Util::snip(line, match_datas) unless (@option.noSnip)
+            line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
 
             unless (@option.colorHighlight)
               stdout.puts header + line
             else
-              stdout.puts HighLine::BLUE + header + HighLine::CLEAR + Util::coloring(line, match_datas)
+              stdout.puts HighLine::BLUE + header + HighLine::CLEAR + GrenSnip::coloring(line, match_datas)
             end
 
             unless match_file
