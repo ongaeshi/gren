@@ -4,7 +4,6 @@ require 'yaml'
 require 'pathname'
 require 'rubygems'
 require 'groonga'
-
 require File.join(File.dirname(__FILE__), '../common/grenfiletest')
 
 module Mkgrendb
@@ -23,6 +22,20 @@ module Mkgrendb
       @src["directory"].each do |dir|
         db_add_dir(File.expand_path(dir))
       end
+    end
+
+    def dump()
+      db_open(@output_db)
+
+      documents = Groonga::Context.default["documents"]
+      records = documents.select
+      records.each do |record|
+        puts "path : #{record.path}"
+        puts "timestamp : #{record.timestamp.strftime('%Y/%m/%d %H:%M:%S')}"
+        puts "content :", record.content[0..64]
+        puts
+      end
+
     end
 
     def db_create(filename)
