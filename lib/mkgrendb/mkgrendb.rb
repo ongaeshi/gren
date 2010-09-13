@@ -1,13 +1,7 @@
 # -*- coding: utf-8 -*-
 
 require 'yaml'
-
 require 'pathname'
-
-base_directory = Pathname(__FILE__).dirname + ".."
-$LOAD_PATH.unshift((base_directory + "ext").to_s)
-$LOAD_PATH.unshift((base_directory + "lib").to_s)
-
 require 'rubygems'
 require 'groonga'
 
@@ -15,9 +9,11 @@ require File.join(File.dirname(__FILE__), '../common/grenfiletest')
 
 module Mkgrendb
   class Mkgrendb
-    def initialize(input_yaml)
-      @output_db = input_yaml.sub(/\.yaml$/, ". db")
-      @src = YAML.load(open(input_yaml).read())
+    def initialize(input)
+      @input_yaml = input.sub(/\.db$/, ".yaml")
+      @output_db = input.sub(/\.yaml$/, ".db")
+      puts "input_yaml : #{@input_yaml} found."
+      @src = YAML.load(open(@input_yaml).read())
       db_create(@output_db)
     end
 
@@ -50,9 +46,9 @@ module Mkgrendb
             table.index("documents.content")
           end
         end
-        puts "create  : #{dbfile.to_s} created."
+        puts "create     : #{dbfile.to_s} created."
       else
-        puts "message : #{dbfile.to_s} already exist."
+        puts "message    : #{dbfile.to_s} already exist."
       end
     end
     private :db_create
@@ -62,9 +58,9 @@ module Mkgrendb
       
       if dbfile.exist?
         Groonga::Database.open(dbfile.to_s)
-        puts "open    : #{dbfile} open."
+        puts  "open       : #{dbfile} open."
       else
-        raise "error    : #{dbfile.to_s} not found!!"
+        raise "error      : #{dbfile.to_s} not found!!"
       end
     end
     private :db_open

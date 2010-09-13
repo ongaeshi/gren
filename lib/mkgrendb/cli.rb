@@ -12,6 +12,7 @@ module Mkgrendb
         arguments.each do |input_yaml|
           obj = Mkgrendb.new(input_yaml)
           obj.update
+          stdout.puts
         end
       else
         stdout.puts opt.help
