@@ -36,6 +36,7 @@ module Mkgrendb
           schema.create_table("documents") do |table|
             table.string("path")
             table.text("content")
+            table.time("timestamp")
           end
 
           schema.create_table("terms",
@@ -74,7 +75,8 @@ module Mkgrendb
       # 格納するデータ
       values = {
         :path => filename,
-        :content => open(filename).read
+        :content => open(filename).read,
+        :timestamp => File.mtime(filename),
       }
       
       # 既に登録されているファイルならばそれを上書き、そうでなければ新規レコードを作成
