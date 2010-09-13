@@ -16,7 +16,7 @@ require File.join(File.dirname(__FILE__), '../common/grenfiletest')
 module Mkgrendb
   class Mkgrendb
     def initialize(input_yaml)
-      @output_db = input_yaml.sub(/\.yaml$/, ".db")
+      @output_db = input_yaml.sub(/\.yaml$/, ". db")
       @src = YAML.load(open(input_yaml).read())
       db_create(@output_db)
     end

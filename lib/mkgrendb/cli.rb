@@ -9,9 +9,10 @@ module Mkgrendb
       opt.parse!(arguments)
 
       if (arguments.size >= 1)
-        # @todo 複数個引数に対応
-        obj = Mkgrendb.new(arguments[0])
-        obj.update
+        arguments.each do |input_yaml|
+          obj = Mkgrendb.new(input_yaml)
+          obj.update
+        end
       else
         stdout.puts opt.help
       end
