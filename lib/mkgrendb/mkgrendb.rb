@@ -13,19 +13,23 @@ module Mkgrendb
       @output_db = input.sub(/\.yaml$/, ".db")
       puts "input_yaml : #{@input_yaml} found."
       @src = YAML.load(open(@input_yaml).read())
-      db_create(@output_db)
     end
 
     def update
+      db_create(@output_db)
       db_open(@output_db)
-      
       @src["directory"].each do |dir|
         db_add_dir(File.expand_path(dir))
       end
     end
 
     def delete
-      puts "Delete #{@output_db} !!"
+      db_delete(@output_db)
+    end
+
+    def full
+      delete
+      update
     end
 
     def dump()
@@ -65,12 +69,21 @@ module Mkgrendb
             table.index("documents.timestamp")
           end
         end
-        puts "create     : #{dbfile.to_s} created."
+        puts "create     : #{filename} created."
       else
-        puts "message    : #{dbfile.to_s} already exist."
+        puts "message    : #{filename} already exist."
       end
     end
     private :db_create
+
+    def db_delete(filename)
+      raise "Illegal file name : #{filename}." unless filename =~ /\.db$/
+      Dir.glob("#{filename}*").each do |f|
+        puts "delete     : #{f}"
+        File.unlink(f)
+      end
+    end
+    private :db_delete
       
     def db_open(filename)
       dbfile = Pathname(File.expand_path(filename))
@@ -111,7 +124,7 @@ module Mkgrendb
       
       # データベースに格納
       values.each do |key, value|
-        puts value if (key == :path)
+        puts "add_file   : #{value}" if (key == :path)
         document[key] = value
       end
 

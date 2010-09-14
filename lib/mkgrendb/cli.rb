@@ -24,8 +24,7 @@ module Mkgrendb
           obj = Mkgrendb.new(input_yaml)
           
           if (isFull)
-            obj.delete
-            obj.update
+            obj.full
             stdout.puts
           elsif (isDelete)
             obj.delete
