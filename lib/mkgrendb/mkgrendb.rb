@@ -24,6 +24,10 @@ module Mkgrendb
       end
     end
 
+    def delete
+      puts "Delete #{@output_db} !!"
+    end
+
     def dump()
       db_open(@output_db)
 
@@ -58,6 +62,7 @@ module Mkgrendb
                               :default_tokenizer => "TokenBigram") do |table|
             table.index("documents.path")
             table.index("documents.content")
+            table.index("documents.timestamp")
           end
         end
         puts "create     : #{dbfile.to_s} created."
