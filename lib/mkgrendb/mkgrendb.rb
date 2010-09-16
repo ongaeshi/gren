@@ -13,6 +13,7 @@ module Mkgrendb
       @output_db = input.sub(/\.yaml$/, ".db")
       puts "input_yaml : #{@input_yaml} found."
       @src = YAML.load(open(@input_yaml).read())
+      @file_count = 0
     end
 
     def update
@@ -129,7 +130,7 @@ module Mkgrendb
       
       # タイムスタンプが新しければデータベースに格納
       if (document[:timestamp] < values[:timestamp])
-        # ファイルの内容を読み込み
+        # 実際に使うタイミングでファイルの内容を読み込み
         values[:content] = open(filename).read
         
         # データベースに格納
@@ -167,6 +168,8 @@ module Mkgrendb
         when "file"
           unless ignoreFile?(fpath)
             db_add_file(stdout, fpath)
+            @file_count += 1
+            puts "file_count : #{@file_count}" if (@file_count % 100 == 0)
           end
         end          
       end
