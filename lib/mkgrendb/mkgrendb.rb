@@ -1,32 +1,50 @@
 # -*- coding: utf-8 -*-
 
 require 'yaml'
-
 require 'pathname'
-
-base_directory = Pathname(__FILE__).dirname + ".."
-$LOAD_PATH.unshift((base_directory + "ext").to_s)
-$LOAD_PATH.unshift((base_directory + "lib").to_s)
-
 require 'rubygems'
 require 'groonga'
-
 require File.join(File.dirname(__FILE__), '../common/grenfiletest')
 
 module Mkgrendb
   class Mkgrendb
-    def initialize(input_yaml)
-      @output_db = input_yaml.sub(/\.yaml$/, ".db")
-      @src = YAML.load(open(input_yaml).read())
-      db_create(@output_db)
+    def initialize(input)
+      @input_yaml = input.sub(/\.db$/, ".yaml")
+      @output_db = input.sub(/\.yaml$/, ".db")
+      puts "input_yaml : #{@input_yaml} found."
+      @src = YAML.load(open(@input_yaml).read())
+      @file_count = 0
     end
 
     def update
+      db_create(@output_db)
       db_open(@output_db)
-      
       @src["directory"].each do |dir|
         db_add_dir(File.expand_path(dir))
       end
+    end
+
+    def delete
+      db_delete(@output_db)
+    end
+
+    def full
+      delete
+      update
+    end
+
+    def dump()
+      db_open(@output_db)
+
+      documents = Groonga::Context.default["documents"]
+      records = documents.select
+      records.each do |record|
+        puts "path : #{record.path}"
+        puts "timestamp : #{record.timestamp.strftime('%Y/%m/%d %H:%M:%S')}"
+        puts "content :", record.content[0..64]
+        puts
+      end
+
     end
 
     def db_create(filename)
@@ -40,6 +58,7 @@ module Mkgrendb
           schema.create_table("documents") do |table|
             table.string("path")
             table.text("content")
+            table.time("timestamp")
           end
 
           schema.create_table("terms",
@@ -48,23 +67,33 @@ module Mkgrendb
                               :default_tokenizer => "TokenBigram") do |table|
             table.index("documents.path")
             table.index("documents.content")
+            table.index("documents.timestamp")
           end
         end
-        puts "create  : #{dbfile.to_s} created."
+        puts "create     : #{filename} created."
       else
-        puts "message : #{dbfile.to_s} already exist."
+        puts "message    : #{filename} already exist."
       end
     end
     private :db_create
+
+    def db_delete(filename)
+      raise "Illegal file name : #{filename}." unless filename =~ /\.db$/
+      Dir.glob("#{filename}*").each do |f|
+        puts "delete     : #{f}"
+        File.unlink(f)
+      end
+    end
+    private :db_delete
       
     def db_open(filename)
       dbfile = Pathname(File.expand_path(filename))
       
       if dbfile.exist?
         Groonga::Database.open(dbfile.to_s)
-        puts "open    : #{dbfile} open."
+        puts  "open       : #{dbfile} open."
       else
-        raise "error    : #{dbfile.to_s} not found!!"
+        raise "error      : #{dbfile.to_s} not found!!"
       end
     end
     private :db_open
@@ -78,25 +107,43 @@ module Mkgrendb
       # 格納するデータ
       values = {
         :path => filename,
-        :content => open(filename).read
+        :content => nil,
+        :timestamp => File.mtime(filename),
       }
       
-      # 既に登録されているファイルならばそれを上書き、そうでなければ新規レコードを作成
+      # 検索するデータベース
       documents = Groonga::Context.default["documents"]
+      
+      # 既に登録されているファイルならばそれを上書き、そうでなければ新規レコードを作成
       _documents = documents.select do |record|
         record["path"] == values[:path]
       end
       
+      isNewFile = false
+
       if _documents.size.zero?
         document = documents.add
+        isNewFile = true
       else
         document = _documents.to_a[0].key
       end
       
-      # データベースに格納
-      values.each do |key, value|
-        puts value if (key == :path)
-        document[key] = value
+      # タイムスタンプが新しければデータベースに格納
+      if (document[:timestamp] < values[:timestamp])
+        # 実際に使うタイミングでファイルの内容を読み込み
+        values[:content] = open(filename).read
+        
+        # データベースに格納
+        values.each do |key, value|
+          if (key == :path)
+            if (isNewFile)
+              puts "add_file   : #{value}"
+            else
+              puts "update     : #{value}"
+            end
+          end
+          document[key] = value
+        end
       end
 
     end
@@ -121,6 +168,8 @@ module Mkgrendb
         when "file"
           unless ignoreFile?(fpath)
             db_add_file(stdout, fpath)
+            @file_count += 1
+            puts "file_count : #{@file_count}" if (@file_count % 100 == 0)
           end
         end          
       end
