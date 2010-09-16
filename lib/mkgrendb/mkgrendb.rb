@@ -106,26 +106,43 @@ module Mkgrendb
       # 格納するデータ
       values = {
         :path => filename,
-        :content => open(filename).read,
+        :content => nil,
         :timestamp => File.mtime(filename),
       }
       
-      # 既に登録されているファイルならばそれを上書き、そうでなければ新規レコードを作成
+      # 検索するデータベース
       documents = Groonga::Context.default["documents"]
+      
+      # 既に登録されているファイルならばそれを上書き、そうでなければ新規レコードを作成
       _documents = documents.select do |record|
         record["path"] == values[:path]
       end
       
+      isNewFile = false
+
       if _documents.size.zero?
         document = documents.add
+        isNewFile = true
       else
         document = _documents.to_a[0].key
       end
       
-      # データベースに格納
-      values.each do |key, value|
-        puts "add_file   : #{value}" if (key == :path)
-        document[key] = value
+      # タイムスタンプが新しければデータベースに格納
+      if (document[:timestamp] < values[:timestamp])
+        # ファイルの内容を読み込み
+        values[:content] = open(filename).read
+        
+        # データベースに格納
+        values.each do |key, value|
+          if (key == :path)
+            if (isNewFile)
+              puts "add_file   : #{value}"
+            else
+              puts "update     : #{value}"
+            end
+          end
+          document[key] = value
+        end
       end
 
     end
