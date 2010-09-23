@@ -9,6 +9,7 @@ require File.join(File.dirname(__FILE__), '../common/grenfiletest')
 module Mkgrendb
   class Mkgrendb
     def initialize(input)
+      input = File.expand_path(input)
       @input_yaml = input.sub(/\.db$/, ".yaml")
       @output_db = input.sub(/\.yaml$/, ".db")
       puts "input_yaml : #{@input_yaml} found."
