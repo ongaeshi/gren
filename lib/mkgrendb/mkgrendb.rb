@@ -5,6 +5,8 @@ require 'pathname'
 require 'rubygems'
 require 'groonga'
 require File.join(File.dirname(__FILE__), '../common/grenfiletest')
+require File.join(File.dirname(__FILE__), '../common/display_util')
+include Gren
 
 module Mkgrendb
   class Mkgrendb
@@ -15,6 +17,8 @@ module Mkgrendb
       puts "input_yaml : #{@input_yaml} found."
       @src = YAML.load(open(@input_yaml).read())
       @file_count = 0
+      @update_count = 0
+      @start_time = Time.now
     end
 
     def update
@@ -23,6 +27,8 @@ module Mkgrendb
       @src["directory"].each do |dir|
         db_add_dir(File.expand_path(dir))
       end
+      @end_time = Time.now
+      print_result
     end
 
     def delete
@@ -32,6 +38,18 @@ module Mkgrendb
     def full
       delete
       update
+    end
+
+    def time
+      @end_time - @start_time 
+    end
+
+    def print_result
+      puts
+      puts "input_yaml : #{@input_yaml} (#{DisplayUtil::time_s(time)})"
+      puts "output_db  : #{@output_db}*"
+      puts "files      : #{@file_count}"
+      puts "updates    : #{@update_count}"
     end
 
     def dump()
@@ -45,7 +63,6 @@ module Mkgrendb
         puts "content :", record.content[0..64]
         puts
       end
-
     end
 
     def db_create(filename)
@@ -140,6 +157,7 @@ module Mkgrendb
             if (isNewFile)
               puts "add_file   : #{value}"
             else
+              @update_count += 1
               puts "update     : #{value}"
             end
           end
