@@ -83,9 +83,9 @@ module Mkgrendb
                               :type => :patricia_trie,
                               :key_normalize => true,
                               :default_tokenizer => "TokenBigram") do |table|
-            table.index("documents.path")
-            table.index("documents.content")
-            table.index("documents.timestamp")
+            table.index("documents.path", :with_position => true)
+            table.index("documents.content", :with_position => true)
+            table.index("documents.timestamp", :with_position => true)
           end
         end
         puts "create     : #{filename} created."
