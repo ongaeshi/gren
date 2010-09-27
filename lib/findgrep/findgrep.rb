@@ -116,7 +116,7 @@ module FindGrep
       documents = Groonga::Context.default["documents"]
 
       # 全てのパターンを検索
-      records = documents.select do |record|
+      table = documents.select do |record|
         expression = nil
 
         # キーワード
@@ -143,11 +143,9 @@ module FindGrep
         expression
       end
       
-      Util::p_classtree(records)
-
-      records = records.sort([{:key => "timestamp", :order => :descending}])
-      #      records = records.sort([{:key => "timestamp", :order => :ascending}])      
-      #      records = records.sort([{:key => :path, :order => :descending}])
+      # 更新日時の新しい順に表示
+      # 本当はGroonga::sortを使いたい所だが、上手くうごかなかったので配列に変換、Array::sort_byを使う
+      records = table.records.sort_by{|v| v.timestamp}.reverse
 
       # データベースにヒット
       stdout.puts "Found   : #{records.size} records."
