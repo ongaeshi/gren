@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'find'
-require File.join(File.dirname(__FILE__), '../common/display_util')
+require File.join(File.dirname(__FILE__), '../common/util')
 include Gren
 
 module FindGrep
@@ -34,8 +34,8 @@ module FindGrep
     end
 
     def print(stdout)
-      stdout.puts "dir   : #{@start_dir} (#{DisplayUtil::time_s(time)})"
-      stdout.puts "files : #{@search_count} in #{@count} (#{DisplayUtil::size_s(@search_size)} in #{DisplayUtil::size_s(@size)})"
+      stdout.puts "dir   : #{@start_dir} (#{Util::time_s(time)})"
+      stdout.puts "files : #{@search_count} in #{@count} (#{Util::size_s(@search_size)} in #{Util::size_s(@size)})"
       stdout.puts "match : #{@match_file_count} files, #{match_count} hit"
     end
 

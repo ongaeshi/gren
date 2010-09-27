@@ -5,7 +5,7 @@ require 'pathname'
 require 'rubygems'
 require 'groonga'
 require File.join(File.dirname(__FILE__), '../common/grenfiletest')
-require File.join(File.dirname(__FILE__), '../common/display_util')
+require File.join(File.dirname(__FILE__), '../common/util')
 include Gren
 
 module Mkgrendb
@@ -46,7 +46,7 @@ module Mkgrendb
 
     def print_result
       puts
-      puts "input_yaml : #{@input_yaml} (#{DisplayUtil::time_s(time)})"
+      puts "input_yaml : #{@input_yaml} (#{Util::time_s(time)})"
       puts "output_db  : #{@output_db}*"
       puts "files      : #{@file_count}"
       puts "updates    : #{@update_count}"
@@ -57,12 +57,13 @@ module Mkgrendb
 
       documents = Groonga::Context.default["documents"]
       records = documents.select
-      records.each do |record|
-        puts "path : #{record.path}"
-        puts "timestamp : #{record.timestamp.strftime('%Y/%m/%d %H:%M:%S')}"
-        puts "content :", record.content[0..64]
-        puts
-      end
+      p records.size
+#       records.each do |record|
+#         puts "path : #{record.path}"
+#         puts "timestamp : #{record.timestamp.strftime('%Y/%m/%d %H:%M:%S')}"
+#         puts "content :", record.content[0..64]
+#         puts
+#       end
     end
 
     def db_create(filename)

@@ -8,6 +8,8 @@ require File.join(File.dirname(__FILE__), '../common/platform')
 require File.join(File.dirname(__FILE__), '../common/grenfiletest')
 require File.join(File.dirname(__FILE__), '../common/grensnip')
 require 'groonga'
+require File.join(File.dirname(__FILE__), '../common/util')
+include Gren
 
 module FindGrep
   class FindGrep
@@ -112,7 +114,7 @@ module FindGrep
       
       # ドキュメントを検索
       documents = Groonga::Context.default["documents"]
-      
+
       # 全てのパターンを検索
       records = documents.select do |record|
         expression = nil
@@ -141,6 +143,12 @@ module FindGrep
         expression
       end
       
+      Util::p_classtree(records)
+
+      records = records.sort([{:key => "timestamp", :order => :descending}])
+      #      records = records.sort([{:key => "timestamp", :order => :ascending}])      
+      #      records = records.sort([{:key => :path, :order => :descending}])
+
       # データベースにヒット
       stdout.puts "Found   : #{records.size} records."
 
