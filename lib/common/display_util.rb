@@ -44,5 +44,19 @@ module Gren
       end
     end
     module_function :size_s
+
+    def dump_methods(c)
+      unless c.is_a?(Class)
+        c = c.class
+      end
+      
+      while (true)
+        p c
+        break if (c == Object)
+        puts "↓  " + c.public_instance_methods(false).inspect
+        c = c.superclass
+      end
+    end
+    module_function :dump_methods
   end
 end
