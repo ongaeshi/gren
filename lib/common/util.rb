@@ -51,12 +51,41 @@ module Gren
       end
       
       while (true)
-        p c
+        puts c.name
         break if (c == Object)
-        puts "↓  " + c.public_instance_methods(false).sort.inspect
+        p_classtree_sub(c)
         c = c.superclass
       end
     end
     module_function :p_classtree
+
+    def p_classtree_sub(c)
+      array = c.public_instance_methods(false).sort
+      
+      if (array.size > 5)
+        print "｜  "
+      else
+        print "↓  "
+      end
+        
+      counter = 0
+      array.each_with_index do |v, index|
+        print v + ", "
+        counter += 1
+        if (counter >= 5)
+          counter = 0
+          puts
+
+          if (array.size - index > 5)
+            print "｜  "
+          else
+            print "↓  "
+          end
+        end
+      end
+      puts
+    end
+    module_function :p_classtree_sub
+
   end
 end
