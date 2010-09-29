@@ -45,6 +45,10 @@ module Gren
     end
     module_function :size_s
 
+    # アルファベットと演算子で表示する数を変える
+    ALPHABET_DISP_NUM = 5
+    OPERATOR_DISP_NUM = 10
+
     def p_classtree(c)
       unless c.is_a?(Class)
         c = c.class
@@ -60,28 +64,31 @@ module Gren
     module_function :p_classtree
 
     def p_classtree_sub(c)
-      array = c.public_instance_methods(false).sort
+      # メソッドの一覧を得る
+      hash = c.public_instance_methods(false).sort.group_by { |m| m =~ /^[a-z]/ }
+      array = hash.values.flatten
+      operator_start_index = hash[0].size
+      limit = ALPHABET_DISP_NUM
+
+      print (array.size > limit) ? "｜  " :  "↓  "
       
-      if (array.size > 5)
-        print "｜  "
-      else
-        print "↓  "
-      end
-        
       counter = 0
       array.each_with_index do |v, index|
-        print v + ", "
-        counter += 1
-        if (counter >= 5)
+        if (index == operator_start_index)
+          limit = OPERATOR_DISP_NUM
           counter = 0
           puts
-
-          if (array.size - index > 5)
-            print "｜  "
-          else
-            print "↓  "
-          end
+          print (array.size - index > limit) ? "｜  " : "↓  "
         end
+
+        if (counter >= limit)
+          counter = 0
+          puts
+          print (array.size - index > limit) ? "｜  " : "↓  "
+        end
+
+        print v + ", "
+        counter += 1
       end
       puts
     end
