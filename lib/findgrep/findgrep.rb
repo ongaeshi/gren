@@ -144,8 +144,18 @@ module FindGrep
       end
       
       # 更新日時の新しい順に表示
-      # 本当はGroonga::sortを使いたい所だが、上手くうごかなかったので配列に変換、Array::sort_byを使う
+      # 本当はGroonga::Table::sortを使いたい所だが、上手くうごかなかったので配列に変換、Array::sort_byを使う
+      #
+      # [前提条件]
+      #  1. tableの型はGroonga::Hash
+      #  2. レコードの中に timestampというtime型で作られたカラムがある
+      #  3. timestampをキーにソートしたい
+      #
+      # [本当はこうしたい]
+      # records = table.sort([{:key => "timestamp", :order => "descending"}])
+
       records = table.records.sort_by{|v| v.timestamp}.reverse
+      
 
       # データベースにヒット
       stdout.puts "Found   : #{records.size} records."
