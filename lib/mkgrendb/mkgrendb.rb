@@ -5,7 +5,7 @@ require 'pathname'
 require 'rubygems'
 require 'groonga'
 require File.join(File.dirname(__FILE__), '../common/grenfiletest')
-require File.join(File.dirname(__FILE__), '../common/display_util')
+require File.join(File.dirname(__FILE__), '../common/util')
 include Gren
 
 module Mkgrendb
@@ -46,7 +46,7 @@ module Mkgrendb
 
     def print_result
       puts
-      puts "input_yaml : #{@input_yaml} (#{DisplayUtil::time_s(time)})"
+      puts "input_yaml : #{@input_yaml} (#{Util::time_s(time)})"
       puts "output_db  : #{@output_db}*"
       puts "files      : #{@file_count}"
       puts "updates    : #{@update_count}"
