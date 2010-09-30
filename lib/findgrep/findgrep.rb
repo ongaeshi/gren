@@ -22,6 +22,7 @@ module FindGrep
                         :isSilent,
                         :debugMode,
                         :filePatterns,
+                        :suffixs,
                         :ignoreFiles,
                         :ignoreDirs,
                         :kcode,
@@ -36,6 +37,7 @@ module FindGrep
                                 false,
                                 false,
                                 false,
+                                [],
                                 [],
                                 [],
                                 [],
@@ -139,7 +141,11 @@ module FindGrep
           end
         end
 
-        # 検索方法
+        # 拡張子(OR)
+        se = suffix_expression(record) 
+        expression &= se if (se)
+        
+        # 検索式
         expression
       end
       
@@ -155,7 +161,6 @@ module FindGrep
       # records = table.sort([{:key => "timestamp", :order => "descending"}])
 
       records = table.records.sort_by{|v| v.timestamp}.reverse
-      
 
       # データベースにヒット
       stdout.puts "Found   : #{records.size} records."
@@ -167,6 +172,38 @@ module FindGrep
         end
       end
     end
+
+    def and_expression(key, list)
+      sub = nil
+      
+      list.each do |word|
+        e = key =~ word
+        if sub.nil?
+          sub = e
+        else
+          sub &= e
+        end
+      end
+
+      sub
+    end
+
+    def suffix_expression(record)
+      sub = nil
+      
+      @option.suffixs.each do |word|
+        e = record.suffix =~ word
+        if sub.nil?
+          sub = e
+        else
+          sub |= e
+        end
+      end
+
+      sub
+    end
+    private :suffix_expression
+      
 
     def searchFromDir(stdout, dir, depth)
       if (@option.depth != -1 && depth > @option.depth)

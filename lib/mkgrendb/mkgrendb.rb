@@ -63,9 +63,11 @@ module Mkgrendb
       documents = Groonga::Context.default["documents"]
       records = documents.select
       records.each do |record|
+        p record
         puts "path : #{record.path}"
+        puts "suffix : #{record.suffix}"
         puts "timestamp : #{record.timestamp.strftime('%Y/%m/%d %H:%M:%S')}"
-        puts "content :", record.content[0..64]
+        puts "content :", record.content ? record.content[0..64] : nil
         puts
       end
     end
@@ -82,6 +84,7 @@ module Mkgrendb
             table.string("path")
             table.text("content")
             table.time("timestamp")
+            table.text("suffix")
           end
 
           schema.create_table("terms",
@@ -91,6 +94,7 @@ module Mkgrendb
             table.index("documents.path", :with_position => true)
             table.index("documents.content", :with_position => true)
             table.index("documents.timestamp", :with_position => true)
+            table.index("documents.suffix", :with_position => true)
           end
         end
         puts "create     : #{filename} created."
@@ -132,6 +136,7 @@ module Mkgrendb
         :path => filename,
         :content => nil,
         :timestamp => File.mtime(filename),
+        :suffix => File::extname(filename),
       }
       
       # 検索するデータベース
