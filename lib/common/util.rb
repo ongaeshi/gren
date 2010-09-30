@@ -65,9 +65,9 @@ module Gren
 
     def p_classtree_sub(c)
       # メソッドの一覧を得る
-      hash = c.public_instance_methods(false).sort.group_by { |m| m =~ /^[a-z]/ }
-      array = hash.values.flatten
-      operator_start_index = hash[0].size
+      group = c.public_instance_methods(false).sort.partition { |m| m =~ /\w/ }
+      array = group.flatten
+      operator_start_index = group[0].size
       limit = ALPHABET_DISP_NUM
 
       print (array.size > limit) ? "｜  " :  "↓  "
