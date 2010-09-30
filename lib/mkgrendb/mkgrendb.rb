@@ -25,7 +25,12 @@ module Mkgrendb
       db_create(@output_db)
       db_open(@output_db)
       @src["directory"].each do |dir|
-        db_add_dir(File.expand_path(dir))
+        dir = File.expand_path(dir)
+        if (FileTest.directory? dir)
+          db_add_dir(dir)
+        else
+          db_add_file(STDOUT, dir)
+        end
       end
       @end_time = Time.now
       print_result
