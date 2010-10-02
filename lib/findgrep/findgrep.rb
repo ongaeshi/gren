@@ -319,7 +319,32 @@ module FindGrep
     private :searchFile
 
     def searchGroongaOnly(stdout, record)
-      stdout.puts "#{record.path}:1:#{record.content.split("\n")[0]}"
+      # キーワードを囲むタグ
+      open_tag = "<<"
+      close_tag = ">>"
+
+      # スニペットオブジェクトの作成
+      snippet = Groonga::Snippet.new(:width => 30,
+#                                     :default_open_tag => open_tag,
+#                                     :default_close_tag => close_tag,
+                                     :html_escape => true,
+                                     :normalize => true) # キーワードを正規化
+      # 検索キーワードを登録
+      @patterns.each do |word|
+        snippet.add_keyword(word)
+      end
+
+      # 本文からスニペットを生成
+      segments = snippet.execute(record.content)
+
+      # 整形
+      separator = "..."
+      snippet_text = segments.join(separator).tr("\n", "")
+      
+      # stdout.puts snippet_text
+
+      stdout.puts "#{record.path}:1:#{snippet_text}"
+      # stdout.puts "#{record.path}:1:#{record.content.split("\n")[0]}"
     end
     private :searchGroongaOnly
 
