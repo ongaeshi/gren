@@ -158,7 +158,6 @@ module FindGrep
       # 検索にヒットしたファイルを実際に検索
       records.each do |record|
         if FileTest.exist? record.path
-          p record.timestamp
           searchFile(stdout, record.path, record.path)
         end
       end
