@@ -17,6 +17,7 @@ module Grendb
       opt.on('-i', '--ignore', 'Ignore case.') {|v| option.ignoreCase = true}
       opt.on('-c', '--color', 'Color highlight.') {|v| option.colorHighlight = true}
       opt.on('--no-snip', 'There being a long line, it does not snip.') {|v| option.noSnip = true }
+      opt.on('-g', '--groonga-only', 'Search only groonga db.') {|v| option.groongaOnly = true }
 
       opt.parse!(arguments)
 

@@ -27,7 +27,8 @@ module FindGrep
                         :ignoreDirs,
                         :kcode,
                         :noSnip,
-                        :dbFile)
+                        :dbFile,
+                        :groongaOnly)
 
     DEFAULT_OPTION = Option.new([],
                                 [],
@@ -43,7 +44,8 @@ module FindGrep
                                 [],
                                 Platform.get_shell_kcode,
                                 false,
-                                nil)
+                                nil,
+                                false)
     
     def initialize(patterns, option)
       @patterns = patterns
@@ -158,7 +160,11 @@ module FindGrep
       # 検索にヒットしたファイルを実際に検索
       records.each do |record|
         if FileTest.exist? record.path
-          searchFile(stdout, record.path, record.path)
+          if (@option.groongaOnly)
+            searchGroongaOnly(stdout, record)
+          else
+            searchFile(stdout, record.path, record.path)
+          end
         end
       end
     end
@@ -311,6 +317,11 @@ module FindGrep
       }
     end
     private :searchFile
+
+    def searchGroongaOnly(stdout, record)
+      stdout.puts "#{record.path}:1:#{record.content.split("\n")[0]}"
+    end
+    private :searchGroongaOnly
 
     def file2data(file)
         data = file.read

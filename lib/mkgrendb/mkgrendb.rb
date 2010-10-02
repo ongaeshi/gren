@@ -72,18 +72,6 @@ module Mkgrendb
       end
     end
 
-    def report()
-      db_open(@output_db)
-
-      documents = Groonga::Context.default["documents"]
-      records = documents.records
-      puts "recrod num     : #{records.size}"
-      puts "DB size        : ########"
-      puts "content size   : ########"
-      puts "suffix : c(##), cpp(##), h(##), hpp(##), rb(##), java(##), txt(##) ...."
-      puts "encode : utf-8(##), sjis(##), euc-jp(##), ascii(##) ...."
-    end
-
     def db_create(filename)
       dbfile = Pathname(File.expand_path(filename))
       dbdir = dbfile.dirname
@@ -105,6 +93,7 @@ module Mkgrendb
                               :default_tokenizer => "TokenBigram") do |table|
             table.index("documents.path", :with_position => true)
             table.index("documents.content", :with_position => true)
+            table.index("documents.timestamp", :with_position => true)
             table.index("documents.suffix", :with_position => true)
           end
         end
