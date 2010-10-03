@@ -161,12 +161,10 @@ module FindGrep
 
       # 検索にヒットしたファイルを実際に検索
       records.each do |record|
-        if FileTest.exist? record.path
-          if (@option.groongaOnly)
-            searchGroongaOnly(stdout, record)
-          else
-            searchFile(stdout, record.path, record.path)
-          end
+        if (@option.groongaOnly)
+          searchGroongaOnly(stdout, record)
+        else
+          searchFile(stdout, record.path, record.path) if FileTest.exist?(record.path)
         end
       end
     end
@@ -288,70 +286,55 @@ module FindGrep
       @result.search_count += 1
       @result.search_size += FileTest.size(fpath)
 
-      # 検索本体
       @result.search_files << fpath_disp if (@option.debugMode)
 
-      open(fpath, "r") { |file|
-        match_file = false
-
-        file2data(file).each_with_index { |line, index|
-          result, match_datas = match?(line)
-
-          # p result
-
-          if ( result )
-            header = "#{fpath_disp}:#{index + 1}:"
-            line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
-
-            unless (@option.colorHighlight)
-              stdout.puts header + line
-            else
-              stdout.puts HighLine::BLUE + header + HighLine::CLEAR + GrenSnip::coloring(line, match_datas)
-            end
-
-            unless match_file
-              @result.match_file_count += 1
-              @result.match_files << fpath_disp if (@option.debugMode)
-              match_file = true
-              break if (@option.isMatchFile)
-            end
-
-            @result.match_count += 1
-          end
-        }
-      }
+      open(fpath, "r") do |file|
+        searchData(stdout, file2data(file), fpath_disp)
+      end
     end
     private :searchFile
 
     def searchGroongaOnly(stdout, record)
-      # キーワードを囲むタグ
-      open_tag = "<<"
-      close_tag = ">>"
-
-      # スニペットオブジェクトの作成
-      snippet = Groonga::Snippet.new(:width => 30,
-#                                     :default_open_tag => open_tag,
-#                                     :default_close_tag => close_tag,
-                                     :html_escape => true,
-                                     :normalize => true) # キーワードを正規化
-      # 検索キーワードを登録
-      @patterns.each do |word|
-        snippet.add_keyword(word)
-      end
-
-      # 本文からスニペットを生成
-      segments = snippet.execute(record.content)
-
-      # 整形
-      separator = "..."
-      snippet_text = segments.join(separator).tr("\n", "")
+      @result.count += 1
+      @result.size += 0 # @todo filesize
       
-      # stdout.puts snippet_text
+      @result.search_count += 1
+      @result.search_size += 0 # @todo filesize
+      
+      @result.search_files << record.path if (@option.debugMode)
 
-      stdout.puts "#{record.path}:1:#{snippet_text}"
-      # stdout.puts "#{record.path}:1:#{record.content.split("\n")[0]}"
+      searchData(stdout, record.content, record.path)
     end
     private :searchGroongaOnly
+
+    def searchData(stdout, data, path)
+      match_file = false
+
+      data.each_with_index { |line, index|
+        result, match_datas = match?(line)
+
+        if ( result )
+          header = "#{path}:#{index + 1}:"
+          line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
+
+          unless (@option.colorHighlight)
+            stdout.puts header + line
+          else
+            stdout.puts HighLine::BLUE + header + HighLine::CLEAR + GrenSnip::coloring(line, match_datas)
+          end
+
+          unless match_file
+            @result.match_file_count += 1
+            @result.match_files << path if (@option.debugMode)
+            match_file = true
+            break if (@option.isMatchFile)
+          end
+
+          @result.match_count += 1
+        end
+      }
+    end
+    private :searchData
 
     def file2data(file)
         data = file.read
