@@ -165,10 +165,6 @@ module FindGrep
           if (@option.groongaOnly)
             searchGroongaOnly(stdout, record)
           else
-            if (@option.isMatchFile) 
-              @patterns = [@patterns[0]]
-              @patternRegexps = strs2regs(@patterns, @option.ignoreCase)
-            end
             searchFile(stdout, record.path, record.path)
           end
         end
@@ -301,6 +297,8 @@ module FindGrep
         file2data(file).each_with_index { |line, index|
           result, match_datas = match?(line)
 
+          # p result
+
           if ( result )
             header = "#{fpath_disp}:#{index + 1}:"
             line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
@@ -380,13 +378,25 @@ module FindGrep
 
       or_matchs = []
       @orRegexps.each {|v| or_matchs << v.match(line)}
-
-      result = match_datas.all? && !sub_matchs.any? && (or_matchs.empty? || or_matchs.any?)
+      
+      unless (@option.isMatchFile)
+        result = match_datas.all? && !sub_matchs.any? && (or_matchs.empty? || or_matchs.any?)
+      else
+        result = first_condition(match_datas, sub_matchs, or_matchs)
+      end
       result_match = match_datas + or_matchs
       result_match.delete(nil)
 
       return result, result_match
     end
     private :match?
+
+    def first_condition(match_datas, sub_matchs, or_matchs)
+      unless match_datas.empty?
+        match_datas[0]
+      else
+        or_matchs[0]
+      end
+    end
   end
 end
