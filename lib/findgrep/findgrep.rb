@@ -295,11 +295,13 @@ module FindGrep
     private :searchFile
 
     def searchGroongaOnly(stdout, record)
+      file_size = record.content.size
+      
       @result.count += 1
-      @result.size += 0 # @todo filesize
+      @result.size += file_size
       
       @result.search_count += 1
-      @result.search_size += 0 # @todo filesize
+      @result.search_size += file_size
       
       @result.search_files << record.path if (@option.debugMode)
 
