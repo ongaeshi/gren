@@ -28,7 +28,8 @@ module FindGrep
                         :kcode,
                         :noSnip,
                         :dbFile,
-                        :groongaOnly)
+                        :groongaOnly,
+                        :isMatchFile)
 
     DEFAULT_OPTION = Option.new([],
                                 [],
@@ -45,6 +46,7 @@ module FindGrep
                                 Platform.get_shell_kcode,
                                 false,
                                 nil,
+                                false,
                                 false)
     
     def initialize(patterns, option)
@@ -163,6 +165,10 @@ module FindGrep
           if (@option.groongaOnly)
             searchGroongaOnly(stdout, record)
           else
+            if (@option.isMatchFile) 
+              @patterns = [@patterns[0]]
+              @patternRegexps = strs2regs(@patterns, @option.ignoreCase)
+            end
             searchFile(stdout, record.path, record.path)
           end
         end
@@ -309,6 +315,7 @@ module FindGrep
               @result.match_file_count += 1
               @result.match_files << fpath_disp if (@option.debugMode)
               match_file = true
+              break if (@option.isMatchFile)
             end
 
             @result.match_count += 1

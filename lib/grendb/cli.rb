@@ -8,6 +8,9 @@ module Grendb
       # オプション
       option = FindGrep::FindGrep::DEFAULT_OPTION
       option.dbFile = ENV['GRENDB_DEFAULT_DB']
+      
+      # デフォルトのマッチモードは'File'
+      option.isMatchFile = true
 
       # オプション解析
       opt = OptionParser.new("#{File.basename($0)} [option] keyword1 [keyword2 ...]")
@@ -18,6 +21,8 @@ module Grendb
       opt.on('-c', '--color', 'Color highlight.') {|v| option.colorHighlight = true}
       opt.on('--no-snip', 'There being a long line, it does not snip.') {|v| option.noSnip = true }
       opt.on('-g', '--groonga-only', 'Search only groonga db.') {|v| option.groongaOnly = true }
+      opt.on('--mf', '--match-file', 'Match file. (Default)') {|v| option.isMatchFile = true }
+      opt.on('-l', '--ml', '--match-line', 'Match line, same mode as "gren".') {|v| option.isMatchFile = false }
 
       opt.parse!(arguments)
 
