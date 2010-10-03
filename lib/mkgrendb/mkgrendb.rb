@@ -93,7 +93,6 @@ module Mkgrendb
                               :default_tokenizer => "TokenBigram") do |table|
             table.index("documents.path", :with_position => true)
             table.index("documents.content", :with_position => true)
-            table.index("documents.timestamp", :with_position => true)
             table.index("documents.suffix", :with_position => true)
           end
         end
