@@ -9,12 +9,14 @@ module Mkgrendb
       isDump = false
       isFull = false
       isDelete = false
+      isReport = false
 
       opt = OptionParser.new "#{File.basename($0)} INPUT_YAML1 [INPUT_YAML2 ...]"
       opt.on('--ddb', "--default-db", "Create or Update default DB. (Plase set ENV['GRENDB_DEFAULT_DB'])") {|v| input_yamls << ENV['GRENDB_DEFAULT_DB']}
       opt.on('--full', "Full update DB. (Delete and create)") {|v| isFull = true }
       opt.on('--delete', "Delete DB. (Not delete yaml)") {|v| isDelete = true }
       opt.on('--dump', "Dump DB.") {|v| isDump = true }
+      opt.on('--report', "Database Report.") {|v| isReport = true }
       opt.parse!(arguments)
 
       input_yamls.concat arguments
@@ -31,6 +33,8 @@ module Mkgrendb
             stdout.puts
           elsif (isDump)
             obj.dump
+          elsif (isReport)
+            obj.report
           else
             obj.update
             stdout.puts

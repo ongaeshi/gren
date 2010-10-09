@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 module Gren
-  module DisplayUtil
+  module Util
     def time_s(time)
       t = time.truncate
       h = t / 3600
@@ -45,18 +45,54 @@ module Gren
     end
     module_function :size_s
 
-    def dump_methods(c)
+    # アルファベットと演算子で表示する数を変える
+    ALPHABET_DISP_NUM = 5
+    OPERATOR_DISP_NUM = 10
+
+    def p_classtree(c)
       unless c.is_a?(Class)
         c = c.class
       end
       
       while (true)
-        p c
+        puts c.name
         break if (c == Object)
-        puts "↓  " + c.public_instance_methods(false).inspect
+        p_classtree_sub(c)
         c = c.superclass
       end
     end
-    module_function :dump_methods
+    module_function :p_classtree
+
+    def p_classtree_sub(c)
+      # メソッドの一覧を得る
+      group = c.public_instance_methods(false).sort.partition { |m| m =~ /\w/ }
+      array = group.flatten
+      operator_start_index = group[0].size
+      limit = ALPHABET_DISP_NUM
+
+      print (array.size > limit) ? "｜  " :  "↓  "
+      
+      counter = 0
+      array.each_with_index do |v, index|
+        if (index == operator_start_index)
+          limit = OPERATOR_DISP_NUM
+          counter = 0
+          puts
+          print (array.size - index > limit) ? "｜  " : "↓  "
+        end
+
+        if (counter >= limit)
+          counter = 0
+          puts
+          print (array.size - index > limit) ? "｜  " : "↓  "
+        end
+
+        print v + ", "
+        counter += 1
+      end
+      puts
+    end
+    module_function :p_classtree_sub
+
   end
 end

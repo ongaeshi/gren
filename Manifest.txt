@@ -12,6 +12,7 @@ lib/common/grenfiletest.rb
 lib/common/grensnip.rb
 lib/common/platform.rb
 lib/common/string_snip.rb
+lib/common/util.rb
 lib/findgrep/findgrep.rb
 lib/findgrep/result.rb
 lib/gren.rb

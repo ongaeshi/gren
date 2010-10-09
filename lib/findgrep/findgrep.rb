@@ -8,6 +8,8 @@ require File.join(File.dirname(__FILE__), '../common/platform')
 require File.join(File.dirname(__FILE__), '../common/grenfiletest')
 require File.join(File.dirname(__FILE__), '../common/grensnip')
 require 'groonga'
+require File.join(File.dirname(__FILE__), '../common/util')
+include Gren
 
 module FindGrep
   class FindGrep
@@ -20,11 +22,14 @@ module FindGrep
                         :isSilent,
                         :debugMode,
                         :filePatterns,
+                        :suffixs,
                         :ignoreFiles,
                         :ignoreDirs,
                         :kcode,
                         :noSnip,
-                        :dbFile)
+                        :dbFile,
+                        :groongaOnly,
+                        :isMatchFile)
 
     DEFAULT_OPTION = Option.new([],
                                 [],
@@ -37,9 +42,12 @@ module FindGrep
                                 [],
                                 [],
                                 [],
+                                [],
                                 Platform.get_shell_kcode,
                                 false,
-                                nil)
+                                nil,
+                                false,
+                                false)
     
     def initialize(patterns, option)
       @patterns = patterns
@@ -112,9 +120,9 @@ module FindGrep
       
       # ドキュメントを検索
       documents = Groonga::Context.default["documents"]
-      
+
       # 全てのパターンを検索
-      records = documents.select do |record|
+      table = documents.select do |record|
         expression = nil
 
         # キーワード
@@ -137,20 +145,61 @@ module FindGrep
           end
         end
 
-        # 検索方法
+        # 拡張子(OR)
+        se = suffix_expression(record) 
+        expression &= se if (se)
+        
+        # 検索式
         expression
       end
       
+      # タイムスタンプでソート
+      records = table.sort([{:key => "timestamp", :order => "descending"}])
+
       # データベースにヒット
       stdout.puts "Found   : #{records.size} records."
 
       # 検索にヒットしたファイルを実際に検索
       records.each do |record|
-        if FileTest.exist? record.path
-          searchFile(stdout, record.path, record.path)
+        if (@option.groongaOnly)
+          searchGroongaOnly(stdout, record)
+        else
+          searchFile(stdout, record.path, record.path) if FileTest.exist?(record.path)
         end
       end
     end
+
+    def and_expression(key, list)
+      sub = nil
+      
+      list.each do |word|
+        e = key =~ word
+        if sub.nil?
+          sub = e
+        else
+          sub &= e
+        end
+      end
+
+      sub
+    end
+
+    def suffix_expression(record)
+      sub = nil
+      
+      @option.suffixs.each do |word|
+        e = record.suffix =~ word
+        if sub.nil?
+          sub = e
+        else
+          sub |= e
+        end
+      end
+
+      sub
+    end
+    private :suffix_expression
+      
 
     def searchFromDir(stdout, dir, depth)
       if (@option.depth != -1 && depth > @option.depth)
@@ -237,37 +286,57 @@ module FindGrep
       @result.search_count += 1
       @result.search_size += FileTest.size(fpath)
 
-      # 検索本体
       @result.search_files << fpath_disp if (@option.debugMode)
 
-      open(fpath, "r") { |file|
-        match_file = false
-
-        file2data(file).each_with_index { |line, index|
-          result, match_datas = match?(line)
-
-          if ( result )
-            header = "#{fpath_disp}:#{index + 1}:"
-            line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
-
-            unless (@option.colorHighlight)
-              stdout.puts header + line
-            else
-              stdout.puts HighLine::BLUE + header + HighLine::CLEAR + GrenSnip::coloring(line, match_datas)
-            end
-
-            unless match_file
-              @result.match_file_count += 1
-              @result.match_files << fpath_disp if (@option.debugMode)
-              match_file = true
-            end
-
-            @result.match_count += 1
-          end
-        }
-      }
+      open(fpath, "r") do |file|
+        searchData(stdout, file2data(file), fpath_disp)
+      end
     end
     private :searchFile
+
+    def searchGroongaOnly(stdout, record)
+      file_size = record.content.size
+      
+      @result.count += 1
+      @result.size += file_size
+      
+      @result.search_count += 1
+      @result.search_size += file_size
+      
+      @result.search_files << record.path if (@option.debugMode)
+
+      searchData(stdout, record.content, record.path)
+    end
+    private :searchGroongaOnly
+
+    def searchData(stdout, data, path)
+      match_file = false
+
+      data.each_with_index { |line, index|
+        result, match_datas = match?(line)
+
+        if ( result )
+          header = "#{path}:#{index + 1}:"
+          line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
+
+          unless (@option.colorHighlight)
+            stdout.puts header + line
+          else
+            stdout.puts HighLine::BLUE + header + HighLine::CLEAR + GrenSnip::coloring(line, match_datas)
+          end
+
+          unless match_file
+            @result.match_file_count += 1
+            @result.match_files << path if (@option.debugMode)
+            match_file = true
+            break if (@option.isMatchFile)
+          end
+
+          @result.match_count += 1
+        end
+      }
+    end
+    private :searchData
 
     def file2data(file)
         data = file.read
@@ -294,13 +363,25 @@ module FindGrep
 
       or_matchs = []
       @orRegexps.each {|v| or_matchs << v.match(line)}
-
-      result = match_datas.all? && !sub_matchs.any? && (or_matchs.empty? || or_matchs.any?)
+      
+      unless (@option.isMatchFile)
+        result = match_datas.all? && !sub_matchs.any? && (or_matchs.empty? || or_matchs.any?)
+      else
+        result = first_condition(match_datas, sub_matchs, or_matchs)
+      end
       result_match = match_datas + or_matchs
       result_match.delete(nil)
 
       return result, result_match
     end
     private :match?
+
+    def first_condition(match_datas, sub_matchs, or_matchs)
+      unless match_datas.empty?
+        match_datas[0]
+      else
+        or_matchs[0]
+      end
+    end
   end
 end

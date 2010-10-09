@@ -5,7 +5,7 @@ require 'pathname'
 require 'rubygems'
 require 'groonga'
 require File.join(File.dirname(__FILE__), '../common/grenfiletest')
-require File.join(File.dirname(__FILE__), '../common/display_util')
+require File.join(File.dirname(__FILE__), '../common/util')
 include Gren
 
 module Mkgrendb
@@ -25,7 +25,12 @@ module Mkgrendb
       db_create(@output_db)
       db_open(@output_db)
       @src["directory"].each do |dir|
-        db_add_dir(File.expand_path(dir))
+        dir = File.expand_path(dir)
+        if (FileTest.directory? dir)
+          db_add_dir(dir)
+        else
+          db_add_file(STDOUT, dir)
+        end
       end
       @end_time = Time.now
       print_result
@@ -46,7 +51,7 @@ module Mkgrendb
 
     def print_result
       puts
-      puts "input_yaml : #{@input_yaml} (#{DisplayUtil::time_s(time)})"
+      puts "input_yaml : #{@input_yaml} (#{Util::time_s(time)})"
       puts "output_db  : #{@output_db}*"
       puts "files      : #{@file_count}"
       puts "updates    : #{@update_count}"
@@ -58,9 +63,11 @@ module Mkgrendb
       documents = Groonga::Context.default["documents"]
       records = documents.select
       records.each do |record|
+        p record
         puts "path : #{record.path}"
+        puts "suffix : #{record.suffix}"
         puts "timestamp : #{record.timestamp.strftime('%Y/%m/%d %H:%M:%S')}"
-        puts "content :", record.content[0..64]
+        puts "content :", record.content ? record.content[0..64] : nil
         puts
       end
     end
@@ -77,6 +84,7 @@ module Mkgrendb
             table.string("path")
             table.text("content")
             table.time("timestamp")
+            table.text("suffix")
           end
 
           schema.create_table("terms",
@@ -85,7 +93,7 @@ module Mkgrendb
                               :default_tokenizer => "TokenBigram") do |table|
             table.index("documents.path", :with_position => true)
             table.index("documents.content", :with_position => true)
-            table.index("documents.timestamp", :with_position => true)
+            table.index("documents.suffix", :with_position => true)
           end
         end
         puts "create     : #{filename} created."
@@ -127,6 +135,7 @@ module Mkgrendb
         :path => filename,
         :content => nil,
         :timestamp => File.mtime(filename),
+        :suffix => File::extname(filename),
       }
       
       # 検索するデータベース
