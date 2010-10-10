@@ -17,6 +17,7 @@ module Mkgrendb
       puts "input_yaml : #{@input_yaml} found."
       @src = YAML.load(open(@input_yaml).read())
       @file_count = 0
+      @add_count = 0
       @update_count = 0
       @start_time = Time.now
     end
@@ -54,7 +55,8 @@ module Mkgrendb
       puts "input_yaml : #{@input_yaml} (#{Util::time_s(time)})"
       puts "output_db  : #{@output_db}*"
       puts "files      : #{@file_count}"
-      puts "updates    : #{@update_count}"
+      puts "add        : #{@add_count}"
+      puts "update     : #{@update_count}"
     end
 
     def dump()
@@ -164,6 +166,7 @@ module Mkgrendb
         values.each do |key, value|
           if (key == :path)
             if (isNewFile)
+              @add_count += 1
               puts "add_file   : #{value}"
             else
               @update_count += 1
