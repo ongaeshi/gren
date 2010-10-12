@@ -5,11 +5,12 @@
 # @author ongaeshi
 # @date   2010/10/13
 
+require File.join(File.dirname(__FILE__), 'groonga_wrapper')
+
 class Searcher
   include Rack::Utils
 
   def initialize
-    @documents = Groonga::Context.default["documents"]
   end
   
   def call(env)
@@ -41,6 +42,7 @@ class Searcher
   def search(request, response)
     render_header(request, response)
     render_search_box(request, response)
+    render_search_result(request, response)
 
     render_footer(request, response)
     response.to_a
@@ -80,6 +82,48 @@ EOH
 EOF
   end
 
+  def render_search_result(request, response)
+    _query = query(request)
+    _page = page(request)
+    limit = 20
+
+    if _query.empty?
+      records = []
+      response.write(<<-EOS)
+  <div class='search-summary'>
+    <p>Rubyでgroonga使って全文検索</p>
+  </div>
+EOS
+    else
+      records, elapsed = GroongaWrapper.instance.search(_query, _page, limit)
+      
+      response.write(<<-EOS)
+  <div class='search-summary'>
+    <p>
+      <span class="keyword">#{escape_html(query(request))}</span>の検索結果:
+      <span class="total-entries">#{records.size}</span>件中
+      <span class="display-range">
+        #{records.size.zero? ? 0 : (_page * limit) + 1}
+        -
+        #{(_page * limit) + records.size}
+      </span>
+      件（#{elapsed}秒）
+    </p>
+  </div>
+EOS
+    end
+    
+    response.write("  <div class='records'>\n")
+
+    records.each do |record|
+#      render_record(request, response, record)
+    end
+
+    response.write("  </div>\n")
+    
+#    render_pagination(request, response, _page, limit, records.size)
+  end
+
   def render_footer(request, response)
     response.write(<<-EOF)
 </div>
@@ -95,6 +139,10 @@ EOF
     unescape(request.path_info.gsub(/\A\/|\/\z/, ''))
   end
 
+  def page(request)
+    (request['page'] || 0).to_i
+  end
+  
   def path(request, component='')
     escape_html("#{request.script_name}/#{component}")
   end
