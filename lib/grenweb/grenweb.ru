@@ -18,9 +18,6 @@ use Rack::Runtime
 use Rack::Static, :urls => ["/css", "/images"], :root => "public"
 use Rack::ContentLength
 
-# @todo 引数や環境変数で渡せるようにする
-Groonga::Database.new(File.expand_path("~/grendb/grendb.db"))
-
 map '/' do
   run Searcher.new
 end

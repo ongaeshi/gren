@@ -95,15 +95,15 @@ EOF
   </div>
 EOS
     else
-      records, elapsed = GroongaWrapper.instance.search(_query, _page, limit)
+      records, total_records, elapsed = GroongaWrapper.instance.search(_query, _page, limit)
       
       response.write(<<-EOS)
   <div class='search-summary'>
     <p>
       <span class="keyword">#{escape_html(query(request))}</span>の検索結果:
-      <span class="total-entries">#{records.size}</span>件中
+      <span class="total-entries">#{total_records}</span>件中
       <span class="display-range">
-        #{records.size.zero? ? 0 : (_page * limit) + 1}
+        #{total_records.zero? ? 0 : (_page * limit) + 1}
         -
         #{(_page * limit) + records.size}
       </span>
@@ -121,7 +121,7 @@ EOS
 
     response.write("  </div>\n")
     
-#    render_pagination(request, response, _page, limit, records.size)
+#    render_pagination(request, response, _page, limit, total_records)
   end
 
   def render_footer(request, response)

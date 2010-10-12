@@ -5,25 +5,22 @@
 # @author ongaeshi
 # @date   2010/10/13
 
+require File.join(File.dirname(__FILE__), 'groonga_wrapper')
+
 class Viewer
   include Rack::Utils
 
   def initialize
-    @documents = Groonga::Context.default["documents"]
   end
   
   def call(env)
     request = Rack::Request.new(env)
     response = Rack::Response.new
     response["Content-Type"] = "text/html; charset=UTF-8"
-    qry = query(request)
+    query = req2query(request)
+    record = GroongaWrapper.instance.searchPath(query)
 
-    records = @documents.select do |record|
-      record.path == qry
-    end
-
-    records.each do |record|
-      response.write(<<-EOF)
+    response.write(<<-EOF)
 <ol>
   <li>ファイルパス: #{record.path}
   <li>更新時刻: #{record.timestamp}
@@ -33,14 +30,13 @@ class Viewer
 #{record.content}
 </pre>
 EOF
-    end
     
     response.to_a
   end
 
   private
 
-  def query(request)
+  def req2query(request)
     unescape(request.path_info.gsub(/\/\z/, ''))
   end
 end
