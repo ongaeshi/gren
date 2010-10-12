@@ -15,12 +15,28 @@ class Searcher
   def call(env)
     request = Rack::Request.new(env)
     response = Rack::Response.new
+
     response["Content-Type"] = "text/html; charset=UTF-8"
 
-    search(request, response)
+    if request.post? or request['query']
+      post_request(request, response)
+    else
+      search(request, response)
+    end
   end
 
   private
+
+  def post_request(request, response)
+    query = request['query'] || ''
+    if query.empty?
+      request.path_info = "/"
+    else
+      request.path_info = "/#{escape(query)}/"
+    end
+    response.redirect(request.url.split(/\?/, 2)[0])
+    response.to_a
+  end
 
   def search(request, response)
     render_header(request, response)
