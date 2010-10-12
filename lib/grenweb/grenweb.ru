@@ -9,8 +9,8 @@ require 'rubygems'
 require 'rack'
 require 'groonga'
 
-require 'rack/lobster'
-# require File.join(File.dirname(__FILE__), 'searcher')
+# require 'rack/lobster'
+require File.join(File.dirname(__FILE__), 'searcher')
 require File.join(File.dirname(__FILE__), 'viewer')
 
 use Rack::CommonLogger          
@@ -22,7 +22,7 @@ use Rack::ContentLength
 Groonga::Database.new(File.expand_path("~/grendb/grendb.db"))
 
 map '/' do
-  run Rack::Lobster.new
+  run Searcher.new
 end
 
 map '/::view' do
