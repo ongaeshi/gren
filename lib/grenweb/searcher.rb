@@ -75,7 +75,7 @@ EOH
     <a href="#{path(request, '')}">
       <img src="#{path(request, 'images/mini-gren.png')}" alt="gren"/>
     </a>
-    <input name="query" type="text" value="#{escape_html(query(request))}" />
+    <input name="query" type="text" value="#{escape_html(req2query(request))}" />
     <input type="submit" value="検索" />
   </p>
 </form>
@@ -83,11 +83,11 @@ EOF
   end
 
   def render_search_result(request, response)
-    _query = query(request)
-    _page = page(request)
+    query = req2query(request)
+    page = req2page(request)
     limit = 20
 
-    if _query.empty?
+    if query.empty?
       records = []
       response.write(<<-EOS)
   <div class='search-summary'>
@@ -95,17 +95,17 @@ EOF
   </div>
 EOS
     else
-      records, total_records, elapsed = GroongaWrapper.instance.search(_query, _page, limit)
+      records, total_records, elapsed = GroongaWrapper.instance.search(query, page, limit)
       
       response.write(<<-EOS)
   <div class='search-summary'>
     <p>
-      <span class="keyword">#{escape_html(query(request))}</span>の検索結果:
+      <span class="keyword">#{escape_html(req2query(request))}</span>の検索結果:
       <span class="total-entries">#{total_records}</span>件中
       <span class="display-range">
-        #{total_records.zero? ? 0 : (_page * limit) + 1}
+        #{total_records.zero? ? 0 : (page * limit) + 1}
         -
-        #{(_page * limit) + records.size}
+        #{(page * limit) + records.size}
       </span>
       件（#{elapsed}秒）
     </p>
@@ -116,12 +116,12 @@ EOS
     response.write("  <div class='records'>\n")
 
     records.each do |record|
-#      render_record(request, response, record)
+      render_record(request, response, record)
     end
 
     response.write("  </div>\n")
     
-#    render_pagination(request, response, _page, limit, total_records)
+#    render_pagination(request, response, page, limit, total_records)
   end
 
   def render_footer(request, response)
@@ -135,11 +135,63 @@ EOS
 EOF
   end
   
-  def query(request)
+  def render_record(request, response, record)
+    response.write("    <div class='record'>\n")
+
+    href = "../::view" + escape_html(record.path)
+    title = escape_html(record.path)
+    timestamp = escape_html(record.timestamp.iso8601)
+    score = record.score
+    response.write("      <h2><a href='#{href}'>#{title}</a>(#{score})</h2>\n")
+    render_snippet(request, response, record)
+
+    response.write(<<-EOM)                    
+      <p class="metadata">
+        <span class="url">#{unescape(href)}</span>
+        -
+        <span class="timestamp">#{timestamp}</span>
+      </p>
+EOM
+    response.write("    </div>\n")
+  end
+
+  def render_snippet(request, response, record)
+    keywords = req2query(request).split("+")
+    
+    response.write(<<-EOS)
+  <span class="keyword">
+    <pre class="snippet">
+#{searchData(record.content, keywords)}
+    </pre>
+  </span>
+EOS
+  end
+  
+  def searchData(data, keywords)
+    str = ""
+
+    data.each_with_index { |line, index|
+      if (match?(keywords, line))
+        header = "#{index + 1}:"
+        str += header + line
+      end
+    }
+
+    str
+  end
+
+  def match?(keywords, line)
+    keywords.each do |keyword|
+      return true if (line =~ /#{keyword}/)
+    end
+    false
+  end
+
+  def req2query(request)
     unescape(request.path_info.gsub(/\A\/|\/\z/, ''))
   end
 
-  def page(request)
+  def req2page(request)
     (request['page'] || 0).to_i
   end
   
