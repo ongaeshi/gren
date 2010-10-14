@@ -12,31 +12,12 @@ class GroongaWrapper
   include Singleton
 
   def initialize
-    # @todo 引数や環境変数で渡せるようにする
-    # Groonga::Database.new(File.expand_path("~/grendb/grendb.db"))
   end
   
-  def search(query, page, limit = 20)
-    before = Time.now
-    
-    records = documents.select do |record|
-      record["content"].match(query)
-    end
-
-    total_records = records.size
-    
-    records = records.sort([["_score", "descending"],
-                            ["timestamp", "descending"]],
-                           :offset => page * limit,
-                           :limit => limit)
-
-    elapsed = Time.now - before
-
-    return records, total_records, elapsed
-  end
-
   def searchAndPrint(query, io)
     option = FindGrep::FindGrep::DEFAULT_OPTION
+    
+    # @todo 引数や環境変数で渡せるようにする
     option.dbFile = ENV['GRENDB_DEFAULT_DB']
     
     # デフォルトのマッチモードは'File'
@@ -44,6 +25,12 @@ class GroongaWrapper
 
     # ファイルは探索しない
     option.groongaOnly = true
+
+    # HTMLで出力
+    option.dispHtml = true
+    
+    # 省略しない
+    option.noSnip = true
     
     # 探索
     findGrep = FindGrep::FindGrep.new(query, option)
@@ -58,12 +45,6 @@ class GroongaWrapper
     records.each do |record|
       return record
     end
-  end
-
-  private 
-
-  def documents
-    Groonga::Context.default["documents"]
   end
 end
 

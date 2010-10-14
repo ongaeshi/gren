@@ -10,6 +10,7 @@ require File.join(File.dirname(__FILE__), '../common/grensnip')
 require 'groonga'
 require File.join(File.dirname(__FILE__), '../common/util')
 include Gren
+require 'cgi'
 
 module FindGrep
   class FindGrep
@@ -29,8 +30,9 @@ module FindGrep
                         :noSnip,
                         :dbFile,
                         :groongaOnly,
-                        :isMatchFile)
-
+                        :isMatchFile,
+                        :dispHtml)
+    
     DEFAULT_OPTION = Option.new([],
                                 [],
                                 ".",
@@ -46,6 +48,7 @@ module FindGrep
                                 Platform.get_shell_kcode,
                                 false,
                                 nil,
+                                false,
                                 false,
                                 false)
     
@@ -82,7 +85,7 @@ module FindGrep
 
       @result.time_stop
       
-      unless (@option.isSilent)
+      if (!@option.isSilent && !@option.dispHtml)
         if (@option.debugMode)
           stdout.puts
           stdout.puts "--- search --------"
@@ -158,7 +161,7 @@ module FindGrep
                             {:key => "timestamp", :order => "descending"}])
 
       # データベースにヒット
-      stdout.puts "Found   : #{records.size} records."
+      stdout.puts "Found   : #{records.size} records." unless (@option.dispHtml)
 
       # 検索にヒットしたファイルを実際に検索
       records.each do |record|
@@ -317,13 +320,25 @@ module FindGrep
         result, match_datas = match?(line)
 
         if ( result )
-          header = "#{path}:#{index + 1}:"
-          line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
+          unless (@option.dispHtml)
+            header = "#{path}:#{index + 1}:"
+            line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
 
-          unless (@option.colorHighlight)
-            stdout.puts header + line
+            unless (@option.colorHighlight)
+              stdout.puts header + line
+            else
+              stdout.puts HighLine::BLUE + header + HighLine::CLEAR + GrenSnip::coloring(line, match_datas)
+            end
           else
-            stdout.puts HighLine::BLUE + header + HighLine::CLEAR + GrenSnip::coloring(line, match_datas)
+            line_no = index + 1
+            line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
+            
+            stdout.puts <<EOF
+<h2>#{path}</h2>
+<pre>
+#{line_no} : #{CGI.escapeHTML(line)}
+</pre>
+EOF
           end
 
           unless match_file

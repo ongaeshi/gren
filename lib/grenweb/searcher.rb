@@ -98,39 +98,7 @@ EOS
     else
       io = StringIO.new
       GroongaWrapper.instance.searchAndPrint(query, io)
-      response.write(<<-EOS)
-<pre>
-#{io.string}
-</pre>
-EOS
-      
-#       records, total_records, elapsed = GroongaWrapper.instance.search(query, page, limit)
-      
-#       response.write(<<-EOS)
-#   <div class='search-summary'>
-#     <p>
-#       <span class="keyword">#{escape_html(req2query(request))}</span>の検索結果:
-#       <span class="total-entries">#{total_records}</span>件中
-#       <span class="display-range">
-#         #{total_records.zero? ? 0 : (page * limit) + 1}
-#         -
-#         #{(page * limit) + records.size}
-#       </span>
-#       件（#{elapsed}秒）
-#     </p>
-#   </div>
-# EOS
-#     end
-    
-#     response.write("  <div class='records'>\n")
-
-#     records.each do |record|
-#       render_record(request, response, record)
-#     end
-
-#     response.write("  </div>\n")
-    
-#    render_pagination(request, response, page, limit, total_records)
+      response.write(io.string)
     end
   end
 
@@ -145,58 +113,6 @@ EOS
 EOF
   end
   
-  def render_record(request, response, record)
-    response.write("    <div class='record'>\n")
-
-    href = "../::view" + escape_html(record.path)
-    title = escape_html(record.path)
-    timestamp = escape_html(record.timestamp.iso8601)
-    score = record.score
-    response.write("      <h2><a href='#{href}'>#{title}</a>(#{score})</h2>\n")
-    render_snippet(request, response, record)
-
-    response.write(<<-EOM)                    
-      <p class="metadata">
-        <span class="url">#{unescape(href)}</span>
-        -
-        <span class="timestamp">#{timestamp}</span>
-      </p>
-EOM
-    response.write("    </div>\n")
-  end
-
-  def render_snippet(request, response, record)
-    keywords = req2query(request).split("+")
-    
-    response.write(<<-EOS)
-  <span class="keyword">
-    <pre class="snippet">
-#{searchData(record.content, keywords)}
-    </pre>
-  </span>
-EOS
-  end
-  
-  def searchData(data, keywords)
-    str = ""
-
-    data.each_with_index { |line, index|
-      if (match?(keywords, line))
-        header = "#{index + 1}:"
-        str += header + line
-      end
-    }
-
-    str
-  end
-
-  def match?(keywords, line)
-    keywords.each do |keyword|
-      return true if (line =~ /#{keyword}/)
-    end
-    false
-  end
-
   def req2query(request)
     unescape(request.path_info.gsub(/\A\/|\/\z/, ''))
   end
