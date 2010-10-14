@@ -6,6 +6,7 @@
 # @date   2010/10/13
 
 require File.join(File.dirname(__FILE__), 'groonga_wrapper')
+require 'stringio'
 
 class Searcher
   include Rack::Utils
@@ -95,33 +96,42 @@ EOF
   </div>
 EOS
     else
-      records, total_records, elapsed = GroongaWrapper.instance.search(query, page, limit)
-      
+      io = StringIO.new
+      GroongaWrapper.instance.searchAndPrint(query, io)
       response.write(<<-EOS)
-  <div class='search-summary'>
-    <p>
-      <span class="keyword">#{escape_html(req2query(request))}</span>の検索結果:
-      <span class="total-entries">#{total_records}</span>件中
-      <span class="display-range">
-        #{total_records.zero? ? 0 : (page * limit) + 1}
-        -
-        #{(page * limit) + records.size}
-      </span>
-      件（#{elapsed}秒）
-    </p>
-  </div>
+<pre>
+#{io.string}
+</pre>
 EOS
-    end
+      
+#       records, total_records, elapsed = GroongaWrapper.instance.search(query, page, limit)
+      
+#       response.write(<<-EOS)
+#   <div class='search-summary'>
+#     <p>
+#       <span class="keyword">#{escape_html(req2query(request))}</span>の検索結果:
+#       <span class="total-entries">#{total_records}</span>件中
+#       <span class="display-range">
+#         #{total_records.zero? ? 0 : (page * limit) + 1}
+#         -
+#         #{(page * limit) + records.size}
+#       </span>
+#       件（#{elapsed}秒）
+#     </p>
+#   </div>
+# EOS
+#     end
     
-    response.write("  <div class='records'>\n")
+#     response.write("  <div class='records'>\n")
 
-    records.each do |record|
-      render_record(request, response, record)
-    end
+#     records.each do |record|
+#       render_record(request, response, record)
+#     end
 
-    response.write("  </div>\n")
+#     response.write("  </div>\n")
     
 #    render_pagination(request, response, page, limit, total_records)
+    end
   end
 
   def render_footer(request, response)
