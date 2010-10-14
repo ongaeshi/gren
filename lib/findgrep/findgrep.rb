@@ -154,7 +154,8 @@ module FindGrep
       end
       
       # タイムスタンプでソート
-      records = table.sort([{:key => "timestamp", :order => "descending"}])
+      records = table.sort([{:key => "_score", :order => "descending"},
+                            {:key => "timestamp", :order => "descending"}])
 
       # データベースにヒット
       stdout.puts "Found   : #{records.size} records."
