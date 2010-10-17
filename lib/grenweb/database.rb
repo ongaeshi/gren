@@ -5,8 +5,8 @@
 # @author ongaeshi
 # @date   2010/10/17
 
-require File.join(File.dirname(__FILE__), 'grn_record')
-require File.join(File.dirname(__FILE__), '../common/util')
+require 'groonga'
+require 'pathname'
 require 'singleton'
 
 module Grenweb
