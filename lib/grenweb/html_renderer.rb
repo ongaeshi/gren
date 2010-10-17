@@ -5,6 +5,9 @@
 # @author ongaeshi
 # @date   2010/10/17
 
+require File.join(File.dirname(__FILE__), 'grep')
+require 'cgi'
+
 module Grenweb
   class HTMLRendeler
     def self.header(title)
@@ -43,15 +46,23 @@ EOS
     <dt class='search-result'>#{record.path}</dt>
     <dd>
       <pre class='lines'>
-<span>#{record.content.split("\n")[0]}</span>
-<span>#{record.content[1]}</span>
-<span>#{record.content[2]}</span>
+#{result_record_match_line(record, patterns)}
       </pre>
     </dd>
 EOS
     end
+
+    private
+
+    def self.result_record_match_line(record, patterns)
+      lines = Grep.new(record.content).match_lines_or(patterns)
+
+      unless (lines.empty?)
+        "#{lines[0].index + 1} : #{CGI.escapeHTML(lines[0].line)}" # 最小にマッチした行の前後を表示
+      end
+    end
   end
-  
+
 end
 
 
