@@ -27,6 +27,6 @@ class GrnRecord
   end
 
   def line(lineNo)
-    @r.content.to_a
+    @r.content[]
   end
 end
