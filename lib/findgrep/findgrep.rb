@@ -52,6 +52,8 @@ module FindGrep
                                 false,
                                 false)
     
+    attr_reader :documents
+    
     def initialize(patterns, option)
       @patterns = patterns
       @option = option
@@ -62,6 +64,22 @@ module FindGrep
       @ignoreFiles = strs2regs(option.ignoreFiles)
       @ignoreDirs = strs2regs(option.ignoreDirs)
       @result = Result.new(option.directory)
+      open_database
+    end
+
+    def open_database()
+      # データベース開く
+      dbfile = Pathname(File.expand_path(@option.dbFile))
+      
+      if dbfile.exist?
+        Groonga::Database.open(dbfile.to_s)
+        puts "open    : #{dbfile} open."
+      else
+        raise "error    : #{dbfile.to_s} not found!!"
+      end
+      
+      # ドキュメントを取
+      @documents = Groonga::Context.default["documents"]
     end
 
     def strs2regs(strs, ignore = false)
@@ -111,21 +129,8 @@ module FindGrep
     end
 
     def searchFromDB(stdout, dir)
-      # データベース開く
-      dbfile = Pathname(File.expand_path(@option.dbFile))
-      
-      if dbfile.exist?
-        Groonga::Database.open(dbfile.to_s)
-        puts "open    : #{dbfile} open."
-      else
-        raise "error    : #{dbfile.to_s} not found!!"
-      end
-      
-      # ドキュメントを検索
-      documents = Groonga::Context.default["documents"]
-
       # 全てのパターンを検索
-      table = documents.select do |record|
+      table = @documents.select do |record|
         expression = nil
 
         # キーワード
@@ -334,7 +339,7 @@ module FindGrep
             line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
             
             stdout.puts <<EOF
-<h2>#{path}</h2>
+<h2><a href="../::view#{path}">#{path}</a></h2>
 <pre>
 #{line_no} : #{CGI.escapeHTML(line)}
 </pre>
