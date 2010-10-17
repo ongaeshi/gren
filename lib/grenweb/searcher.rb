@@ -5,8 +5,7 @@
 # @author ongaeshi
 # @date   2010/10/13
 
-require File.join(File.dirname(__FILE__), 'groonga_wrapper')
-require 'stringio'
+require File.join(File.dirname(__FILE__), 'grn_db')
 
 class Searcher
   include Rack::Utils
@@ -96,9 +95,9 @@ EOF
   </div>
 EOS
     else
-      io = StringIO.new
-      GroongaWrapper.instance.searchAndPrint(query, io)
-      response.write(io.string)
+#       io = StringIO.new
+#       GroongaWrapper.instance.searchAndPrint(query, io)
+#       response.write(io.string)
     end
   end
 

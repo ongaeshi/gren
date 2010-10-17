@@ -5,7 +5,7 @@
 # @author ongaeshi
 # @date   2010/10/13
 
-require File.join(File.dirname(__FILE__), 'groonga_wrapper')
+require File.join(File.dirname(__FILE__), 'grn_db')
 
 class Viewer
   include Rack::Utils
@@ -18,7 +18,7 @@ class Viewer
     response = Rack::Response.new
     response["Content-Type"] = "text/html; charset=UTF-8"
     query = req2query(request)
-    record = GroongaWrapper.instance.searchPath(query)
+    record = GrnDB.instance.record(query)
 
     response.write(<<-EOF)
 <ol>
