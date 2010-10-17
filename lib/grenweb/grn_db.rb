@@ -6,6 +6,7 @@
 # @date   2010/10/17
 
 require File.join(File.dirname(__FILE__), 'grn_record')
+require File.join(File.dirname(__FILE__), '../common/util')
 require 'singleton'
 
 class GrnDB
@@ -28,11 +29,8 @@ class GrnDB
   end
 
   def record(path)
-    records = @documents.select { |record| record.path == path }
-
-    records.each do |record|
-      return GrnRecord.new(record)
-    end
+    table = @documents.select { |record| record.path == path }
+    table.records[0]
   end
 
   def search(patterns)
