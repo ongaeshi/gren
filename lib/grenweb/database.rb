@@ -29,8 +29,8 @@ module Grenweb
       @documents = Groonga::Context.default["documents"]
     end
 
-    def record(path)
-      table = @documents.select { |record| record.path == path }
+    def record(shortpath)
+      table = @documents.select { |record| record.shortpath == shortpath }
       table.records[0]
     end
 

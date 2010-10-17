@@ -43,7 +43,7 @@ EOS
     
     def self.result_record(record, patterns)
       <<EOS
-    <dt class='result-record'><a href='#{"../::view" + CGI.escapeHTML(record.path)}'>#{record.path}</a></dt>
+    <dt class='result-record'><a href='#{"../::view/" + CGI.escapeHTML(record.shortpath)}'>#{record.shortpath}</a></dt>
     <dd>
       <pre class='lines'>
 #{result_record_match_line(record, patterns)}

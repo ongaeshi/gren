@@ -23,7 +23,7 @@ module Grenweb
 
       response.write(<<-EOF)
 <ol>
-  <li>ファイルパス: #{record.path}
+  <li>ファイルパス: #{record.shortpath}
   <li>更新時刻: #{record.timestamp}
   <li>拡張子: #{record.suffix}
 </ul>
@@ -38,7 +38,7 @@ EOF
     private
 
     def req2query(request)
-      unescape(request.path_info.gsub(/\/\z/, ''))
+      unescape(request.path_info.gsub(/\A\/|\/z/, ''))
     end
   end
 end
