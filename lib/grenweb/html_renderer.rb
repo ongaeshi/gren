@@ -55,11 +55,28 @@ EOS
     private
 
     def self.result_record_match_line(record, patterns)
-      lines = Grep.new(record.content).match_lines_or(patterns)
+      str = ""
+      
+      grep = Grep.new(record.content)
+      lines = grep.match_lines_or(patterns)
 
       unless (lines.empty?)
-        "#{lines[0].index + 1} : #{match_strong(CGI.escapeHTML(lines[0].line), lines[0].match_datas)}" # 最小にマッチした行の前後を表示
+        index = lines[0].index
+        nth = 1                 # @todo パラメータ?
+        
+        (index - nth..index + nth).each do |i|
+          if (0 <= i && i < grep.content.size)
+            match_datas = (i == index) ? lines[0].match_datas : []
+            str << line(i + 1, grep.content[i], match_datas) + "\n"
+          end
+        end
       end
+
+      str
+    end
+
+    def self.line(lineno, line, match_datas)
+      sprintf("%5d: %s", lineno, match_strong(CGI.escapeHTML(line), match_datas))
     end
 
     def self.match_strong(line, match_datas)

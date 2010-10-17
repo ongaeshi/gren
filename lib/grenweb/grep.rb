@@ -7,11 +7,13 @@
 
 module Grenweb
   class Grep
+    attr_reader :content
+    
     def initialize(content)
-      @content = content
+      @content = content.split("\n")
     end
 
-    MatchLineResult = Struct.new(:index, :line, :match_datas)
+    MatchLineResult = Struct.new(:index, :match_datas)
     
     def match_lines_or(patterns)
       result = []
@@ -22,11 +24,14 @@ module Grenweb
         patternRegexps.each {|v| match_datas << v.match(line)}
 
         if (match_datas.any?)
-          result << MatchLineResult.new(index, line, match_datas)
+          result << MatchLineResult.new(index, match_datas)
         end
       end
       
       result
+    end
+
+    def context(result, num)
     end
 
     private
