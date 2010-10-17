@@ -11,7 +11,7 @@ module Grenweb
       @content = content
     end
 
-    MatchLineResult = Struct.new(:index, :line)
+    MatchLineResult = Struct.new(:index, :line, :match_datas)
     
     def match_lines_or(patterns)
       result = []
@@ -22,7 +22,7 @@ module Grenweb
         patternRegexps.each {|v| match_datas << v.match(line)}
 
         if (match_datas.any?)
-          result << MatchLineResult.new(index, line)
+          result << MatchLineResult.new(index, line, match_datas)
         end
       end
       

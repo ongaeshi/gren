@@ -58,8 +58,16 @@ EOS
       lines = Grep.new(record.content).match_lines_or(patterns)
 
       unless (lines.empty?)
-        "#{lines[0].index + 1} : #{CGI.escapeHTML(lines[0].line)}" # 最小にマッチした行の前後を表示
+        "#{lines[0].index + 1} : #{match_strong(CGI.escapeHTML(lines[0].line), lines[0].match_datas)}" # 最小にマッチした行の前後を表示
       end
+    end
+
+    def self.match_strong(line, match_datas)
+      match_datas.each do |m|
+        line = line.split(m[0]).join('<strong>' + m[0] + '</strong>')
+      end
+      
+      line
     end
   end
 
