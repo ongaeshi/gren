@@ -6,6 +6,7 @@
 # @date   2010/10/13
 
 require File.join(File.dirname(__FILE__), 'database')
+require File.join(File.dirname(__FILE__), 'html_renderer')
 
 module Grenweb
   class Searcher
@@ -50,23 +51,7 @@ module Grenweb
     end
 
     def render_header(request, response)
-      response.write(<<-EOH)
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-  <!-- <meta name="robot" content="noindex,nofollow" /> -->
-  <title>gren web検索</title>
-</head>
-<body>
-<div class="header">
-  <h1>gren web検索</h1>
-</div>
-
-<div class="content">
-EOH
+      response.write(HTMLRendeler.header("gren web検索"))
     end
 
     def render_search_box(request, response)
@@ -96,21 +81,14 @@ EOF
   </div>
 EOS
       else
-        #       io = StringIO.new
-        #       GroongaWrapper.instance.searchAndPrint(query, io)
-        #       response.write(io.string)
+        patterns = query.split(/\s/)
+        records = Database.instance.search(patterns)
+        records.each { |record| response.write(HTMLRendeler.result_record(record, patterns)) }
       end
     end
 
     def render_footer(request, response)
-      response.write(<<-EOF)
-</div>
-
-<div class="footer">
-</div>
-</body>
-</html>
-EOF
+      response.write(HTMLRendeler.footer)
     end
     
     def req2query(request)
