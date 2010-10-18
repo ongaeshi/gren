@@ -5,6 +5,7 @@
 # @author ongaeshi
 # @date   2010/10/13
 
+require 'rack'
 require File.join(File.dirname(__FILE__), 'database')
 require File.join(File.dirname(__FILE__), 'html_renderer')
 
@@ -45,7 +46,6 @@ module Grenweb
       render_header(request, response)
       render_search_box(request, response)
       render_search_result(request, response)
-
       render_footer(request, response)
       response.to_a
     end
@@ -71,25 +71,57 @@ EOF
     def render_search_result(request, response)
       query = req2query(request)
       page = req2page(request)
-      limit = 20
+      limit = 20                # パラメータ化？
 
       if query.empty?
-        records = []
-        response.write(<<-EOS)
-  <div class='search-summary'>
-    <p>Grenweb</p>
-  </div>
-EOS
+        response.write HTMLRendeler.empty_summary
       else
         patterns = query.split(/\s/)
-        records = Database.instance.search(patterns)
+        records, total_records, elapsed = Database.instance.search(patterns, page, limit)
+        render_search_summary(request, response, records, total_records, elapsed, limit)
         records.each { |record| response.write(HTMLRendeler.result_record(record, patterns)) }
+        render_pagination(request, response, page, limit, total_records)
       end
+    end
+
+    def render_search_summary(request, response, records, total_records, elapsed, limit)
+      query = req2query(request)
+      page = req2page(request)
+
+      response.write HTMLRendeler.search_summary(query,
+                                                 total_records,
+                                                 (total_records.zero? ? 0 : (page * limit) + 1)..((page * limit) + records.size),
+                                                 elapsed)
+    end
+
+    def render_pagination(request, response, page, limit, total_records)
+      query = req2query(request)
+      return if query.empty?
+      return if total_records < limit
+
+      last_page = (total_records / limit.to_f).ceil
+      response.write("<div class='pagination'>\n")
+      if page > 0
+        response.write(HTMLRendeler.pagination_link(page - 1, "<<"))
+      end
+      last_page.times do |i|
+        if i == page
+          response.write(HTMLRendeler.pagination_span(i))
+        else
+          response.write(HTMLRendeler.pagination_link(i, i))
+        end
+      end
+      if page < (last_page - 1)
+        response.write(HTMLRendeler.pagination_link(page + 1, ">>"))
+      end
+      response.write("</div>\n")
     end
 
     def render_footer(request, response)
       response.write(HTMLRendeler.footer)
     end
+
+    private
     
     def req2query(request)
       unescape(request.path_info.gsub(/\A\/|\/\z/, ''))

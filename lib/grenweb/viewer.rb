@@ -5,6 +5,7 @@
 # @author ongaeshi
 # @date   2010/10/13
 
+require 'rack'
 require File.join(File.dirname(__FILE__), 'database')
 
 module Grenweb

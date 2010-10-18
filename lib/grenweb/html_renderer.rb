@@ -81,10 +81,39 @@ EOS
 
     def self.match_strong(line, match_datas)
       match_datas.each do |m|
-        line = line.split(m[0]).join('<strong>' + m[0] + '</strong>')
+        line = line.split(m[0]).join('<strong>' + m[0] + '</strong>') unless (m.nil?)
       end
       
       line
+    end
+
+    def self.pagination_link(page, label)
+      href = "./?page=#{page}"
+      pagination_span("<a href='#{href}'>#{label}</a>")
+    end
+
+    def self.pagination_span(content)
+      "<span class='pagination-link'>#{content}</span>\n"
+    end
+
+    def self.empty_summary()
+      <<EOS
+  <div class='search-summary'>
+    <p>gren web検索</p>
+  </div>
+EOS
+    end
+
+    def self.search_summary(keyword, total_records, range, elapsed)
+      <<EOS
+  <div class='search-summary'>
+    <p>
+      <span class="keyword">#{keyword}</span>の検索結果:
+      <span class="total-entries">#{total_records}</span>件中
+      <span class="display-range">#{range.first} - #{range.last}</span>件（#{elapsed}秒）
+    </p>
+  </div>
+EOS
     end
   end
 

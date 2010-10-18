@@ -34,7 +34,9 @@ module Grenweb
       table.records[0]
     end
 
-    def search(patterns)
+    def search(patterns, page = 0, limit = -1)
+      before = Time.now
+
       # 全てのパターンを検索
       table = @documents.select do |record|
         expression = nil
@@ -53,12 +55,20 @@ module Grenweb
         expression
       end
       
+      # マッチ数
+      total_records = table.size
+      
       # スコアとタイムスタンプでソート
       records = table.sort([{:key => "_score", :order => "descending"},
-                            {:key => "timestamp", :order => "descending"}])
+                            {:key => "timestamp", :order => "descending"}],
+                           :offset => page * limit,
+                           :limit => limit)
+      
+      # 検索にかかった時間
+      elapsed = Time.now - before
 
       # 結果
-      records
+      return records, total_records, elapsed
     end
   end
 end
