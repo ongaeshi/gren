@@ -70,7 +70,7 @@ module Gren
       operator_start_index = group[0].size
       limit = ALPHABET_DISP_NUM
 
-      print (array.size > limit) ? "｜  " :  "↓  "
+      print((array.size > limit) ? "｜  " :  "↓  ")
       
       counter = 0
       array.each_with_index do |v, index|
@@ -78,13 +78,13 @@ module Gren
           limit = OPERATOR_DISP_NUM
           counter = 0
           puts
-          print (array.size - index > limit) ? "｜  " : "↓  "
+          print((array.size - index > limit) ? "｜  " : "↓  ")
         end
 
         if (counter >= limit)
           counter = 0
           puts
-          print (array.size - index > limit) ? "｜  " : "↓  "
+          print((array.size - index > limit) ? "｜  " : "↓  ")
         end
 
         print v + ", "

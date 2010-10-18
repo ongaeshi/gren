@@ -1,5 +1,7 @@
-require File.join(File.dirname(__FILE__), "test_helper.rb")
-require 'grenweb/cli'
+require File.join(File.dirname(__FILE__), 'test_helper.rb')
+require File.join(File.dirname(__FILE__), '../lib/grenweb/cli.rb')
+require File.join(File.dirname(__FILE__), '../lib/grenweb/searcher.rb')
+require File.join(File.dirname(__FILE__), '../lib/grenweb/viewer.rb')
 
 class TestGrenwebCli < Test::Unit::TestCase
   def setup
