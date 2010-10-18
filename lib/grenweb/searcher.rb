@@ -18,10 +18,8 @@ module Grenweb
     
     def call(env)
       @request = Rack::Request.new(env)
-
       @response = Rack::Response.new
       @response["Content-Type"] = "text/html; charset=UTF-8"
-
       @limit = 20
 
       if @request.post? or @request['query']
@@ -53,21 +51,11 @@ module Grenweb
     end
 
     def render_header
-      @response.write(HTMLRendeler.header("gren web検索"))
+      @response.write HTMLRendeler.header("gren web検索")
     end
 
     def render_search_box
-      @response.write(<<-EOF)
-<form method="post" action="#{req2path}">
-  <p>
-    <a href="#{req2path}">
-      <img src="#{req2path('images/mini-gren.png')}" alt="gren"/>
-    </a>
-    <input name="query" type="text" value="#{escape_html(req2query)}" />
-    <input type="submit" value="検索" />
-  </p>
-</form>
-EOF
+      @response.write HTMLRendeler.search_box(req2path, req2path('images/mini-gren.png'), "grenweb", escape_html(req2query))
     end
 
     def render_search_result

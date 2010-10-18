@@ -115,6 +115,21 @@ EOS
   </div>
 EOS
     end
+
+    def self.search_box(rootpath, imgsrc, imgalt, text)
+      <<EOS
+<form method="post" action="#{rootpath}">
+  <p>
+    <a href="#{rootpath}">
+      <img src="#{imgsrc}" alt="#{imgalt}"/>
+    </a>
+    <input name="query" type="text" value="#{text}" />
+    <input type="submit" value="検索" />
+  </p>
+</form>
+EOS
+    end
+
   end
 
 end

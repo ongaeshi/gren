@@ -28,4 +28,18 @@ EOS
   def test_match_strong
     assert_equal(HTMLRendeler.match_strong("This is line.", [nil, nil]), "This is line.")
   end
+
+  def test_search_box
+    assert_equal(HTMLRendeler.search_box('/', '/images/mini-gren.png', 'grenweb', 'test must'), <<-EOF)
+<form method="post" action="/">
+  <p>
+    <a href="/">
+      <img src="/images/mini-gren.png" alt="grenweb"/>
+    </a>
+    <input name="query" type="text" value="test must" />
+    <input type="submit" value="検索" />
+  </p>
+</form>
+EOF
+  end
 end
