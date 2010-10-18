@@ -20,7 +20,9 @@ module Grenweb
       @request = Rack::Request.new(env)
       @response = Rack::Response.new
       @response["Content-Type"] = "text/html; charset=UTF-8"
-      @limit = 20
+
+      @limit = 20               # 1ページに表示する最大レコード
+      @nth = 3                  # マッチした行の前後何行を表示するか
 
       if @request.post? or @request['query']
         post_request
@@ -68,7 +70,7 @@ module Grenweb
         patterns = query.split(/\s/)
         records, total_records, elapsed = Database.instance.search(patterns, page, @limit)
         render_search_summary(records, total_records, elapsed)
-        records.each { |record| @response.write(HTMLRendeler.result_record(record, patterns)) }
+        records.each { |record| @response.write(HTMLRendeler.result_record(record, patterns, @nth)) }
         render_pagination(page, total_records)
       end
     end

@@ -41,12 +41,12 @@ EOS
 EOS
     end
     
-    def self.result_record(record, patterns)
+    def self.result_record(record, patterns, nth=1)
       <<EOS
     <dt class='result-record'><a href='#{"../::view/" + CGI.escapeHTML(record.shortpath)}'>#{record.shortpath}</a></dt>
     <dd>
       <pre class='lines'>
-#{result_record_match_line(record, patterns)}
+#{result_record_match_line(record, patterns, nth)}
       </pre>
     </dd>
 EOS
@@ -54,7 +54,7 @@ EOS
 
     private
 
-    def self.result_record_match_line(record, patterns)
+    def self.result_record_match_line(record, patterns, nth)
       str = ""
       
       grep = Grep.new(record.content)
@@ -62,7 +62,6 @@ EOS
 
       unless (lines.empty?)
         index = lines[0].index
-        nth = 1                 # @todo パラメータ?
         
         (index - nth..index + nth).each do |i|
           if (0 <= i && i < grep.content.size)
