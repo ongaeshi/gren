@@ -52,8 +52,6 @@ EOS
 EOS
     end
 
-    private
-
     def self.result_record_match_line(record, patterns, nth)
       str = ""
       
@@ -69,6 +67,25 @@ EOS
             str << line(i + 1, grep.content[i], match_datas) + "\n"
           end
         end
+      end
+
+      str
+    end
+
+    def self.record_content(record)
+      <<EOS
+<pre>
+#{record_content_line(record)}
+</pre>
+EOS
+    end
+    
+    def self.record_content_line(record)
+      str = ""
+
+      grep = Grep.new(record.content)
+      grep.content.each_with_index do |l, index|
+        str << line(index + 1, l, []) + "\n"
       end
 
       str
@@ -110,6 +127,16 @@ EOS
       <span class="keyword">#{keyword}</span>の検索結果:
       <span class="total-entries">#{total_records}</span>件中
       <span class="display-range">#{range.first} - #{range.last}</span>件（#{elapsed}秒）
+    </p>
+  </div>
+EOS
+    end
+
+    def self.view_summary(path, elapsed)
+      <<EOS
+  <div class='search-summary'>
+    <p>
+      <span class="keyword">#{path}</span>（#{elapsed}秒）
     </p>
   </div>
 EOS

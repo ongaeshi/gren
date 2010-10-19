@@ -30,8 +30,10 @@ module Grenweb
     end
 
     def record(shortpath)
+      before = Time.now
       table = @documents.select { |record| record.shortpath == shortpath }
-      table.records[0]
+      elapsed = Time.now - before
+      return table.records[0], elapsed
     end
 
     def search(patterns, page = 0, limit = -1)

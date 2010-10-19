@@ -20,19 +20,18 @@ module Grenweb
       @response = Rack::Response.new
       @response["Content-Type"] = "text/html; charset=UTF-8"
 
-      record = Database.instance.record(req2query)
+      record, elapsed = Database.instance.record(req2query)
 
-      @response.write(<<-EOF)
-<ol>
-  <li>ファイルパス: #{record.shortpath}
-  <li>更新時刻: #{record.timestamp}
-  <li>拡張子: #{record.suffix}
-</ul>
-<pre>
-#{record.content}
-</pre>
-EOF
-
+      @response.write HTMLRendeler.header("gren web検索")
+      @response.write HTMLRendeler.search_box(req2path(".."), req2path('../images/mini-gren.png'), "grenweb", "")
+      if (record)
+        @response.write HTMLRendeler.view_summary(record.shortpath, elapsed)
+        @response.write HTMLRendeler.record_content(record)
+      else
+        @response.write HTMLRendeler.empty_summary
+      end
+      @response.write HTMLRendeler.footer
+      
       @response.to_a
     end
 
@@ -40,6 +39,10 @@ EOF
 
     def req2query
       unescape(@request.path_info.gsub(/\A\/|\/z/, ''))
+    end
+
+    def req2path(component='')
+      escape_html("#{@request.script_name}/#{component}")
     end
   end
 end
