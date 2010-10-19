@@ -53,7 +53,7 @@ module Grenweb
     end
 
     def render_header
-      @response.write HTMLRendeler.header("gren", "gren", req2path)
+      @response.write HTMLRendeler.header("gren : #{escape_html(req2query)}", "gren", req2path)
     end
 
     def render_search_box
