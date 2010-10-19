@@ -10,7 +10,7 @@ require 'cgi'
 
 module Grenweb
   class HTMLRendeler
-    def self.header(title)
+    def self.header(title, header1, path)
       <<EOS
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -23,7 +23,10 @@ module Grenweb
 </head>
 <body>
 <div class="header">
-  <h1>#{title}</h1>
+  <h1>
+    <a href="#{path}"><img src="#{path}/images/mini-gren.png" alt="gren-icon"/></a>
+    #{header1}
+  </h1>
 </div>
 
 <div class="content">
@@ -142,14 +145,11 @@ EOS
 EOS
     end
 
-    def self.search_box(rootpath, imgsrc, imgalt, text)
+    def self.search_box(rootpath, text)
       <<EOS
 <form method="post" action="#{rootpath}">
   <p>
-    <a href="#{rootpath}">
-      <img src="#{imgsrc}" alt="#{imgalt}"/>
-    </a>
-    <input name="query" type="text" value="#{text}" />
+    <input name="query" type="text" size="60" value="#{text}" />
     <input type="submit" value="検索" />
   </p>
 </form>

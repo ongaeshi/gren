@@ -53,11 +53,11 @@ module Grenweb
     end
 
     def render_header
-      @response.write HTMLRendeler.header("gren web検索")
+      @response.write HTMLRendeler.header("gren", "gren", req2path)
     end
 
     def render_search_box
-      @response.write HTMLRendeler.search_box(req2path, req2path('images/mini-gren.png'), "grenweb", escape_html(req2query))
+      @response.write HTMLRendeler.search_box(req2path, escape_html(req2query))
     end
 
     def render_search_result
@@ -122,8 +122,12 @@ module Grenweb
       (@request['page'] || 0).to_i
     end
     
-    def req2path(component='')
-      escape_html("#{@request.script_name}/#{component}")
+    def req2path(component=nil)
+      unless (component)
+        escape_html("#{@request.script_name}")
+      else
+        escape_html("#{@request.script_name}/#{component}")
+      end
     end
     
   end
