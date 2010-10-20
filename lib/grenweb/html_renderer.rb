@@ -11,7 +11,7 @@ require 'cgi'
 module Grenweb
   class HTMLRendeler
     def self.header(title, header1, path)
-      imgpath = Pathname.new(path + '/images/mini-gren.png').cleanpath
+      imgpath = Pathname.new(path + '/images/gren-icon.png').cleanpath
       
       <<EOS
 <?xml version="1.0" encoding="utf-8"?>
@@ -26,7 +26,7 @@ module Grenweb
 <body>
 <div class="header">
   <h1>
-    <a href="#{path}"><img src="#{imgpath}" alt="gren-icon"/></a>
+    <a href="#{path}"><img src="#{imgpath}" alt="gren-icon" border="0"/></a>
     #{header1}
   </h1>
 </div>
