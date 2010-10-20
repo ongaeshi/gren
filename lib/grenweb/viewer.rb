@@ -44,11 +44,10 @@ module Grenweb
     end
     
     def req2path(component='')
-      unless (component)
-        escape_html("#{@request.script_name}")
-      else
-        escape_html("#{@request.script_name}/#{component}")
-      end
+      path = []
+      path << ((@request.script_name == "") ? '/' : @request.script_name)
+      path << component if (component)
+      path.join('/')
     end
   end
 end

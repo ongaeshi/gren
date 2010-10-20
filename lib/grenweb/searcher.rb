@@ -53,7 +53,9 @@ module Grenweb
     end
 
     def render_header
-      @response.write HTMLRendeler.header("gren : #{escape_html(req2query)}", "gren", req2path)
+      q = escape_html(req2query)
+      title = (q == "") ? "gren" : "gren : #{q}"
+      @response.write HTMLRendeler.header(title, "gren", req2path)
     end
 
     def render_search_box
@@ -123,13 +125,12 @@ module Grenweb
     end
     
     def req2path(component=nil)
-      unless (component)
-        escape_html("#{@request.script_name}")
-      else
-        escape_html("#{@request.script_name}/#{component}")
-      end
+      path = []
+      path << ((@request.script_name == "") ? '/' : @request.script_name)
+      path << component if (component)
+      path.join('/')
     end
-    
+
   end
 end
 
