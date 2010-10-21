@@ -11,7 +11,7 @@ module Grenweb
   class Query
     OPTIONS = [
                ['package',  'p'],
-               ['filepath', 'f'],
+               ['filepath', 'fpath', 'f'],
                ['suffix',   's'],
               ]
 
@@ -26,18 +26,22 @@ module Grenweb
     end
 
     def package
-      @hash['package'] + @hash['p']
+      calc_param(0)
     end
 
     def filepath
-      @hash['filepath'] + @hash['f']
+      calc_param(1)
     end
 
     def suffix
-      @hash['suffix'] + @hash['s']
+      calc_param(2)
     end
 
     private
+
+    def calc_param(index)
+      OPTIONS[index].inject([]){|result, item| result.concat @hash[item] }
+    end
 
     def init_hash
       @hash = {}
