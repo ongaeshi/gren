@@ -55,7 +55,13 @@ module Grenweb
         
         # パッケージ(OR)
         pe = package_expression(record, packages) 
-        expression &= pe if (pe)
+        if (pe)
+          if expression.nil?
+            expression = pe
+          else
+            expression &= pe
+          end
+        end
         
         # ファイルパス
         fpaths.each do |word|
@@ -69,7 +75,13 @@ module Grenweb
 
         # 拡張子(OR)
         se = suffix_expression(record, suffixs) 
-        expression &= se if (se)
+        if (se)
+          if expression.nil?
+            expression = se
+          else
+            expression &= se
+          end
+        end
         
         # 検索式
         expression

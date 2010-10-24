@@ -25,7 +25,7 @@ module Grenweb
     end
 
     def empty?
-      keywords.size == 0
+      keywords.size == 0 && packages.size == 0 && fpaths.size == 0 && suffixs.size == 0
     end
 
     def keywords

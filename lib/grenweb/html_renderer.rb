@@ -50,7 +50,8 @@ EOS
     end
     
     def self.result_record(record, patterns, nth=1)
-      <<EOS
+      if (patterns.size > 0)
+        <<EOS
     <dt class='result-record'><a href='#{"../::view/" + Rack::Utils::escape_html(record.shortpath)}'>#{record.shortpath}</a></dt>
     <dd>
       <pre class='lines'>
@@ -58,6 +59,11 @@ EOS
       </pre>
     </dd>
 EOS
+      else
+        <<EOS
+    <dt class='result-record'><a href='#{"../::view/" + Rack::Utils::escape_html(record.shortpath)}'>#{record.shortpath}</a></dt>
+EOS
+      end
     end
 
     def self.result_record_match_line(record, patterns, nth)
