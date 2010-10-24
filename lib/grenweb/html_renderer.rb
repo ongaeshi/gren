@@ -5,11 +5,14 @@
 # @author ongaeshi
 # @date   2010/10/17
 
+require 'rubygems'
+require 'rack'
 require File.join(File.dirname(__FILE__), 'grep')
-require 'cgi'
 
 module Grenweb
   class HTMLRendeler
+    include Rack::Utils
+
     def self.header(title, header1, path)
       imgpath = Pathname.new(path + '/images/gren-icon.png').cleanpath
       
@@ -48,7 +51,7 @@ EOS
     
     def self.result_record(record, patterns, nth=1)
       <<EOS
-    <dt class='result-record'><a href='#{"../::view/" + CGI.escapeHTML(record.shortpath)}'>#{record.shortpath}</a></dt>
+    <dt class='result-record'><a href='#{"../::view/" + Rack::Utils::escape_html(record.shortpath)}'>#{record.shortpath}</a></dt>
     <dd>
       <pre class='lines'>
 #{result_record_match_line(record, patterns, nth)}
@@ -97,7 +100,7 @@ EOS
     end
 
     def self.line(lineno, line, match_datas)
-      sprintf("%5d: %s", lineno, match_strong(CGI.escapeHTML(line), match_datas))
+      sprintf("%5d: %s", lineno, match_strong(Rack::Utils::escape_html(line), match_datas))
     end
 
     def self.match_strong(line, match_datas)
