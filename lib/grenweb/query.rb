@@ -11,6 +11,7 @@ require 'rack'
 module Grenweb
   class Query
     include Rack::Utils
+    attr_reader :query_string
   
     OPTIONS = [
                ['package',  'p'],
@@ -22,6 +23,10 @@ module Grenweb
       @query_string = unescape(request.path_info.gsub(/\A\/|\/\z/, ''))
       init_hash
       parse
+    end
+
+    def escape_html
+      Rack::Utils::escape_html(@query_string)
     end
 
     def empty?

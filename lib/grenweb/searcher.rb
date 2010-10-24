@@ -19,10 +19,11 @@ module Grenweb
     
     def call(env)
       @request = Rack::Request.new(env)
+      @query = Query.new(@request)
+
       @response = Rack::Response.new
       @response["Content-Type"] = "text/html; charset=UTF-8"
 
-      @limit = 20               # 1ページに表示する最大レコード
       @nth = 3                  # マッチした行の前後何行を表示するか
 
       if @request.post? or @request['query']
@@ -54,45 +55,39 @@ module Grenweb
     end
 
     def render_header
-      q = escape_html(req2query)
-      title = (q == "") ? "gren" : "gren : #{q}"
+      t = @query.escape_html
+      title = (t == "") ? "gren" : "gren : #{t}"
       @response.write HTMLRendeler.header(title, "gren", req2path)
     end
 
     def render_search_box
-      @response.write HTMLRendeler.search_box(req2path, escape_html(req2query))
+      @response.write HTMLRendeler.search_box(req2path, @query.escape_html)
     end
 
     def render_search_result
-      q = req2query2
-      page = req2page
-
-      if q.empty?
+      if @query.empty?
         @response.write HTMLRendeler.empty_summary
       else
-        records, total_records, elapsed = Database.instance.search(q.keywords, q.packages, q.fpaths, q.suffixs, page, @limit)
+        records, total_records, elapsed = Database.instance.search(@query.keywords, @query.packages, @query.fpaths, @query.suffixs, calcPage, calcLimit)
         render_search_summary(records, total_records, elapsed)
-        records.each { |record| @response.write(HTMLRendeler.result_record(record, q.keywords, @nth)) }
-        render_pagination(page, total_records)
+        records.each { |record| @response.write(HTMLRendeler.result_record(record, @query.keywords, @nth)) }
+        render_pagination(calcPage, total_records)
       end
     end
 
     def render_search_summary(records, total_records, elapsed)
-      query = req2query
-      page = req2page
-
-      @response.write HTMLRendeler.search_summary(query,
+      pageStart = calcPage * calcLimit
+      @response.write HTMLRendeler.search_summary(@query.query_string,
                                                   total_records,
-                                                  (total_records.zero? ? 0 : (page * @limit) + 1)..((page * @limit) + records.size),
+                                                  (total_records.zero? ? 0 : pageStart + 1)..(pageStart + records.size),
                                                   elapsed)
     end
 
     def render_pagination(page, total_records)
-      query = req2query
-      return if query.empty?
-      return if total_records < @limit
+      return if @query.empty?
+      return if total_records < calcLimit
 
-      last_page = (total_records / @limit.to_f).ceil
+      last_page = (total_records / calcLimit.to_f).ceil
       @response.write("<div class='pagination'>\n")
       if page > 0
         @response.write(HTMLRendeler.pagination_link(page - 1, "<<"))
@@ -115,19 +110,22 @@ module Grenweb
     end
 
     private
+
+    # 1ページに表示する最大レコードを計算
+    def calcLimit
+      if @query.keywords.size == 0
+        100
+      else
+        20
+      end
+    end
     
-    def req2query
-      unescape(@request.path_info.gsub(/\A\/|\/\z/, ''))
-    end
-
-    def req2query2
-      Query.new(@request)
-    end
-
-    def req2page
+    # 現在ページを計算
+    def calcPage
       (@request['page'] || 0).to_i
     end
     
+    # リクエストからパスを計算
     def req2path(component=nil)
       path = []
       path << ((@request.script_name == "") ? '/' : @request.script_name)
