@@ -36,7 +36,7 @@ module Grenweb
       return table.records[0], elapsed
     end
 
-    def search(patterns, page = 0, limit = -1)
+    def search(patterns, packages, fpaths, suffixs, page = 0, limit = -1)
       before = Time.now
 
       # 全てのパターンを検索
@@ -53,6 +53,16 @@ module Grenweb
           end
         end
         
+        # ファイルパス
+        fpaths.each do |word|
+          sub_expression = record.path =~ word
+          if expression.nil?
+            expression = sub_expression
+          else
+            expression &= sub_expression
+          end
+        end
+
         # 検索式
         expression
       end

@@ -32,15 +32,15 @@ module Grenweb
       @hash['keywords']
     end
 
-    def package
+    def packages
       calc_param(0)
     end
 
-    def filepath
+    def fpaths
       calc_param(1)
     end
 
-    def suffix
+    def suffixs
       calc_param(2)
     end
 

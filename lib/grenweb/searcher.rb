@@ -64,16 +64,15 @@ module Grenweb
     end
 
     def render_search_result
-      query = req2query2
+      q = req2query2
       page = req2page
 
-      if query.empty?
+      if q.empty?
         @response.write HTMLRendeler.empty_summary
       else
-        patterns = query.keywords
-        records, total_records, elapsed = Database.instance.search(patterns, page, @limit)
+        records, total_records, elapsed = Database.instance.search(q.keywords, q.packages, q.fpaths, q.suffixs, page, @limit)
         render_search_summary(records, total_records, elapsed)
-        records.each { |record| @response.write(HTMLRendeler.result_record(record, patterns, @nth)) }
+        records.each { |record| @response.write(HTMLRendeler.result_record(record, q.keywords, @nth)) }
         render_pagination(page, total_records)
       end
     end
