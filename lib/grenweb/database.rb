@@ -53,6 +53,10 @@ module Grenweb
           end
         end
         
+        # パッケージ(OR)
+        pe = package_expression(record, packages) 
+        expression &= pe if (pe)
+        
         # ファイルパス
         fpaths.each do |word|
           sub_expression = record.path =~ word
@@ -63,6 +67,10 @@ module Grenweb
           end
         end
 
+        # 拡張子(OR)
+        se = suffix_expression(record, suffixs) 
+        expression &= se if (se)
+        
         # 検索式
         expression
       end
@@ -82,5 +90,40 @@ module Grenweb
       # 結果
       return records, total_records, elapsed
     end
+
+    def package_expression(record, packages)
+      sub = nil
+      
+      # @todo 専用カラム package が欲しいところ
+      #       でも今でもpackageはORとして機能してるからいいっちゃいい
+      packages.each do |word|
+        e = record.path =~ word
+        if sub.nil?
+          sub = e
+        else
+          sub |= e
+        end
+      end
+
+      sub
+    end
+    private :package_expression
+
+    def suffix_expression(record, suffixs)
+      sub = nil
+      
+      suffixs.each do |word|
+        e = record.suffix =~ word
+        if sub.nil?
+          sub = e
+        else
+          sub |= e
+        end
+      end
+
+      sub
+    end
+    private :suffix_expression
+    
   end
 end
