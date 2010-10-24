@@ -5,10 +5,13 @@
 # @author ongaeshi
 # @date   2010/10/21
 
-require 'uri'
+require 'rubygems'
+require 'rack'
 
 module Grenweb
   class Query
+    include Rack::Utils
+  
     OPTIONS = [
                ['package',  'p'],
                ['filepath', 'fpath', 'f'],
@@ -16,9 +19,13 @@ module Grenweb
               ]
 
     def initialize(request)
-      @query_string = URI.unescape(request.path_info.gsub(/\A\/|\/\z/, ''))
+      @query_string = unescape(request.path_info.gsub(/\A\/|\/\z/, ''))
       init_hash
       parse
+    end
+
+    def empty?
+      keywords.size == 0
     end
 
     def keywords

@@ -8,6 +8,7 @@
 require 'rack'
 require File.join(File.dirname(__FILE__), 'database')
 require File.join(File.dirname(__FILE__), 'html_renderer')
+require File.join(File.dirname(__FILE__), 'query')
 
 module Grenweb
   class Searcher
@@ -63,13 +64,13 @@ module Grenweb
     end
 
     def render_search_result
-      query = req2query
+      query = req2query2
       page = req2page
 
       if query.empty?
         @response.write HTMLRendeler.empty_summary
       else
-        patterns = query.split(/\s/)
+        patterns = query.keywords
         records, total_records, elapsed = Database.instance.search(patterns, page, @limit)
         render_search_summary(records, total_records, elapsed)
         records.each { |record| @response.write(HTMLRendeler.result_record(record, patterns, @nth)) }
@@ -118,6 +119,10 @@ module Grenweb
     
     def req2query
       unescape(@request.path_info.gsub(/\A\/|\/\z/, ''))
+    end
+
+    def req2query2
+      Query.new(@request)
     end
 
     def req2page
