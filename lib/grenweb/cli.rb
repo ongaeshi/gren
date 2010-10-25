@@ -4,6 +4,7 @@ require 'rubygems'
 require 'rack'
 require 'fileutils'
 require File.join(File.dirname(__FILE__), 'database')
+require 'launchy'
 
 module Grenweb
   class CLI
@@ -32,6 +33,9 @@ EOF
       # サーバースクリプトのある場所へ移動
       FileUtils.cd(File.dirname(__FILE__))
       
+      # ブラウザ起動
+      Launchy.open("http://localhost:#{option[:Port]}")
+      
       # サーバー起動
       Rack::Server.start(
                          :environment => "development",
@@ -42,8 +46,6 @@ EOF
                          :config      => "grenweb.ru"
                          )
 
-      # ブラウザ起動
-      
     end
   end
 end
