@@ -3,6 +3,7 @@ require 'optparse'
 require 'rubygems'
 require 'rack'
 require 'fileutils'
+require File.join(File.dirname(__FILE__), 'database')
 
 module Grenweb
   class CLI
@@ -24,6 +25,9 @@ URL : http://localhost:#{option[:Port]}
 DB  : #{option[:DbFile]}
 ----------------------------------------
 EOF
+
+      # 使用するデータベースの位置設定
+      Database.setup(option[:DbFile])
       
       # サーバースクリプトのある場所へ移動
       FileUtils.cd(File.dirname(__FILE__))

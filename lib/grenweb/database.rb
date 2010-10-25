@@ -13,8 +13,12 @@ module Grenweb
   class Database
     include Singleton
 
+    def self.setup(dbFile)
+      @@dbFile = dbFile
+    end
+
     def initialize
-      open("~/grendb/grendb.db")  # @todo 環境変数やクラス変数に逃がす
+      open(@@dbFile)
     end
 
     def open(dbFile)
@@ -25,7 +29,7 @@ module Grenweb
       else
         raise "error    : #{dbfile.to_s} not found!!"
       end
-
+      
       @documents = Groonga::Context.default["documents"]
     end
 
