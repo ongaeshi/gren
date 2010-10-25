@@ -20,7 +20,12 @@ $hoe = Hoe.spec 'gren' do
   self.rubyforge_name       = self.name # TODO this is default value
 
   # 必要とするgem
-  self.extra_deps         = [['termcolor','>= 1.2.0'], ['rroonga','>= 1.0.0'], ['rack','>=1.2.1']]
+  self.extra_deps         = [
+                             ['termcolor','>= 1.2.0'],
+                             ['rroonga','>= 1.0.0'],
+                             ['rack','>=1.2.1'],
+                             ['launchy', '>=0.3.7']
+                            ]
 
   # 本来はnewgemの中で設定されるべき(後で報告した方がいいかも)
   self.extra_rdoc_files << "README.rdoc"
