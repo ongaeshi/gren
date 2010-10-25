@@ -11,45 +11,41 @@ module Grenweb
     def self.execute(stdout, arguments=[])
       option = {
         :Port => 9292,
-        :DbFile => nil,
+        :DbFile => ENV['GRENDB_DEFAULT_DB'],
       }
       
       opt = OptionParser.new("#{File.basename($0)}")
-      opt.on('--db [GREN_DB_FILE]', 'Search from the grendb database.') {|v| option[:DbFile] = v || ENV['GRENDB_DEFAULT_DB']}
+      opt.on('--db [GREN_DB_FILE]', 'Search from the grendb database.') {|v| option[:DbFile] = v }
       opt.on('-p', '--port PORT', 'use PORT (default: 9292)') {|v| option[:Port] = v }
       opt.parse!(arguments)
 
       # webサーバー起動
-      if (option[:DbFile])
-        stdout.puts <<EOF
+      stdout.puts <<EOF
 Start up grenweb !!
 URL : http://localhost:#{option[:Port]}
 DB  : #{option[:DbFile]}
 ----------------------------------------
 EOF
 
-        # 使用するデータベースの位置設定
-        Database.setup(option[:DbFile])
-        
-        # サーバースクリプトのある場所へ移動
-        FileUtils.cd(File.dirname(__FILE__))
-        
-        # ブラウザ起動
-        Launchy.open("http://localhost:#{option[:Port]}")
-        
-        # サーバー起動
-        Rack::Server.start(
-                           :environment => "development",
-                           :pid         => nil,
-                           :Port        => option[:Port],
-                           :Host        => "0.0.0.0",
-                           :AccessLog   => [],
-                           :config      => "grenweb.ru"
-                           )
+      # 使用するデータベースの位置設定
+      Database.setup(option[:DbFile])
+      
+      # サーバースクリプトのある場所へ移動
+      FileUtils.cd(File.dirname(__FILE__))
+      
+      # ブラウザ起動
+      Launchy.open("http://localhost:#{option[:Port]}")
+      
+      # サーバー起動
+      Rack::Server.start(
+                         :environment => "development",
+                         :pid         => nil,
+                         :Port        => option[:Port],
+                         :Host        => "0.0.0.0",
+                         :AccessLog   => [],
+                         :config      => "grenweb.ru"
+                         )
 
-      else
-        puts opt.help
-      end
     end
   end
 end
