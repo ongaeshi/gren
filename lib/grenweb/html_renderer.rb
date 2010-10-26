@@ -13,7 +13,7 @@ module Grenweb
   class HTMLRendeler
     include Rack::Utils
 
-    def self.header(title, header1)
+    def self.header(title, header1, isCenter = false)
       <<EOS
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -25,8 +25,7 @@ module Grenweb
   <title>#{title}</title>
 </head>
 <body>
-<div align="center">
-<div class="header">
+#{(isCenter) ? "<div align=\"center\">\n" : ""}<div class="header">
   <h1>
     <a href="/"><img src="/images/gren-icon.png" alt="gren-icon" border="0"/></a>
     #{header1}
@@ -37,13 +36,12 @@ module Grenweb
 EOS
     end
     
-    def self.footer()
+    def self.footer(isCenter = false)
       <<EOS
 </div>
 
 <div class="footer">
-</div>
-</div>
+#{(isCenter) ? "</div>\n" : ""}</div>
 </body>
 </html>
 EOS
