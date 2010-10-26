@@ -13,7 +13,7 @@ module Grenweb
   class HTMLRendeler
     include Rack::Utils
 
-    def self.header(title, header1, isCenter = false)
+    def self.header(title, header1)
       <<EOS
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -25,9 +25,9 @@ module Grenweb
   <title>#{title}</title>
 </head>
 <body>
-#{(isCenter) ? "<div align=\"center\">\n" : ""}<div class="header">
+<div class="header">
   <h1>
-    <a href="/"><img src="/images/gren-icon.png" alt="gren-icon" border="0"/></a>
+    <a href="/"><img src="/images/gren-icon-mini.png" alt="gren-icon" border="0"/></a>
     #{header1}
   </h1>
 </div>
@@ -36,12 +36,48 @@ module Grenweb
 EOS
     end
     
-    def self.footer(isCenter = false)
+    def self.footer
       <<EOS
 </div>
 
 <div class="footer">
-#{(isCenter) ? "</div>\n" : ""}</div>
+</div>
+</body>
+</html>
+EOS
+    end
+    
+    def self.header_home(title, header1)
+      <<EOS
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <!-- <meta name="robot" content="noindex,nofollow" /> -->
+  <title>#{title}</title>
+</head>
+<body>
+<div align="center">
+<div class="header">
+  <h1>
+    <a href="/"><img src="/images/gren-icon.png" alt="gren-icon" border="0" height="100px"/></a>
+    #{header1}
+  </h1>
+</div>
+
+<div class="content">
+EOS
+    end
+
+    def self.footer_home()
+      <<EOS
+</div>
+
+<div class="footer">
+</div>
+</div>
 </body>
 </html>
 EOS
