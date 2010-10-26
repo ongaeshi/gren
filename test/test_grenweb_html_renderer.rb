@@ -30,8 +30,8 @@ EOS
   end
 
   def test_search_box
-    assert_equal(HTMLRendeler.search_box('/', 'test must'), <<-EOF)
-<form method="post" action="/">
+    assert_equal(HTMLRendeler.search_box('test must'), <<-EOF)
+<form method="post" action="/::search">
   <p>
     <input name="query" type="text" size="60" value="test must" />
     <input type="submit" value="検索" />
