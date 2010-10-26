@@ -64,7 +64,7 @@ module FindGrep
       @ignoreFiles = strs2regs(option.ignoreFiles)
       @ignoreDirs = strs2regs(option.ignoreDirs)
       @result = Result.new(option.directory)
-      open_database
+      open_database if (@option.dbFile)
     end
 
     def open_database()
