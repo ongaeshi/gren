@@ -13,9 +13,7 @@ module Grenweb
   class HTMLRendeler
     include Rack::Utils
 
-    def self.header(title, header1, path)
-      imgpath = Pathname.new(path + '/images/gren-icon.png').cleanpath
-      
+    def self.header(title, header1)
       <<EOS
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -27,9 +25,10 @@ module Grenweb
   <title>#{title}</title>
 </head>
 <body>
+<div align="center">
 <div class="header">
   <h1>
-    <a href="#{path}"><img src="#{imgpath}" alt="gren-icon" border="0"/></a>
+    <a href="/"><img src="/images/gren-icon.png" alt="gren-icon" border="0"/></a>
     #{header1}
   </h1>
 </div>
@@ -44,6 +43,7 @@ EOS
 
 <div class="footer">
 </div>
+</div>
 </body>
 </html>
 EOS
@@ -52,7 +52,7 @@ EOS
     def self.result_record(record, patterns, nth=1)
       if (patterns.size > 0)
         <<EOS
-    <dt class='result-record'><a href='#{"../::view/" + Rack::Utils::escape_html(record.shortpath)}'>#{record.shortpath}</a></dt>
+    <dt class='result-record'><a href='#{"/::view/" + Rack::Utils::escape_html(record.shortpath)}'>#{record.shortpath}</a></dt>
     <dd>
       <pre class='lines'>
 #{result_record_match_line(record, patterns, nth)}
@@ -61,7 +61,7 @@ EOS
 EOS
       else
         <<EOS
-    <dt class='result-record'><a href='#{"../::view/" + Rack::Utils::escape_html(record.shortpath)}'>#{record.shortpath}</a></dt>
+    <dt class='result-record'><a href='#{"/::view/" + Rack::Utils::escape_html(record.shortpath)}'>#{record.shortpath}</a></dt>
 EOS
       end
     end
@@ -156,9 +156,9 @@ EOS
 EOS
     end
 
-    def self.search_box(rootpath, text)
+    def self.search_box(text)
       <<EOS
-<form method="post" action="#{rootpath}">
+<form method="post" action="/::search">
   <p>
     <input name="query" type="text" size="60" value="#{text}" />
     <input type="submit" value="検索" />

@@ -11,7 +11,7 @@ require File.join(File.dirname(__FILE__), 'html_renderer')
 require File.join(File.dirname(__FILE__), 'query')
 
 module Grenweb
-  class Searcher
+  class Home
     include Rack::Utils
 
     def initialize

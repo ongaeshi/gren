@@ -23,13 +23,13 @@ module Grenweb
       record, elapsed = Database.instance.record(req2query)
 
       if (record)
-        @response.write HTMLRendeler.header("gren : #{record.shortpath}", "gren", req2path('..'))
-        @response.write HTMLRendeler.search_box(req2path(".."), "")
+        @response.write HTMLRendeler.header("gren : #{record.shortpath}", "gren")
+        @response.write HTMLRendeler.search_box("")
         @response.write HTMLRendeler.view_summary(record.shortpath, elapsed)
         @response.write HTMLRendeler.record_content(record)
       else
-        @response.write HTMLRendeler.header("gren : not found.", "gren", req2path('..'))
-        @response.write HTMLRendeler.search_box(req2path(".."), "")
+        @response.write HTMLRendeler.header("gren : not found.", "gren")
+        @response.write HTMLRendeler.search_box("")
         @response.write HTMLRendeler.empty_summary
       end
       @response.write HTMLRendeler.footer

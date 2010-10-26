@@ -7,6 +7,7 @@
 
 require 'rubygems'
 require 'rack'
+require File.join(File.dirname(__FILE__), 'home')
 require File.join(File.dirname(__FILE__), 'searcher')
 require File.join(File.dirname(__FILE__), 'viewer')
 
@@ -16,6 +17,10 @@ use Rack::Static, :urls => ["/css", "/images"], :root => "public"
 use Rack::ContentLength
 
 map '/' do
+  run Grenweb::Home.new
+end
+
+map '/::search' do
   run Grenweb::Searcher.new
 end
 
