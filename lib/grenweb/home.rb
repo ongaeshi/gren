@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # @file 
-# @brief  検索処理本体
+# @brief  ホーム画面
 # @author ongaeshi
 # @date   2010/10/13
 

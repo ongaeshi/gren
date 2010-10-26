@@ -55,9 +55,7 @@ module Grenweb
     end
 
     def render_header
-      t = @query.escape_html
-      title = (t == "") ? "gren" : "gren : #{t}"
-      @response.write HTMLRendeler.header(title, "gren")
+      @response.write HTMLRendeler.header("gren : #{@query.escape_html}", "gren")
     end
 
     def render_search_box
