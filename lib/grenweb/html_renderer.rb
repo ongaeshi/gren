@@ -156,7 +156,7 @@ EOS
 EOS
     end
 
-    def self.search_box(text)
+    def self.search_box(text = "")
       <<EOS
 <form method="post" action="/::search">
   <p>
