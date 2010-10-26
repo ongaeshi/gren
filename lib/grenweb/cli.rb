@@ -17,6 +17,7 @@ module Grenweb
       opt = OptionParser.new("#{File.basename($0)}")
       opt.on('--db [GREN_DB_FILE]', 'Search from the grendb database.') {|v| option[:DbFile] = v }
       opt.on('-p', '--port PORT', 'use PORT (default: 9292)') {|v| option[:Port] = v }
+      opt.on('--no-browser', 'No launch browser.') {|v| option[:NoBrowser] = true }
       opt.parse!(arguments)
 
       # webサーバー起動
@@ -34,7 +35,7 @@ EOF
       FileUtils.cd(File.dirname(__FILE__))
       
       # ブラウザ起動
-      Launchy.open("http://localhost:#{option[:Port]}")
+      Launchy.open("http://localhost:#{option[:Port]}") unless (option[:NoBrowser])
       
       # サーバー起動
       Rack::Server.start(
