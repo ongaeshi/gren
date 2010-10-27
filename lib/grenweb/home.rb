@@ -27,9 +27,9 @@ module Grenweb
     private
 
     def render
-      @response.write HTMLRendeler.header_home("gren", "gren")
+      @response.write HTMLRendeler.header_home("gren", "gren", '0.2.5')
       @response.write HTMLRendeler.search_box
-      @response.write HTMLRendeler.footer_home()
+      @response.write HTMLRendeler.footer_home(12, 2056)
       @response.to_a
     end
   end

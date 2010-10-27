@@ -47,7 +47,7 @@ EOS
 EOS
     end
     
-    def self.header_home(title, header1)
+    def self.header_home(title, header1, version)
       <<EOS
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -63,7 +63,7 @@ EOS
 <div class="header">
   <h1>
     <a href="/"><img src="/images/gren-icon.png" alt="gren-icon" border="0" height="100px"/></a>
-    #{header1}
+    #{header1} <font size="2">#{version}</font>
   </h1>
 </div>
 
@@ -71,11 +71,15 @@ EOS
 EOS
     end
 
-    def self.footer_home()
+    def self.footer_home(package, files)
       <<EOS
 </div>
 
 <div class="footer">
+  <br>
+  <a href="/::search/p:*">#{package}</a>のパッケージ、
+  <a href="/::search/f:*">#{files}</a>のファイル、
+  <b><a href="http://ongaeshi.github.com/gren">grenについて</a></b>
 </div>
 </div>
 </body>
