@@ -156,7 +156,7 @@ EOS
     end
 
     def self.pagination_link(page, label)
-      href = "./?page=#{page}"
+      href = "?page=#{page}"
       pagination_span("<a href='#{href}'>#{label}</a>")
     end
 

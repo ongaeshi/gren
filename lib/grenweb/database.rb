@@ -40,10 +40,42 @@ module Grenweb
       return table.records[0], elapsed
     end
 
+    def fileNum
+      @documents.select.size
+    end
+
     def search(patterns, packages, fpaths, suffixs, page = 0, limit = -1)
       before = Time.now
 
       # 全てのパターンを検索
+      if (fpaths.include?("*"))
+        records, total_records = selectAll(page, limit)
+      else
+        records, total_records = searchMain(patterns, packages, fpaths, suffixs, page, limit)
+      end
+      
+      # 検索にかかった時間
+      elapsed = Time.now - before
+
+      # 結果
+      return records, total_records, elapsed
+    end
+
+    def selectAll(page, limit)
+      table = @documents.select
+
+      # マッチ数
+      total_records = table.size
+      
+      # スコアとタイムスタンプでソート
+      records = table.sort([{:key => "shortpath", :order => "descending"}],
+                           :offset => page * limit,
+                           :limit => limit)
+
+      return records, total_records
+    end
+
+    def searchMain(patterns, packages, fpaths, suffixs, page, limit)
       table = @documents.select do |record|
         expression = nil
 
@@ -90,7 +122,7 @@ module Grenweb
         # 検索式
         expression
       end
-      
+
       # マッチ数
       total_records = table.size
       
@@ -99,13 +131,10 @@ module Grenweb
                             {:key => "timestamp", :order => "descending"}],
                            :offset => page * limit,
                            :limit => limit)
-      
-      # 検索にかかった時間
-      elapsed = Time.now - before
 
-      # 結果
-      return records, total_records, elapsed
+      return records, total_records
     end
+    private :searchMain
 
     def package_expression(record, packages)
       sub = nil

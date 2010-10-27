@@ -122,15 +122,6 @@ module Grenweb
     def calcPage
       (@request['page'] || 0).to_i
     end
-    
-    # リクエストからパスを計算
-    def req2path(component=nil)
-      path = []
-      path << ((@request.script_name == "") ? '/' : @request.script_name)
-      path << component if (component)
-      path.join('/')
-    end
-
   end
 end
 
