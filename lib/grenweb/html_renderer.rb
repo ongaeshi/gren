@@ -76,7 +76,7 @@ EOS
 </div>
 
 <div class="footer">
-  <br>
+  <!-- <br> -->
   <!-- <a href="/::search/p:*">#{package}</a>のパッケージ、 -->
   <a href="/::search/f:*">#{files}</a>のファイル、
   <b><a href="http://ongaeshi.github.com/gren">grenについて</a></b>
@@ -205,8 +205,33 @@ EOS
 EOS
     end
 
-  end
+    def self.sample_code
+      <<EOS
+  <div class='sample-code'>
+  <pre>
+1. キーワードで検索
+#{link('def open')}
 
+2. １フレーズとして検索
+#{link('"def open"')}
+
+3. パッケージ名で絞り込み
+#{link('def open p:gren')}
+
+4. ファイル名や拡張子で絞り込み
+#{link('def open f:test s:rb')}
+  
+5. 色々出来るよ
+#{link('p:gren p:tidtools s:rb f:test assert f:cli')}
+  </pre>
+  </div>
+EOS
+    end
+
+    def self.link(keyword)
+      "<a href='/::search/#{Rack::Utils::escape_html(keyword)}'>#{keyword}</a>"
+    end
+  end
 end
 
 

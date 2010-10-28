@@ -29,6 +29,7 @@ module Grenweb
     def render
       @response.write HTMLRendeler.header_home("gren", "gren", Version)
       @response.write HTMLRendeler.search_box
+      @response.write HTMLRendeler.sample_code
       @response.write HTMLRendeler.footer_home("??", Database.instance.fileNum)
       @response.to_a
     end
