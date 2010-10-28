@@ -9,7 +9,7 @@ class TestGrenwebHTMLRendeler < Test::Unit::TestCase
   end
 
   def test_pagination_line
-    assert_equal("<span class='pagination-link'><a href='./?page=1'>test</a></span>\n", HTMLRendeler.pagination_link(1, "test"))
+    assert_equal("<span class='pagination-link'><a href='?page=1'>test</a></span>\n", HTMLRendeler.pagination_link(1, "test"))
   end
   
   def test_search_summary

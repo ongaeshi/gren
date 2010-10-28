@@ -66,11 +66,16 @@ module Grenweb
 
       # マッチ数
       total_records = table.size
+
+      # 2010/10/29 ongaeshi
+      # 本当はこのようにgroongaAPIでソートしたいのだが上手くいかなかった
+      #       # ファイル名順にソート
+      #       records = table.sort([{:key => "shortpath", :order => "descending"}],
+      #                            :offset => page * limit,
+      #                            :limit => limit)
       
-      # スコアとタイムスタンプでソート
-      records = table.sort([{:key => "shortpath", :order => "descending"}],
-                           :offset => page * limit,
-                           :limit => limit)
+      # ソート
+      records = table.records.sort_by{|record| record.shortpath.downcase }[page * limit, limit]
 
       return records, total_records
     end
