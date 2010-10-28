@@ -77,7 +77,7 @@ EOS
 
 <div class="footer">
   <br>
-  <a href="/::search/p:*">#{package}</a>のパッケージ、
+  <!-- <a href="/::search/p:*">#{package}</a>のパッケージ、 -->
   <a href="/::search/f:*">#{files}</a>のファイル、
   <b><a href="http://ongaeshi.github.com/gren">grenについて</a></b>
 </div>
