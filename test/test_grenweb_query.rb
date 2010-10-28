@@ -43,6 +43,9 @@ class TestGrenWebQuery < Test::Unit::TestCase
 
     q = create_query("int &p")
     assert_equal q.escape_html, 'int &amp;p'
+
+    q = create_query('"def update"')
+    assert_equal q.keywords, ['def update']
   end
 
   def create_query(query)

@@ -69,10 +69,11 @@ module Grenweb
       parts = @query_string.scan(/(?:(#{kp}):)?(?:"(.+)"|(\S+))/)
 
       parts.each do |key, quoted_value, value|
+        text = quoted_value || value
         unless (key)
-          @hash['keywords'] << value
+          @hash['keywords'] << text
         else
-          @hash[key] << value
+          @hash[key] << text
         end
       end
     end
