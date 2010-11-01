@@ -23,6 +23,7 @@ module Grenweb
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
   <!-- <meta name="robot" content="noindex,nofollow" /> -->
   <title>#{title}</title>
+  <link rel="stylesheet" href="/css/gren.css"  type="text/css" media="all" />
 </head>
 <body>
 <div class="header">
@@ -57,6 +58,7 @@ EOS
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
   <!-- <meta name="robot" content="noindex,nofollow" /> -->
   <title>#{title}</title>
+  <link rel="stylesheet" href="/css/gren.css"  type="text/css" media="all" />
 </head>
 <body>
 <div align="center">
