@@ -23,7 +23,11 @@ lib/grenweb/cli.rb
 lib/grenweb/database.rb
 lib/grenweb/grenweb.ru
 lib/grenweb/grep.rb
+lib/grenweb/help.rb
+lib/grenweb/home.rb
 lib/grenweb/html_renderer.rb
+lib/grenweb/public/css/gren.css
+lib/grenweb/public/images/gren-icon-mini.png
 lib/grenweb/public/images/gren-icon.png
 lib/grenweb/query.rb
 lib/grenweb/searcher.rb

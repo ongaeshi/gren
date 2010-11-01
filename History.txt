@@ -1,3 +1,13 @@
+=== 0.3.0 2010/11/02
+
+* grenweb
+* mkgrendb
+
+=== 0.2.4 2010/10/09
+
+* mkgrendb
+* grendb
+
 === 0.2.3 2010/09/25
 
 * mkgrendb

@@ -16,11 +16,9 @@ class TestGrenwebHTMLRendeler < Test::Unit::TestCase
     assert_equal(HTMLRendeler.search_summary(10, 500, 10..20, 0.00893),
                  <<-EOS)
   <div class='search-summary'>
-    <p>
-      <span class="keyword">10</span>の検索結果:
-      <span class="total-entries">500</span>件中
-      <span class="display-range">10 - 20</span>件（0.00893秒）
-    </p>
+    <span class="keyword">10</span>の検索結果:
+    <span class="total-entries">500</span>件中
+    <span class="display-range">10 - 20</span>件（0.00893秒）
   </div>
 EOS
   end

@@ -7,5 +7,5 @@ require 'rubygems'
 require File.expand_path(File.dirname(__FILE__) + "/../lib/gren")
 require "grenweb/cli"
 
-Version = "0.2.5"
+Version = "0.3.0"
 Grenweb::CLI.execute(STDOUT, ARGV)
