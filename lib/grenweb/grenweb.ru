@@ -10,6 +10,7 @@ require 'rack'
 require File.join(File.dirname(__FILE__), 'home')
 require File.join(File.dirname(__FILE__), 'searcher')
 require File.join(File.dirname(__FILE__), 'viewer')
+require File.join(File.dirname(__FILE__), 'help')
 
 use Rack::CommonLogger          
 use Rack::Runtime
@@ -27,3 +28,8 @@ end
 map '/::view' do
   run Grenweb::Viewer.new
 end
+
+map '/::help' do
+  run Grenweb::Help.new
+end
+

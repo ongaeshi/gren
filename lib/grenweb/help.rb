@@ -11,7 +11,7 @@ require File.join(File.dirname(__FILE__), 'html_renderer')
 require File.join(File.dirname(__FILE__), 'query')
 
 module Grenweb
-  class Home
+  class Help
     include Rack::Utils
 
     def call(env)
@@ -27,9 +27,9 @@ module Grenweb
     private
 
     def render
-      @response.write HTMLRendeler.header_home("gren", "gren", Version)
-      @response.write HTMLRendeler.search_box
-      @response.write HTMLRendeler.footer_home("??", Database.instance.fileNum)
+      @response.write HTMLRendeler.header("gren - help", "gren - help")
+      @response.write HTMLRendeler.sample_code
+      @response.write HTMLRendeler.footer
       @response.to_a
     end
   end

@@ -76,10 +76,11 @@ EOS
 </div>
 
 <div class="footer">
-  <!-- <br> -->
-  <!-- <a href="/::search/p:*">#{package}</a>のパッケージ、 -->
-  <a href="/::search/f:*">#{files}</a>のファイル、
-  <b><a href="http://ongaeshi.github.com/gren">grenについて</a></b>
+  <br>
+  <!-- <a href="/::search/p:*">#{package}</a>のパッケージ , -->
+  <a href="/::search/f:*">#{files}</a>のファイル<br>
+  <a href="/::help">ヘルプ</a> , 
+  <a href="http://ongaeshi.github.com/gren">grenについて</a>
 </div>
 </div>
 </body>
@@ -208,22 +209,18 @@ EOS
     def self.sample_code
       <<EOS
   <div class='sample-code'>
-  <pre>
-1. キーワードで検索
-#{link('def open')}
-
-2. １フレーズとして検索
-#{link('"def open"')}
-
-3. パッケージ名で絞り込み
-#{link('def open p:gren')}
-
-4. ファイル名や拡張子で絞り込み
-#{link('def open f:test s:rb')}
-  
-5. 色々出来るよ
-#{link('p:gren p:tidtools s:rb f:test assert f:cli')}
-  </pre>
+  <ol>
+    <li>キーワードで検索<br>
+      #{link('def open')}
+    <li>１フレーズとして検索<br>
+      #{link('"def open"')}
+    <li>パッケージ名で絞り込み<br>
+      #{link('def open p:gren')}
+    <li>ファイル名や拡張子で絞り込み<br>
+      #{link('def open f:test s:rb')}
+    <li>組み合わせ<br>
+      #{link('p:gren p:tidtools s:rb f:test assert f:cli')}
+  </ol>
   </div>
 EOS
     end
