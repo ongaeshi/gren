@@ -62,7 +62,7 @@ EOS
 </head>
 <body>
 <div align="center">
-<div class="header">
+<div class="header_home">
   <h1>
     <a href="/"><img src="/images/gren-icon.png" alt="gren-icon" border="0" height="100px"/></a>
     #{header1} <font size="2">#{version}</font>
@@ -77,8 +77,7 @@ EOS
       <<EOS
 </div>
 
-<div class="footer">
-  <br>
+<div class="footer_home">
   <!-- <a href="/::search/p:*">#{package}</a>のパッケージ , -->
   <a href="/::search/f:*">#{files}</a>のファイル<br>
   <a href="/::help">ヘルプ</a> , 
@@ -178,11 +177,9 @@ EOS
     def self.search_summary(keyword, total_records, range, elapsed)
       <<EOS
   <div class='search-summary'>
-    <p>
-      <span class="keyword">#{keyword}</span>の検索結果:
-      <span class="total-entries">#{total_records}</span>件中
-      <span class="display-range">#{range.first} - #{range.last}</span>件（#{elapsed}秒）
-    </p>
+    <span class="keyword">#{keyword}</span>の検索結果:
+    <span class="total-entries">#{total_records}</span>件中
+    <span class="display-range">#{range.first} - #{range.last}</span>件（#{elapsed}秒）
   </div>
 EOS
     end
@@ -190,9 +187,7 @@ EOS
     def self.view_summary(path, elapsed)
       <<EOS
   <div class='search-summary'>
-    <p>
-      <span class="keyword">#{path}</span>（#{elapsed}秒）
-    </p>
+    <span class="keyword">#{path}</span>（#{elapsed}秒）
   </div>
 EOS
     end
