@@ -10,6 +10,7 @@ require File.join(File.dirname(__FILE__), '../common/grensnip')
 require 'groonga'
 require File.join(File.dirname(__FILE__), '../common/util')
 include Gren
+require 'cgi'
 
 module FindGrep
   class FindGrep
@@ -29,8 +30,9 @@ module FindGrep
                         :noSnip,
                         :dbFile,
                         :groongaOnly,
-                        :isMatchFile)
-
+                        :isMatchFile,
+                        :dispHtml)
+    
     DEFAULT_OPTION = Option.new([],
                                 [],
                                 ".",
@@ -47,7 +49,10 @@ module FindGrep
                                 false,
                                 nil,
                                 false,
+                                false,
                                 false)
+    
+    attr_reader :documents
     
     def initialize(patterns, option)
       @patterns = patterns
@@ -59,6 +64,22 @@ module FindGrep
       @ignoreFiles = strs2regs(option.ignoreFiles)
       @ignoreDirs = strs2regs(option.ignoreDirs)
       @result = Result.new(option.directory)
+      open_database if (@option.dbFile)
+    end
+
+    def open_database()
+      # データベース開く
+      dbfile = Pathname(File.expand_path(@option.dbFile))
+      
+      if dbfile.exist?
+        Groonga::Database.open(dbfile.to_s)
+        puts "open    : #{dbfile} open."
+      else
+        raise "error    : #{dbfile.to_s} not found!!"
+      end
+      
+      # ドキュメントを取
+      @documents = Groonga::Context.default["documents"]
     end
 
     def strs2regs(strs, ignore = false)
@@ -82,7 +103,7 @@ module FindGrep
 
       @result.time_stop
       
-      unless (@option.isSilent)
+      if (!@option.isSilent && !@option.dispHtml)
         if (@option.debugMode)
           stdout.puts
           stdout.puts "--- search --------"
@@ -108,21 +129,8 @@ module FindGrep
     end
 
     def searchFromDB(stdout, dir)
-      # データベース開く
-      dbfile = Pathname(File.expand_path(@option.dbFile))
-      
-      if dbfile.exist?
-        Groonga::Database.open(dbfile.to_s)
-        puts "open    : #{dbfile} open."
-      else
-        raise "error    : #{dbfile.to_s} not found!!"
-      end
-      
-      # ドキュメントを検索
-      documents = Groonga::Context.default["documents"]
-
       # 全てのパターンを検索
-      table = documents.select do |record|
+      table = @documents.select do |record|
         expression = nil
 
         # キーワード
@@ -154,10 +162,11 @@ module FindGrep
       end
       
       # タイムスタンプでソート
-      records = table.sort([{:key => "timestamp", :order => "descending"}])
+      records = table.sort([{:key => "_score", :order => "descending"},
+                            {:key => "timestamp", :order => "descending"}])
 
       # データベースにヒット
-      stdout.puts "Found   : #{records.size} records."
+      stdout.puts "Found   : #{records.size} records." unless (@option.dispHtml)
 
       # 検索にヒットしたファイルを実際に検索
       records.each do |record|
@@ -316,13 +325,25 @@ module FindGrep
         result, match_datas = match?(line)
 
         if ( result )
-          header = "#{path}:#{index + 1}:"
-          line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
+          unless (@option.dispHtml)
+            header = "#{path}:#{index + 1}:"
+            line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
 
-          unless (@option.colorHighlight)
-            stdout.puts header + line
+            unless (@option.colorHighlight)
+              stdout.puts header + line
+            else
+              stdout.puts HighLine::BLUE + header + HighLine::CLEAR + GrenSnip::coloring(line, match_datas)
+            end
           else
-            stdout.puts HighLine::BLUE + header + HighLine::CLEAR + GrenSnip::coloring(line, match_datas)
+            line_no = index + 1
+            line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
+            
+            stdout.puts <<EOF
+<h2><a href="../::view#{path}">#{path}</a></h2>
+<pre>
+#{line_no} : #{CGI.escapeHTML(line)}
+</pre>
+EOF
           end
 
           unless match_file

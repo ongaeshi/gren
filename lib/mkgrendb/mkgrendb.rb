@@ -17,6 +17,7 @@ module Mkgrendb
       puts "input_yaml : #{@input_yaml} found."
       @src = YAML.load(open(@input_yaml).read())
       @file_count = 0
+      @add_count = 0
       @update_count = 0
       @start_time = Time.now
     end
@@ -29,7 +30,7 @@ module Mkgrendb
         if (FileTest.directory? dir)
           db_add_dir(dir)
         else
-          db_add_file(STDOUT, dir)
+          db_add_file(STDOUT, dir, File.basename(dir))
         end
       end
       @end_time = Time.now
@@ -54,7 +55,8 @@ module Mkgrendb
       puts "input_yaml : #{@input_yaml} (#{Util::time_s(time)})"
       puts "output_db  : #{@output_db}*"
       puts "files      : #{@file_count}"
-      puts "updates    : #{@update_count}"
+      puts "add        : #{@add_count}"
+      puts "update     : #{@update_count}"
     end
 
     def dump()
@@ -65,6 +67,7 @@ module Mkgrendb
       records.each do |record|
         p record
         puts "path : #{record.path}"
+        puts "shortpath : #{record.shortpath}"
         puts "suffix : #{record.suffix}"
         puts "timestamp : #{record.timestamp.strftime('%Y/%m/%d %H:%M:%S')}"
         puts "content :", record.content ? record.content[0..64] : nil
@@ -82,6 +85,7 @@ module Mkgrendb
         Groonga::Schema.define do |schema|
           schema.create_table("documents") do |table|
             table.string("path")
+            table.string("shortpath")
             table.text("content")
             table.time("timestamp")
             table.text("suffix")
@@ -92,6 +96,7 @@ module Mkgrendb
                               :key_normalize => true,
                               :default_tokenizer => "TokenBigram") do |table|
             table.index("documents.path", :with_position => true)
+            table.index("documents.shortpath", :with_position => true)
             table.index("documents.content", :with_position => true)
             table.index("documents.suffix", :with_position => true)
           end
@@ -125,14 +130,15 @@ module Mkgrendb
     private :db_open
 
     def db_add_dir(dirname)
-      searchDirectory(STDOUT, dirname, 0)
+      searchDirectory(STDOUT, dirname, File.basename(dirname), 0)
     end
     private :db_add_dir
 
-    def db_add_file(stdout, filename)
+    def db_add_file(stdout, filename, shortpath)
       # 格納するデータ
       values = {
         :path => filename,
+        :shortpath => shortpath,
         :content => nil,
         :timestamp => File.mtime(filename),
         :suffix => File::extname(filename),
@@ -164,6 +170,7 @@ module Mkgrendb
         values.each do |key, value|
           if (key == :path)
             if (isNewFile)
+              @add_count += 1
               puts "add_file   : #{value}"
             else
               @update_count += 1
@@ -176,12 +183,12 @@ module Mkgrendb
 
     end
 
-    def searchDirectory(stdout, dir, depth)
+    def searchDirectory(stdout, dir, shortdir, depth)
       Dir.foreach(dir) do |name|
         next if (name == '.' || name == '..')
           
         fpath = File.join(dir,name)
-        fpath_disp = fpath.gsub(/^.\//, "")
+        shortpath = File.join(shortdir,name)
         
         # 除外ディレクトリならばパス
         next if ignoreDir?(fpath)
@@ -192,10 +199,10 @@ module Mkgrendb
         # ファイルならば中身を探索、ディレクトリならば再帰
         case File.ftype(fpath)
         when "directory"
-          searchDirectory(stdout, fpath, depth + 1)
+          searchDirectory(stdout, fpath, shortpath, depth + 1)
         when "file"
           unless ignoreFile?(fpath)
-            db_add_file(stdout, fpath)
+            db_add_file(stdout, fpath, shortpath)
             @file_count += 1
             puts "file_count : #{@file_count}" if (@file_count % 100 == 0)
           end
