@@ -56,3 +56,7 @@ pre {
 span.keyword {
     font-weight: bold;    
 }
+
+font.version {
+    font-size: 35%;
+}

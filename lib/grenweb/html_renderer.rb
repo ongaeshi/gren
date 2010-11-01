@@ -65,7 +65,7 @@ EOS
 <div class="header_home">
   <h1>
     <a href="/"><img src="/images/gren-icon.png" alt="gren-icon" border="0" height="100px"/></a>
-    #{header1} <font size="2">#{version}</font>
+    #{header1} <font class="version">#{version}</font>
   </h1>
 </div>
 
