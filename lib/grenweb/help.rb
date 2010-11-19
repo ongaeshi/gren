@@ -15,6 +15,7 @@ module Grenweb
     include Rack::Utils
 
     def call(env)
+      @env = env
       @request = Rack::Request.new(env)
       @query = Query.new(@request)
 
@@ -27,9 +28,10 @@ module Grenweb
     private
 
     def render
-      @response.write HTMLRendeler.header("gren - help", "gren - help")
-      @response.write HTMLRendeler.sample_code
-      @response.write HTMLRendeler.footer
+      r = HTMLRendeler.new(@request.script_name + '/..')
+      @response.write r.header("gren - help", "gren - help")
+      @response.write r.sample_code
+      @response.write r.footer
       @response.to_a
     end
   end

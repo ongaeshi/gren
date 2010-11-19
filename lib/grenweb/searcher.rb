@@ -26,6 +26,8 @@ module Grenweb
 
       @nth = 3                  # マッチした行の前後何行を表示するか
 
+      @rendeler = HTMLRendeler.new(@request.script_name + '/..')
+
       if @request.post? or @request['query']
         post_request
       else
@@ -55,27 +57,27 @@ module Grenweb
     end
 
     def render_header
-      @response.write HTMLRendeler.header("gren : #{@query.escape_html}", "gren")
+      @response.write @rendeler.header("gren : #{@query.escape_html}", "gren")
     end
 
     def render_search_box
-      @response.write HTMLRendeler.search_box(@query.escape_html)
+      @response.write @rendeler.search_box(@query.escape_html)
     end
 
     def render_search_result
       if @query.empty?
-        @response.write HTMLRendeler.empty_summary
+        @response.write @rendeler.empty_summary
       else
         records, total_records, elapsed = Database.instance.search(@query.keywords, @query.packages, @query.fpaths, @query.suffixs, calcPage, calcLimit)
         render_search_summary(records, total_records, elapsed)
-        records.each { |record| @response.write(HTMLRendeler.result_record(record, @query.keywords, @nth)) }
+        records.each { |record| @response.write(@rendeler.result_record(record, @query.keywords, @nth)) }
         render_pagination(calcPage, total_records)
       end
     end
 
     def render_search_summary(records, total_records, elapsed)
       pageStart = calcPage * calcLimit
-      @response.write HTMLRendeler.search_summary(@query.query_string,
+      @response.write @rendeler.search_summary(@query.query_string,
                                                   total_records,
                                                   (total_records.zero? ? 0 : pageStart + 1)..(pageStart + records.size),
                                                   elapsed)
@@ -88,23 +90,23 @@ module Grenweb
       last_page = (total_records / calcLimit.to_f).ceil
       @response.write("<div class='pagination'>\n")
       if page > 0
-        @response.write(HTMLRendeler.pagination_link(page - 1, "<<"))
+        @response.write(@rendeler.pagination_link(page - 1, "<<"))
       end
       last_page.times do |i|
         if i == page
-          @response.write(HTMLRendeler.pagination_span(i))
+          @response.write(@rendeler.pagination_span(i))
         else
-          @response.write(HTMLRendeler.pagination_link(i, i))
+          @response.write(@rendeler.pagination_link(i, i))
         end
       end
       if page < (last_page - 1)
-        @response.write(HTMLRendeler.pagination_link(page + 1, ">>"))
+        @response.write(@rendeler.pagination_link(page + 1, ">>"))
       end
       @response.write("</div>\n")
     end
 
     def render_footer
-      @response.write HTMLRendeler.footer
+      @response.write @rendeler.footer
     end
 
     private
