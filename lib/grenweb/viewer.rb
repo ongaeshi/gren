@@ -7,6 +7,7 @@
 
 require 'rack'
 require File.join(File.dirname(__FILE__), 'database')
+require File.join(File.dirname(__FILE__), 'html_renderer2')
 
 module Grenweb
   class Viewer
@@ -22,17 +23,19 @@ module Grenweb
 
       record, elapsed = Database.instance.record(req2query)
 
+      @rendeler = HTMLRendeler2.new(@request.script_name + '/..')
+
       if (record)
-        @response.write HTMLRendeler.header("gren : #{record.shortpath}", "gren")
-        @response.write HTMLRendeler.search_box("")
-        @response.write HTMLRendeler.view_summary(record.shortpath, elapsed)
-        @response.write HTMLRendeler.record_content(record)
+        @response.write @rendeler.header("gren : #{record.shortpath}", "gren")
+        @response.write @rendeler.search_box("")
+        @response.write @rendeler.view_summary(record.shortpath, elapsed)
+        @response.write @rendeler.record_content(record)
       else
-        @response.write HTMLRendeler.header("gren : not found.", "gren")
-        @response.write HTMLRendeler.search_box("")
-        @response.write HTMLRendeler.empty_summary
+        @response.write @rendeler.header("gren : not found.", "gren")
+        @response.write @rendeler.search_box("")
+        @response.write @rendeler.empty_summary
       end
-      @response.write HTMLRendeler.footer
+      @response.write @rendeler.footer
       
       @response.to_a
     end
@@ -40,14 +43,9 @@ module Grenweb
     private
 
     def req2query
+      p @request.path_info
       unescape(@request.path_info.gsub(/\A\/|\/z/, ''))
     end
     
-    def req2path(component='')
-      path = []
-      path << ((@request.script_name == "") ? '/' : @request.script_name)
-      path << component if (component)
-      path.join('/')
-    end
   end
 end

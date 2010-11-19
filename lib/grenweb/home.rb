@@ -7,7 +7,7 @@
 
 require 'rack'
 require File.join(File.dirname(__FILE__), 'database')
-require File.join(File.dirname(__FILE__), 'html_renderer')
+require File.join(File.dirname(__FILE__), 'html_renderer2')
 require File.join(File.dirname(__FILE__), 'query')
 
 module Grenweb
@@ -15,6 +15,7 @@ module Grenweb
     include Rack::Utils
 
     def call(env)
+      @env = env
       @request = Rack::Request.new(env)
       @query = Query.new(@request)
 
@@ -27,9 +28,10 @@ module Grenweb
     private
 
     def render
-      @response.write HTMLRendeler.header_home("gren", "gren", Version)
-      @response.write HTMLRendeler.search_box
-      @response.write HTMLRendeler.footer_home("??", Database.instance.fileNum)
+      r = HTMLRendeler2.new(@request.script_name)
+      @response.write r.header_home("gren", "gren", Version)
+      @response.write r.search_box
+      @response.write r.footer_home("??", Database.instance.fileNum)
       @response.to_a
     end
   end
