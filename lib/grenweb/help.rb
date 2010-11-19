@@ -7,7 +7,7 @@
 
 require 'rack'
 require File.join(File.dirname(__FILE__), 'database')
-require File.join(File.dirname(__FILE__), 'html_renderer2')
+require File.join(File.dirname(__FILE__), 'html_renderer')
 require File.join(File.dirname(__FILE__), 'query')
 
 module Grenweb
@@ -28,7 +28,7 @@ module Grenweb
     private
 
     def render
-      r = HTMLRendeler2.new(@request.script_name + '/..')
+      r = HTMLRendeler.new(@request.script_name + '/..')
       @response.write r.header("gren - help", "gren - help")
       @response.write r.sample_code
       @response.write r.footer

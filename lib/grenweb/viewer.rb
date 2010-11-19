@@ -7,7 +7,7 @@
 
 require 'rack'
 require File.join(File.dirname(__FILE__), 'database')
-require File.join(File.dirname(__FILE__), 'html_renderer2')
+require File.join(File.dirname(__FILE__), 'html_renderer')
 
 module Grenweb
   class Viewer
@@ -23,7 +23,7 @@ module Grenweb
 
       record, elapsed = Database.instance.record(req2query)
 
-      @rendeler = HTMLRendeler2.new(@request.script_name + '/..')
+      @rendeler = HTMLRendeler.new(@request.script_name + '/..')
 
       if (record)
         @response.write @rendeler.header("gren : #{record.shortpath}", "gren")

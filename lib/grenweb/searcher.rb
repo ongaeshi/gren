@@ -7,7 +7,7 @@
 
 require 'rack'
 require File.join(File.dirname(__FILE__), 'database')
-require File.join(File.dirname(__FILE__), 'html_renderer2')
+require File.join(File.dirname(__FILE__), 'html_renderer')
 require File.join(File.dirname(__FILE__), 'query')
 
 module Grenweb
@@ -26,7 +26,7 @@ module Grenweb
 
       @nth = 3                  # マッチした行の前後何行を表示するか
 
-      @rendeler = HTMLRendeler2.new(@request.script_name + '/..')
+      @rendeler = HTMLRendeler.new(@request.script_name + '/..')
 
       if @request.post? or @request['query']
         post_request

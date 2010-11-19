@@ -6,14 +6,15 @@ class TestGrenwebHTMLRendeler < Test::Unit::TestCase
   include Grenweb
 
   def setup
+    @rendeler = HTMLRendeler.new('/')
   end
 
   def test_pagination_line
-    assert_equal("<span class='pagination-link'><a href='?page=1'>test</a></span>\n", HTMLRendeler.pagination_link(1, "test"))
+    assert_equal("<span class='pagination-link'><a href='?page=1'>test</a></span>\n", @rendeler.pagination_link(1, "test"))
   end
   
   def test_search_summary
-    assert_equal(HTMLRendeler.search_summary(10, 500, 10..20, 0.00893),
+    assert_equal(@rendeler.search_summary(10, 500, 10..20, 0.00893),
                  <<-EOS)
   <div class='search-summary'>
     <span class="keyword">10</span>の検索結果:
@@ -24,11 +25,11 @@ EOS
   end
 
   def test_match_strong
-    assert_equal(HTMLRendeler.match_strong("This is line.", [nil, nil]), "This is line.")
+    assert_equal(@rendeler.match_strong("This is line.", [nil, nil]), "This is line.")
   end
 
   def test_search_box
-    assert_equal(HTMLRendeler.search_box('test must'), <<-EOF)
+    assert_equal(@rendeler.search_box('test must'), <<-EOF)
 <form method="post" action="/::search">
   <p>
     <input name="query" type="text" size="60" value="test must" />
