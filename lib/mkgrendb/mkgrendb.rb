@@ -4,6 +4,7 @@ require 'yaml'
 require 'pathname'
 require 'rubygems'
 require 'groonga'
+require 'fileutils'
 require File.join(File.dirname(__FILE__), '../common/grenfiletest')
 require File.join(File.dirname(__FILE__), '../common/util')
 include Gren
@@ -112,7 +113,7 @@ module Mkgrendb
       raise "Illegal file name : #{filename}." unless filename =~ /\.db$/
       Dir.glob("#{filename}*").each do |f|
         puts "delete     : #{f}"
-        File.unlink(f)
+        FileUtils.rm_r(f)
       end
     end
     private :db_delete
