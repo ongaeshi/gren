@@ -28,7 +28,10 @@ module Mkgrendb
       db_open(@output_db)
       @src["directory"].each do |dir|
         dir = File.expand_path(dir)
-        if (FileTest.directory? dir)
+
+        if (!FileTest.exist?(dir))
+          puts "[WARNING]  : #{dir} (Not found, skip)"
+        elsif (FileTest.directory? dir)
           db_add_dir(dir)
         else
           db_add_file(STDOUT, dir, File.basename(dir))
