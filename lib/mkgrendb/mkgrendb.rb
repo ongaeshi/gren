@@ -4,6 +4,7 @@ require 'yaml'
 require 'pathname'
 require 'rubygems'
 require 'groonga'
+require 'fileutils'
 require File.join(File.dirname(__FILE__), '../common/grenfiletest')
 require File.join(File.dirname(__FILE__), '../common/util')
 include Gren
@@ -27,7 +28,10 @@ module Mkgrendb
       db_open(@output_db)
       @src["directory"].each do |dir|
         dir = File.expand_path(dir)
-        if (FileTest.directory? dir)
+
+        if (!FileTest.exist?(dir))
+          puts "[WARNING]  : #{dir} (Not found, skip)"
+        elsif (FileTest.directory? dir)
           db_add_dir(dir)
         else
           db_add_file(STDOUT, dir, File.basename(dir))
@@ -112,7 +116,7 @@ module Mkgrendb
       raise "Illegal file name : #{filename}." unless filename =~ /\.db$/
       Dir.glob("#{filename}*").each do |f|
         puts "delete     : #{f}"
-        File.unlink(f)
+        FileUtils.rm_r(f)
       end
     end
     private :db_delete
