@@ -18,6 +18,7 @@ class TestMkgrendb < Test::Unit::TestCase
       CLI.execute($stdout, ["update"])
       CLI.execute($stdout, ["add"])
       CLI.execute($stdout, ["list"])
+      CLI.execute($stdout, ["rebuild"])
     end
   end
 end

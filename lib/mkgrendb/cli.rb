@@ -13,6 +13,7 @@ The most commonly used mkgrendb are:
   update      Update db.
   add         Add contents. (ex. ~/Documents/gren, git://github.com/ongaeshi/gren.git)
   list        List all contents. 
+  rebuild     Rebuild db. 
 EOF
 
       subopt = Hash.new
@@ -20,6 +21,7 @@ EOF
       subopt['update'] = OptionParser.new("#{File.basename($0)} update")
       subopt['add'] = OptionParser.new("#{File.basename($0)} add content1 [content2 ...]")
       subopt['list'] = OptionParser.new("#{File.basename($0)} list")
+      subopt['rebuild'] = OptionParser.new("#{File.basename($0)} rebuild")
 
       opt.order!(arguments)
       subcommand = arguments.shift
@@ -37,6 +39,8 @@ EOF
           obj.add
         when "list"
           obj.list
+        when "rebuild"
+          obj.rebuild
         end
       else
         if subcommand
