@@ -13,7 +13,7 @@ class TestMkgrendb < Test::Unit::TestCase
   include Mkgrendb
 
   def test_000
-    FileUtils.cd('/Users/ongaeshi/grendb2/') do |dir|
+    FileUtils.cd('test/testdb') do |dir|
       CLI.execute($stdout, ["init"])
       CLI.execute($stdout, ["update"])
       CLI.execute($stdout, ["add"])
