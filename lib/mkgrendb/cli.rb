@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'optparse'
-require File.join(File.dirname(__FILE__), 'mkgrendb')
+require File.join(File.dirname(__FILE__), 'mkgrendb2')
 
 module Mkgrendb
   class CLI
@@ -21,15 +21,29 @@ EOF
       subopt['add'] = OptionParser.new("#{File.basename($0)} add content1 [content2 ...]")
       subopt['list'] = OptionParser.new("#{File.basename($0)} list")
 
-      opt.order!(ARGV)
-      subcommand = ARGV.shift
+      opt.order!(arguments)
+      subcommand = arguments.shift
 
       if (subopt[subcommand])
-        subopt[subcommand].parse!(ARGV) unless ARGV.empty?
-        puts "command : #{subcommand}"
+        subopt[subcommand].parse!(arguments) unless arguments.empty?
+        obj = Mkgrendb2.new
+
+        case subcommand
+        when "init"
+          obj.init
+        when "update"
+          obj.update
+        when "add"
+          obj.add
+        when "list"
+          obj.list
+        end
       else
-        stdout.puts opt.help
-        $stderr.puts "no such subcommand: #{subcommand}" if subcommand
+        if subcommand
+          $stderr.puts "mkgrendb: '#{subcommand}' is not a mkgrendb command. See 'mkgrendb --help'"
+        else
+          stdout.puts opt.help
+        end
       end
     end
   end
