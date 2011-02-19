@@ -5,44 +5,31 @@ require File.join(File.dirname(__FILE__), 'mkgrendb')
 module Mkgrendb
   class CLI
     def self.execute(stdout, arguments=[])
-      input_yamls = []
-      isDump = false
-      isFull = false
-      isDelete = false
-      isReport = false
+      opt = OptionParser.new <<EOF
+#{File.basename($0)} COMMAND [ARGS]
 
-      opt = OptionParser.new "#{File.basename($0)} INPUT_YAML1 [INPUT_YAML2 ...]"
-      opt.on('--ddb', "--default-db", "Create or Update default DB. (Plase set ENV['GRENDB_DEFAULT_DB'])") {|v| input_yamls << ENV['GRENDB_DEFAULT_DB']}
-      opt.on('--full', "Full update DB. (Delete and create)") {|v| isFull = true }
-      opt.on('--delete', "Delete DB. (Not delete yaml)") {|v| isDelete = true }
-      opt.on('--dump', "Dump DB.") {|v| isDump = true }
-      opt.on('--report', "Database Report.") {|v| isReport = true }
-      opt.parse!(arguments)
+The most commonly used mkgrendb are:
+  init        Init db.
+  update      Update db.
+  add         Add contents. (ex. ~/Documents/gren, git://github.com/ongaeshi/gren.git)
+  list        List all contents. 
+EOF
 
-      input_yamls.concat arguments
+      subopt = Hash.new
+      subopt['init'] = OptionParser.new("#{File.basename($0)} init")
+      subopt['update'] = OptionParser.new("#{File.basename($0)} update")
+      subopt['add'] = OptionParser.new("#{File.basename($0)} add content1 [content2 ...]")
+      subopt['list'] = OptionParser.new("#{File.basename($0)} list")
 
-      if (input_yamls.size >= 1)
-        input_yamls.each do |input_yaml|
-          obj = Mkgrendb.new(input_yaml)
-          
-          if (isFull)
-            obj.full
-            stdout.puts
-          elsif (isDelete)
-            obj.delete
-            stdout.puts
-          elsif (isDump)
-            obj.dump
-          elsif (isReport)
-            obj.report
-          else
-            obj.update
-            stdout.puts
-          end
+      opt.order!(ARGV)
+      subcommand = ARGV.shift
 
-        end
+      if (subopt[subcommand])
+        subopt[subcommand].parse!(ARGV) unless ARGV.empty?
+        puts "command : #{subcommand}"
       else
         stdout.puts opt.help
+        $stderr.puts "no such subcommand: #{subcommand}" if subcommand
       end
     end
   end
