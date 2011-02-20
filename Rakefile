@@ -37,3 +37,20 @@ end
 require 'newgem/tasks'
 Dir['tasks/**/*.rake'].each { |t| load t }
 
+# clear current task
+module Rake
+  class Task
+    def clear_actions
+      @actions.clear
+    end
+  end
+end
+
+# clear test task
+t = Rake.application.lookup(:test).clear_actions
+
+# new test
+task :test do
+  load "test/runner.rb"
+end
+
