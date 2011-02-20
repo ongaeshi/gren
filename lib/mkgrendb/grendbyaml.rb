@@ -15,7 +15,26 @@ module Mkgrendb
     def self.create
       raise YAMLAlreadyExist.new if FileTest.exist? 'grendb.yaml'
       data = {'directory' => [], 'version' => 0.1}
-      YAML.dump(data, open("grendb.yaml", "w"))
+      YAML.dump(data, open('grendb.yaml', "w"))
     end
+
+    def self.load
+      return GrendbYAML.new(YAML.load(open('grendb.yaml').read()))
+    end
+
+    def add(content)
+      @data['directory'] << content
+    end
+
+    def save
+      YAML.dump(@data, open('grendb.yaml', "w"))
+    end
+
+    private
+
+    def initialize(data)
+      @data = data
+    end
+
   end
 end

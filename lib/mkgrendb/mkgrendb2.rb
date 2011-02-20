@@ -23,14 +23,15 @@ module Mkgrendb
     end
 
     def update
-      #GrendbYAML.load
+      yaml = GrendbYAML.load
+      p yaml
       puts "update"
     end
 
     def add
-#       GrendbYAML.load
-#       GrendbYAML.add
-#       GrendbYAML.save
+      yaml = GrendbYAML.load
+      yaml.add("hoge")
+      yaml.save
     end
 
     def list

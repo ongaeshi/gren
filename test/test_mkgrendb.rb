@@ -14,11 +14,11 @@ class TestMkgrendb < Test::Unit::TestCase
 
   def test_000
     FileUtils.cd('test/testdb') do |dir|
-      CLI.execute($stdout, ["init"])
-      CLI.execute($stdout, ["update"])
-      CLI.execute($stdout, ["add"])
-      CLI.execute($stdout, ["list"])
-      CLI.execute($stdout, ["rebuild"])
+#       CLI.execute($stdout, ["init"])
+#       CLI.execute($stdout, ["update"])
+#       CLI.execute($stdout, ["add"])
+#       CLI.execute($stdout, ["list"])
+#       CLI.execute($stdout, ["rebuild"])
     end
   end
 end
