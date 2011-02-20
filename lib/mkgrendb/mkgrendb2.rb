@@ -9,39 +9,47 @@ require File.join(File.dirname(__FILE__), 'grendbyaml')
 
 module Mkgrendb
   class Mkgrendb2
-    def initialize()
+    GREN_DB_FILE = 'db/grendb.db'
+    
+    def initialize(io = $stdout)
+      @out = io
     end
 
     def init
-      begin
+      if Dir.entries('.') == [".", ".."]
         GrendbYAML.create
-        puts "create     : grendb.yaml"
-        db_create('db/grendb.db')
-      rescue GrendbYAML::YAMLAlreadyExist
-        puts "Already existing Grendb Database in #{Dir.pwd}"
+        @out.puts "create     : grendb.yaml"
+        db_create(GREN_DB_FILE)
+      else
+        @out.puts "Can't create Grendb Database (Not empty) in #{Dir.pwd}"
       end
     end
 
     def update
       yaml = GrendbYAML.load
       p yaml
-      puts "update"
+
+      db_open(GREN_DB_FILE)
     end
 
-    def add
+    def add(*content)
+      # YAML更新
       yaml = GrendbYAML.load
-      yaml.add("hoge")
+      yaml.add(*content)
       yaml.save
+
+      # @todo 部分アップデート
+      update
     end
 
     def list
 #       GrendbYAML.load
-#       puts GrendbYAML.list
+#       @out.puts GrendbYAML.list
     end
 
     def rebuild
-      db_delete('db/grendb.db')
-      db_create('db/grendb.db')
+      db_delete(GREN_DB_FILE)
+      db_create(GREN_DB_FILE)
       update
     end
 
@@ -73,16 +81,27 @@ module Mkgrendb
             table.index("documents.suffix", :with_position => true)
           end
         end
-        puts "create     : #{filename} created."
+        @out.puts "create     : #{filename} created."
       else
-        puts "message    : #{filename} already exist."
+        @out.puts "message    : #{filename} already exist."
       end
     end
     
+    def db_open(filename)
+      dbfile = Pathname(File.expand_path(filename))
+      
+      if dbfile.exist?
+        Groonga::Database.open(dbfile.to_s)
+        puts  "open       : #{dbfile} open."
+      else
+        raise "error      : #{dbfile.to_s} not found!!"
+      end
+    end
+
     def db_delete(filename)
       raise "Illegal file name : #{filename}." unless filename =~ /\.db$/
       Dir.glob("#{filename}*").each do |f|
-        puts "delete     : #{f}"
+        @out.puts "delete     : #{f}"
         FileUtils.rm_r(f)
       end
     end
