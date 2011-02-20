@@ -5,6 +5,7 @@ require 'pathname'
 require 'rubygems'
 require 'groonga'
 require 'fileutils'
+require File.join(File.dirname(__FILE__), 'grendbyaml')
 
 module Mkgrendb
   class Mkgrendb2
@@ -12,26 +13,35 @@ module Mkgrendb
     end
 
     def init
-      # 空じゃ無かったら警告を出して終了
-      # yamlファイルの追加
-      db_create('db/grendb.db')
+      begin
+        GrendbYAML.create
+        puts "create     : grendb.yaml"
+        db_create('db/grendb.db')
+      rescue GrendbYAML::YAMLAlreadyExist
+        puts "Already existing Grendb Database in #{Dir.pwd}"
+      end
     end
 
     def update
+      #GrendbYAML.load
       puts "update"
     end
 
     def add
-      puts "add"
+#       GrendbYAML.load
+#       GrendbYAML.add
+#       GrendbYAML.save
     end
 
     def list
-      puts "list"
+#       GrendbYAML.load
+#       puts GrendbYAML.list
     end
 
     def rebuild
       db_delete('db/grendb.db')
       db_create('db/grendb.db')
+      update
     end
 
     private
