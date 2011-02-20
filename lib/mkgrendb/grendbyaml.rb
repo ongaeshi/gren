@@ -12,22 +12,41 @@ module Mkgrendb
     class YAMLAlreadyExist < RuntimeError
     end
     
+    class YAMLNotExist < RuntimeError
+    end
+
     def self.create
       raise YAMLAlreadyExist.new if FileTest.exist? 'grendb.yaml'
-      data = {'directory' => [], 'version' => 0.1}
-      YAML.dump(data, open('grendb.yaml', "w"))
+      obj = GrendbYAML.new({'directory' => [], 'version' => 0.1})
+      obj.save
+      return obj
     end
 
     def self.load
-      return GrendbYAML.new(YAML.load(open('grendb.yaml').read()))
+      raise YAMLNotExist.new unless FileTest.exist? 'grendb.yaml'
+      open('grendb.yaml') do |f|
+        return GrendbYAML.new(YAML.load(f.read()))
+      end
     end
 
-    def add(content)
-      @data['directory'] << content
+    def add(*content)
+      directory.push(*content)
+    end
+
+    def remove(*content)
+      content.each {|f| directory.delete f }
     end
 
     def save
-      YAML.dump(@data, open('grendb.yaml', "w"))
+      open('grendb.yaml', "w") { |f| YAML.dump(@data, f) }
+    end
+
+    def directory
+      @data['directory']
+    end
+
+    def version
+      @data['version']
     end
 
     private
