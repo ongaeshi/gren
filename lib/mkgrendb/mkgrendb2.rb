@@ -19,6 +19,7 @@ module Mkgrendb
       @file_count = 0
       @add_count = 0
       @update_count = 0
+      @start_time = Time.now
     end
 
     def init
@@ -32,23 +33,19 @@ module Mkgrendb
     end
 
     def update
-      yaml = GrendbYAML.load
-      db_open(GREN_DB_FILE)
+      print_result do 
+        yaml = GrendbYAML.load
+        db_open(GREN_DB_FILE)
 
-      yaml.directory.each do |dir|
-        update_dir(dir)
+        yaml.directory.each do |dir|
+          update_dir_in(dir)
+        end
       end
     end
 
     def update_dir(dir)
-      dir = File.expand_path(dir)
-
-      if (!FileTest.exist?(dir))
-        @out.puts "[WARNING]  : #{dir} (Not found, skip)"
-      elsif (FileTest.directory? dir)
-        db_add_dir(dir)
-      else
-        db_add_file(STDOUT, dir, File.basename(dir))
+      print_result do 
+        update_dir_in(dir)
       end
     end
 
@@ -85,6 +82,34 @@ module Mkgrendb
     end
 
     private
+
+    def update_dir_in(dir)
+      dir = File.expand_path(dir)
+
+      if (!FileTest.exist?(dir))
+        @out.puts "[WARNING]  : #{dir} (Not found, skip)"
+      elsif (FileTest.directory? dir)
+        db_add_dir(dir)
+      else
+        db_add_file(STDOUT, dir, File.basename(dir))
+      end
+    end
+
+    def time
+      @end_time - @start_time 
+    end
+
+    def print_result
+      yield
+      
+      @end_time = Time.now
+      
+      @out.puts
+      @out.puts "time       : #{Util::time_s(time)}"
+      @out.puts "files      : #{@file_count}"
+      @out.puts "add        : #{@add_count}"
+      @out.puts "update     : #{@update_count}"
+    end
 
     def db_create(filename)
       dbfile = Pathname(File.expand_path(filename))
