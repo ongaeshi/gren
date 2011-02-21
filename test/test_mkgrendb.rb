@@ -7,22 +7,14 @@
 
 require 'rubygems'
 require File.join(File.dirname(__FILE__), "test_helper.rb")
-require 'test/unit'
+require File.join(File.dirname(__FILE__), "file_test_utils")
 require File.join(File.dirname(__FILE__), "../lib/mkgrendb/cli.rb")
 require File.join(File.dirname(__FILE__), "../lib/mkgrendb/mkgrendb2.rb")
-require 'fileutils'
 require 'stringio'
 
 class TestMkgrendb < Test::Unit::TestCase
   include Mkgrendb
-
-  def setup
-    @prev_dir = Dir.pwd
-    @tmp_dir = Pathname(File.dirname(__FILE__)) + "tmp"
-    FileUtils.rm_rf(@tmp_dir.to_s)
-    FileUtils.mkdir_p(@tmp_dir.to_s)
-    FileUtils.cd(@tmp_dir.to_s)
-  end
+  include FileTestUtils
 
    def test_create
      db_path = Pathname.new('.') + 'db'
@@ -54,11 +46,6 @@ EOF
        CLI.execute($stdout, ["add"])
        CLI.execute($stdout, ["list"])
        CLI.execute($stdout, ["rebuild"])
-  end
-
-  def teardown
-    FileUtils.cd(@prev_dir)
-    FileUtils.rm_rf(@tmp_dir.to_s)
   end
 end
 
