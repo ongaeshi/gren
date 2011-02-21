@@ -12,6 +12,7 @@ The most commonly used mkgrendb are:
   init        Init db.
   update      Update db.
   add         Add contents. (ex. ~/Documents/gren, git://github.com/ongaeshi/gren.git)
+  remove      Remove contents.
   list        List all contents. 
   rebuild     Rebuild db. 
 EOF
@@ -20,6 +21,7 @@ EOF
       subopt['init'] = OptionParser.new("#{File.basename($0)} init")
       subopt['update'] = OptionParser.new("#{File.basename($0)} update")
       subopt['add'] = OptionParser.new("#{File.basename($0)} add content1 [content2 ...]")
+      subopt['remove'] = OptionParser.new("#{File.basename($0)} remove content1 [content2 ...]")
       subopt['list'] = OptionParser.new("#{File.basename($0)} list")
       subopt['rebuild'] = OptionParser.new("#{File.basename($0)} rebuild")
 
@@ -37,6 +39,8 @@ EOF
           obj.update
         when "add"
           obj.add *arguments
+        when "remove"
+          obj.remove *arguments
         when "list"
           obj.list
         when "rebuild"
