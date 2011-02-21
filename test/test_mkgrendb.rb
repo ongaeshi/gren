@@ -33,7 +33,7 @@ create     : grendb.yaml
 create     : db/grendb.db created.
 EOF
      
-     io.rewind
+     io.string = ""
      obj.init
      assert_match "Can't create Grendb Database (Not empty)", io.string
      
@@ -47,24 +47,37 @@ EOF
      assert_equal [], GrendbYAML.load.directory
      
      # Mkgrendb2#add
-     io.rewind
+     io.string = ""
      obj.add('../../lib/findgrep', '../../lib/common')
      assert_match /add_file\s+:\s+.*findgrep.rb/, io.string
      assert_match /add_file\s+:\s+.*grenfiletest.rb/, io.string
 
      # Mkgrendb2#update
-     io.rewind
+     io.string = ""
      obj.update
-     assert_match /add_file\s+:\s+.*findgrep.rb/, io.string
-     assert_match /add_file\s+:\s+.*grenfiletest.rb/, io.string     
   end
 
   def test_cli
     io = StringIO.new
     CLI.execute(io, ["init"])
-    CLI.execute(io, ["update"])
-    CLI.execute(io, ["add"])
+
+    io.string = ""
+    CLI.execute(io, ["add", "dummy/bar", "foo"])
+    assert_match /dummy\/bar/, io.string
+    assert_match /foo/, io.string
+    
+    io.string = ""
     CLI.execute(io, ["list"])
+    assert_match /dummy\/bar/, io.string
+    assert_match /foo/, io.string
+
+    CLI.execute(io, ["remove", "foo"])
+    io.string = ""
+    CLI.execute(io, ["list"])
+    assert_match /dummy\/bar/, io.string
+    assert_no_match /foo/, io.string
+
+    CLI.execute(io, ["update"])
     CLI.execute(io, ["rebuild"])
   end
 

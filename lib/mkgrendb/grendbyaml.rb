@@ -49,6 +49,10 @@ module Mkgrendb
       @data['version']
     end
 
+    def list
+      directory
+    end
+
     private
 
     def initialize(data)

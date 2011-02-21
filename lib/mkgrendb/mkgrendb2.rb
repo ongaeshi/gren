@@ -75,8 +75,7 @@ module Mkgrendb
     end
 
     def list
-#       GrendbYAML.load
-#       @out.puts GrendbYAML.list
+      @out.puts GrendbYAML.load.list
     end
 
     def rebuild
