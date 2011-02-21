@@ -36,16 +36,40 @@ EOF
      io.rewind
      obj.init
      assert_match "Can't create Grendb Database (Not empty)", io.string
-
+     
+     # Mkgrendb2#add, remove
      obj.add('test1.html', 'test2.html')
+     assert_equal ['test1.html', 'test2.html'], GrendbYAML.load.directory
+     assert_match /WARNING.*test1.html/, io.string
+     assert_match /WARNING.*test2.html/, io.string
+
+     obj.remove('test1.html', 'test2.html')
+     assert_equal [], GrendbYAML.load.directory
+     
+     # Mkgrendb2#add
+     io.rewind
+     obj.add('../../lib/findgrep', '../../lib/common')
+     assert_match /add_file\s+:\s+.*findgrep.rb/, io.string
+     assert_match /add_file\s+:\s+.*grenfiletest.rb/, io.string
+
+     # Mkgrendb2#update
+     io.rewind
+     obj.update
+     assert_match /add_file\s+:\s+.*findgrep.rb/, io.string
+     assert_match /add_file\s+:\s+.*grenfiletest.rb/, io.string     
   end
 
   def test_cli
-       CLI.execute($stdout, ["init"])
-       CLI.execute($stdout, ["update"])
-       CLI.execute($stdout, ["add"])
-       CLI.execute($stdout, ["list"])
-       CLI.execute($stdout, ["rebuild"])
+    io = StringIO.new
+    CLI.execute(io, ["init"])
+    CLI.execute(io, ["update"])
+    CLI.execute(io, ["add"])
+    CLI.execute(io, ["list"])
+    CLI.execute(io, ["rebuild"])
+  end
+
+  def teardown
+    teardown_custom(true)
   end
 end
 

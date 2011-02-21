@@ -28,7 +28,7 @@ EOF
 
       if (subopt[subcommand])
         subopt[subcommand].parse!(arguments) unless arguments.empty?
-        obj = Mkgrendb2.new
+        obj = Mkgrendb2.new(stdout)
 
         case subcommand
         when "init"
@@ -36,7 +36,7 @@ EOF
         when "update"
           obj.update
         when "add"
-          obj.add
+          obj.add *arguments
         when "list"
           obj.list
         when "rebuild"

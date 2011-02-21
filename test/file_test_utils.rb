@@ -40,8 +40,12 @@ module FileTestUtils
   end
 
   def teardown
+    teardown_custom(true)
+  end
+
+  def teardown_custom(is_remove_dir)
     FileUtils.cd(@prev_dir)
-    FileUtils.rm_rf(@tmp_dir.to_s)
+    FileUtils.rm_rf(@tmp_dir.to_s) if (is_remove_dir)
   end
 
   private
