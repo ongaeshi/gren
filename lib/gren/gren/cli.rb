@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'optparse'
-require File.join(File.dirname(__FILE__), '../findgrep/findgrep')
+require 'gren/findgrep/findgrep'
 
 module Gren
   class CLI
