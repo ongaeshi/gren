@@ -1,21 +1,27 @@
 # Gren (grep next)
 
-[gren](http://gren.ongaeshi.me) is a next grep tool.
+[gren](http://gren.ongaeshi.me)はgrepの置き換えを目指して作ったコマンドラインツールです。
 
-## Features
+## 特徴
 
-* The basis is find+grep.
-* The item that the user specifies to the minimum
+* 基本はfind+grep
+  * 指定ディレクトリ以下にある全てのファイルの中身を調べます。 
+  * ユーザーが指定する項目を最小限に
+  * デフォルトで除外ディレクトリが設定されています
+  * AND検索、
+* バイナリファイルの自動判別
   * The binary or the text or the tool judges it from the automatic operation. 
+* grepとの互換性  
+  
 * Convenient retrieval result
 
-## Installation
+## インストール
 
 ```
 $ gem install gren
 ```
 
-## Usage
+## オプション
 
 ```
 $ gren -h
@@ -36,7 +42,7 @@ gren [option] pattern
         --no-snip                    There being a long line, it does not snip.
 ```
 
-## Editor Setting
+## エディタとの連携
 ### Emacs
 
 ```lisp
@@ -44,8 +50,8 @@ gren [option] pattern
 (setq grep-find-command "gren ")            ; "gren.bat" for Windows
 ```
 
-### License
+### ライセンス
 See LISENCE.txt
 
-### Author
+### 作者
 [ongaeshi](http://ongaeshi.me)
