@@ -24,7 +24,7 @@ module Gren
       opt.on('--id REGEXP', '--ignore-dir REGEXP', 'Ignore dir pattern. (Enable multiple call)') {|v| option.ignoreDirs << v}
       opt.on('--if REGEXP', '--ignore-file REGEXP', 'Ignore file pattern. (Enable multiple call)') {|v| option.ignoreFiles << v}
       opt.on('--no-snip', 'There being a long line, it does not snip.') {|v| option.noSnip = true }
-      opt.on('-s', '--silent', 'Silent. Display match line only.') {|v| option.isSilent = true}
+      opt.on('--silent', 'Silent. Display match line only.') {|v| option.isSilent = true}
       opt.on('--this', '"--depth 0"') {|v| option.depth = 0}
       opt.on('-v', '--verbose', 'Set the verbose level of output.') {|v| option.isSilent = false }
       opt.parse!(arguments)
