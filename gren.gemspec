@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Gren::VERSION
   gem.authors       = ["ongaeshi"]
   gem.email         = ["ongaeshi0621@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{gren is a next grep tool.}
+  gem.summary       = %q{gren is a next grep tool. The basis is find+grep.}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
