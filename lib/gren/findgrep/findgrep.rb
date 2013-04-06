@@ -44,7 +44,7 @@ module FindGrep
                  [],
                  [],
                  [],
-                 Platform.get_shell_kcode,
+                 Kconv::UTF8, # Platform.get_shell_kcode,
                  false,
                  false)
     end
