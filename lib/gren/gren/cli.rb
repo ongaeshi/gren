@@ -6,7 +6,7 @@ module Gren
   class CLI
     def self.execute(stdout, arguments=[])
       # オプション
-      option = FindGrep::FindGrep::DEFAULT_OPTION.dup
+      option = FindGrep::FindGrep::create_default_option
       option.isSilent = true
 
       # オプション解析

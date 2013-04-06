@@ -29,23 +29,25 @@ module FindGrep
                         :kcode,
                         :noSnip,
                         :isMatchFile)
-    
-    DEFAULT_OPTION = Option.new([],
-                                [],
-                                ".",
-                                -1,
-                                false,
-                                false,
-                                false,
-                                false,
-                                false,
-                                [],
-                                [],
-                                [],
-                                [],
-                                Platform.get_shell_kcode,
-                                false,
-                                false)
+
+    def self.create_default_option
+      Option.new([],
+                 [],
+                 ".",
+                 -1,
+                 false,
+                 false,
+                 false,
+                 false,
+                 false,
+                 [],
+                 [],
+                 [],
+                 [],
+                 Platform.get_shell_kcode,
+                 false,
+                 false)
+    end
     
     attr_reader :documents
     
