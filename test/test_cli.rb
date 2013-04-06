@@ -5,7 +5,7 @@
 # @author ongaeshi
 # @date   2011/12/03
 
-require 'gren/gren/cli'
+require 'gren/cli'
 require 'test_helper'
 
 class TestCLI < Test::Unit::TestCase
