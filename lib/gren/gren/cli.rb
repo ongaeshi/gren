@@ -13,18 +13,19 @@ module Gren
       opt = OptionParser.new("#{File.basename($0)} [option] pattern")
       opt.on('--not PATTERN', 'Keyword is not included.') {|v| option.keywordsNot << v}
       opt.on('--or PATTERN', 'Either of keyword is contained.') {|v| option.keywordsOr << v}
-      opt.on('-d DIR', '--directory DIR', 'Start directory. (deafult:".")') {|v| option.directory = v}
-      opt.on('--depth DEPTH', 'Limit search depth. ') {|v| option.depth = v.to_i}
-      opt.on('--this', '"--depth 0"') {|v| option.depth = 0}
-      opt.on('-i', '--ignore', 'Ignore case.') {|v| option.ignoreCase = true}
-      opt.on('-s', '--silent', 'Silent. Display match line only.') {|v| option.isSilent = true}
-      opt.on('--debug', 'Debug display.') {|v| option.debugMode = true}
       opt.on('-c', '--color', 'Color highlight.') {|v| option.colorHighlight = true}
-      opt.on('-f REGEXP', '--file-regexp REGEXP', 'Search file regexp. (Enable multiple call)') {|v| option.filePatterns << v}
-      opt.on('--if REGEXP', '--ignore-file REGEXP', 'Ignore file pattern. (Enable multiple call)') {|v| option.ignoreFiles << v}
-      opt.on('--id REGEXP', '--ignore-dir REGEXP', 'Ignore dir pattern. (Enable multiple call)') {|v| option.ignoreDirs << v}
+      opt.on('--cs', '--case-sensitive', 'Case sensitivity.') {|v| option.caseSensitive = true }
+      opt.on('-d DIR', '--directory DIR', 'Start directory. (deafult:".")') {|v| option.directory = v}
+      opt.on('--debug', 'Debug display.') {|v| option.debugMode = true}
+      opt.on('--depth DEPTH', 'Limit search depth. ') {|v| option.depth = v.to_i}
       opt.on('-e ENCODE', '--encode ENCODE', 'Specify encode(none, auto, jis, sjis, euc, ascii, utf8, utf16). Default is "auto"') {|v| setupEncodeOption(option, v) }
+      opt.on('-f REGEXP', '--file-regexp REGEXP', 'Search file regexp. (Enable multiple call)') {|v| option.filePatterns << v}
+      opt.on('-i', '--ignore', 'Ignore case.') {|v| option.ignoreCase = true}
+      opt.on('--id REGEXP', '--ignore-dir REGEXP', 'Ignore dir pattern. (Enable multiple call)') {|v| option.ignoreDirs << v}
+      opt.on('--if REGEXP', '--ignore-file REGEXP', 'Ignore file pattern. (Enable multiple call)') {|v| option.ignoreFiles << v}
       opt.on('--no-snip', 'There being a long line, it does not snip.') {|v| option.noSnip = true }
+      opt.on('--silent', 'Silent. Display match line only.') {|v| option.isSilent = true}
+      opt.on('--this', '"--depth 0"') {|v| option.depth = 0}
       opt.on('-v', '--verbose', 'Set the verbose level of output.') {|v| option.isSilent = false }
       opt.parse!(arguments)
 

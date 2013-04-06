@@ -18,6 +18,7 @@ module FindGrep
                         :directory,
                         :depth,
                         :ignoreCase,
+                        :caseSensitive,
                         :colorHighlight,
                         :isSilent,
                         :debugMode,
@@ -37,6 +38,7 @@ module FindGrep
                                 false,
                                 false,
                                 false,
+                                false,
                                 [],
                                 [],
                                 [],
@@ -48,23 +50,23 @@ module FindGrep
     attr_reader :documents
     
     def initialize(patterns, option)
-      @patterns = patterns
-      @option = option
-      @patternRegexps = strs2regs(patterns, @option.ignoreCase)
-      @subRegexps = strs2regs(option.keywordsNot, @option.ignoreCase)
-      @orRegexps = strs2regs(option.keywordsOr, @option.ignoreCase)
-      @filePatterns = strs2regs(option.filePatterns)
-      @ignoreFiles = strs2regs(option.ignoreFiles)
-      @ignoreDirs = strs2regs(option.ignoreDirs)
-      @result = Result.new(option.directory)
+      @patterns       = patterns
+      @option         = option
+      @patternRegexps = strs2regs(patterns)
+      @subRegexps     = strs2regs(option.keywordsNot)
+      @orRegexps      = strs2regs(option.keywordsOr)
+      @filePatterns   = strs2regs(option.filePatterns)
+      @ignoreFiles    = strs2regs(option.ignoreFiles)
+      @ignoreDirs     = strs2regs(option.ignoreDirs)
+      @result         = Result.new(option.directory)
     end
 
-    def strs2regs(strs, ignore = false)
+    def strs2regs(strs)
       regs = []
 
       strs.each do |v|
         option = 0
-        option |= Regexp::IGNORECASE if (ignore)
+        option |= Regexp::IGNORECASE if (@option.ignoreCase || (!@option.caseSensitive && Util::downcase?(v)))
         regs << Regexp.new(v, option)
       end
 
