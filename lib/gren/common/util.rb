@@ -96,5 +96,9 @@ module Gren
       io.instance_of?(IO) && File.pipe?(io)
     end
 
+    def downcase?(str)
+      str == str.downcase
+    end
+
   end
 end
