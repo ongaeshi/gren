@@ -72,7 +72,11 @@ module FindGrep
     end
 
     def searchAndPrint(stdout)
-      searchFromDir(stdout, @option.directory, 0)
+      unless Util.pipe?($stdin)
+        searchFromDir(stdout, @option.directory, 0)
+      else
+        searchData(stdout, $stdin.read.split("\n"), nil)
+      end
 
       @result.time_stop
       
@@ -233,7 +237,7 @@ module FindGrep
         result, match_datas = match?(line)
 
         if ( result )
-          header = "#{path}:#{index + 1}:"
+          header = path ? "#{path}:#{index + 1}:" : ""
           line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
 
           unless (@option.colorHighlight)
@@ -243,7 +247,7 @@ module FindGrep
           end
 
           unless match_file
-            @result.match_file_count += 1
+             @result.match_file_count += 1
             @result.match_files << path if (@option.debugMode)
             match_file = true
             break if (@option.isMatchFile)
