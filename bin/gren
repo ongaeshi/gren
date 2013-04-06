@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require "gren"
+require 'gren'
 
-Version = "0.2.1"
+Version = Gren::VERSION
 Gren::CLI.execute(STDOUT, ARGV)
