@@ -29,7 +29,7 @@ module Gren
       opt.parse!(arguments)
 
       # 検索オブジェクトの生成
-      if (arguments.size > 0 || option.keywordsOr.size > 0)
+      if (arguments.size > 0 || option.keywordsOr.size > 0 || Util.pipe?($stdin))
         findGrep = FindGrep::FindGrep.new(arguments, option)
         findGrep.searchAndPrint(stdout)
       else
