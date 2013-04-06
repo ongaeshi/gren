@@ -2,6 +2,8 @@
 
 module Gren
   module Util
+    module_function
+
     def time_s(time)
       t = time.truncate
       h = t / 3600
@@ -18,12 +20,10 @@ module Gren
         "#{t}sec"
       end
     end
-    module_function :time_s
 
     def round(n, d)
       (n * 10 ** d).round / 10.0 ** d
     end
-    module_function :round
 
     def size_s(size)
       tb = 1024 ** 4
@@ -43,7 +43,6 @@ module Gren
         size.to_s + "Byte"
       end
     end
-    module_function :size_s
 
     # アルファベットと演算子で表示する数を変える
     ALPHABET_DISP_NUM = 5
@@ -61,7 +60,6 @@ module Gren
         c = c.superclass
       end
     end
-    module_function :p_classtree
 
     def p_classtree_sub(c)
       # メソッドの一覧を得る
@@ -92,7 +90,11 @@ module Gren
       end
       puts
     end
-    module_function :p_classtree_sub
+
+    # StringIO patch
+    def pipe?(io)
+      io.instance_of?(IO) && File.pipe?(io)
+    end
 
   end
 end
