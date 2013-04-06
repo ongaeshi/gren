@@ -18,7 +18,4 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
   gem.add_dependency 'termcolor','>= 1.2.0'
-  gem.add_dependency 'rroonga','>= 1.0.0'
-  gem.add_dependency 'rack','>=1.2.1'
-  gem.add_dependency 'launchy', '>=0.3.7'
 end
