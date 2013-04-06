@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 require 'find'
-require File.join(File.dirname(__FILE__), 'result')
+require 'gren/findgrep/result'
 require 'rubygems'
 require 'termcolor'
 require 'kconv'
-require File.join(File.dirname(__FILE__), '../common/platform')
-require File.join(File.dirname(__FILE__), '../common/grenfiletest')
-require File.join(File.dirname(__FILE__), '../common/grensnip')
-require 'groonga'
-require File.join(File.dirname(__FILE__), '../common/util')
+require 'gren/common/platform'
+require 'gren/common/grenfiletest'
+require 'gren/common/grensnip'
+# require 'groonga'
+require 'gren/common/util'
 include Gren
 require 'cgi'
 
