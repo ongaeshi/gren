@@ -6,7 +6,8 @@ module Gren
   class CLI
     def self.execute(stdout, arguments=[])
       # オプション
-      option = FindGrep::FindGrep::DEFAULT_OPTION
+      option = FindGrep::FindGrep::DEFAULT_OPTION.dup
+      option.isSilent = true
 
       # オプション解析
       opt = OptionParser.new("#{File.basename($0)} [option] pattern")
@@ -24,6 +25,7 @@ module Gren
       opt.on('--id REGEXP', '--ignore-dir REGEXP', 'Ignore dir pattern. (Enable multiple call)') {|v| option.ignoreDirs << v}
       opt.on('-e ENCODE', '--encode ENCODE', 'Specify encode(none, auto, jis, sjis, euc, ascii, utf8, utf16). Default is "auto"') {|v| setupEncodeOption(option, v) }
       opt.on('--no-snip', 'There being a long line, it does not snip.') {|v| option.noSnip = true }
+      opt.on('-v', '--verbose', 'Set the verbose level of output.') {|v| option.isSilent = false }
       opt.parse!(arguments)
 
       # 検索オブジェクトの生成
