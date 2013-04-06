@@ -1,3 +1,29 @@
+# 1.0.0 2013/04/06
+
+* gren
+  * デフォルトでは詳細表示をOFF
+    * --verbose オプションを追加
+  * 小文字の単語は大文字小文字を無視する
+    * test -> 'ignore' , Test -> 'not ignore'
+  * パイプをサポート
+    * ls | gren test
+
+* Support Ruby 1.9
+  * prec_i -> to_i, prec_f -> to_f
+
+* File rename & add
+  * History.*.txt -> HISTORY.*.md
+  * README.rdoc -> README.md
+  * Add README.ja.md
+  * require join -> require 'gren/..'
+  * Add test_cli.rb
+  * gren/gren/cli -> gren/cli
+  * Delete display_util.rb
+
+* etc
+  * hoe -> bundler に移行
+  * Delete grendb(rroonga, rack) dependency
+
 # 0.3.2 2011/02/20
 
 * mkgrendb

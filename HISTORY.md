@@ -1,3 +1,29 @@
+# 1.0.0 2013/04/06
+
+* gren
+  * Do not drill in the default
+    * Add --verbose options
+  * Lowercase word ignores capitalization
+    * test -> 'ignore' , Test -> 'not ignore'
+  * Support pipe
+    * ls | gren test
+
+* Support Ruby 1.9
+  * prec_i -> to_i, prec_f -> to_f
+
+* File rename & add
+  * History.*.txt -> HISTORY.*.md
+  * README.rdoc -> README.md
+  * Add README.ja.md
+  * require join -> require 'gren/..'
+  * Add test_cli.rb
+  * gren/gren/cli -> gren/cli
+  * Delete display_util.rb
+
+* etc
+  * hoe -> bundler
+  * Delete grendb(rroonga, rack) dependency
+
 # 0.3.2 2011/02/20
 
 * mkgrendb
