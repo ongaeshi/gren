@@ -7,7 +7,6 @@ require 'kconv'
 require 'gren/common/platform'
 require 'gren/common/grenfiletest'
 require 'gren/common/grensnip'
-# require 'groonga'
 require 'gren/common/util'
 include Gren
 require 'cgi'
@@ -28,10 +27,7 @@ module FindGrep
                         :ignoreDirs,
                         :kcode,
                         :noSnip,
-                        :dbFile,
-                        :groongaOnly,
-                        :isMatchFile,
-                        :dispHtml)
+                        :isMatchFile)
     
     DEFAULT_OPTION = Option.new([],
                                 [],
@@ -47,9 +43,6 @@ module FindGrep
                                 [],
                                 Platform.get_shell_kcode,
                                 false,
-                                nil,
-                                false,
-                                false,
                                 false)
     
     attr_reader :documents
@@ -60,26 +53,10 @@ module FindGrep
       @patternRegexps = strs2regs(patterns, @option.ignoreCase)
       @subRegexps = strs2regs(option.keywordsNot, @option.ignoreCase)
       @orRegexps = strs2regs(option.keywordsOr, @option.ignoreCase)
-      @filePatterns = (!@option.dbFile) ? strs2regs(option.filePatterns) : []
+      @filePatterns = strs2regs(option.filePatterns)
       @ignoreFiles = strs2regs(option.ignoreFiles)
       @ignoreDirs = strs2regs(option.ignoreDirs)
       @result = Result.new(option.directory)
-      open_database if (@option.dbFile)
-    end
-
-    def open_database()
-      # データベース開く
-      dbfile = Pathname(File.expand_path(@option.dbFile))
-      
-      if dbfile.exist?
-        Groonga::Database.open(dbfile.to_s)
-        puts "open    : #{dbfile} open."
-      else
-        raise "error    : #{dbfile.to_s} not found!!"
-      end
-      
-      # ドキュメントを取
-      @documents = Groonga::Context.default["documents"]
     end
 
     def strs2regs(strs, ignore = false)
@@ -95,15 +72,11 @@ module FindGrep
     end
 
     def searchAndPrint(stdout)
-      unless (@option.dbFile)
-        searchFromDir(stdout, @option.directory, 0)
-      else
-        searchFromDB(stdout, @option.directory)
-      end
+      searchFromDir(stdout, @option.directory, 0)
 
       @result.time_stop
       
-      if (!@option.isSilent && !@option.dispHtml)
+      if !@option.isSilent
         if (@option.debugMode)
           stdout.puts
           stdout.puts "--- search --------"
@@ -125,56 +98,6 @@ module FindGrep
         end
 
         @result.print(stdout)
-      end
-    end
-
-    def searchFromDB(stdout, dir)
-      # 全てのパターンを検索
-      table = @documents.select do |record|
-        expression = nil
-
-        # キーワード
-        @patterns.each do |word|
-          sub_expression = record.content =~ word
-          if expression.nil?
-            expression = sub_expression
-          else
-            expression &= sub_expression
-          end
-        end
-        
-        # パス
-        @option.filePatterns.each do |word|
-          sub_expression = record.path =~ word
-          if expression.nil?
-            expression = sub_expression
-          else
-            expression &= sub_expression
-          end
-        end
-
-        # 拡張子(OR)
-        se = suffix_expression(record) 
-        expression &= se if (se)
-        
-        # 検索式
-        expression
-      end
-      
-      # タイムスタンプでソート
-      records = table.sort([{:key => "_score", :order => "descending"},
-                            {:key => "timestamp", :order => "descending"}])
-
-      # データベースにヒット
-      stdout.puts "Found   : #{records.size} records." unless (@option.dispHtml)
-
-      # 検索にヒットしたファイルを実際に検索
-      records.each do |record|
-        if (@option.groongaOnly)
-          searchGroongaOnly(stdout, record)
-        else
-          searchFile(stdout, record.path, record.path) if FileTest.exist?(record.path)
-        end
       end
     end
 
@@ -303,21 +226,6 @@ module FindGrep
     end
     private :searchFile
 
-    def searchGroongaOnly(stdout, record)
-      file_size = record.content.size
-      
-      @result.count += 1
-      @result.size += file_size
-      
-      @result.search_count += 1
-      @result.search_size += file_size
-      
-      @result.search_files << record.path if (@option.debugMode)
-
-      searchData(stdout, record.content, record.path)
-    end
-    private :searchGroongaOnly
-
     def searchData(stdout, data, path)
       match_file = false
 
@@ -325,25 +233,13 @@ module FindGrep
         result, match_datas = match?(line)
 
         if ( result )
-          unless (@option.dispHtml)
-            header = "#{path}:#{index + 1}:"
-            line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
+          header = "#{path}:#{index + 1}:"
+          line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
 
-            unless (@option.colorHighlight)
-              stdout.puts header + line
-            else
-              stdout.puts HighLine::BLUE + header + HighLine::CLEAR + GrenSnip::coloring(line, match_datas)
-            end
+          unless (@option.colorHighlight)
+            stdout.puts header + line
           else
-            line_no = index + 1
-            line = GrenSnip::snip(line, match_datas) unless (@option.noSnip)
-            
-            stdout.puts <<EOF
-<h2><a href="../::view#{path}">#{path}</a></h2>
-<pre>
-#{line_no} : #{CGI.escapeHTML(line)}
-</pre>
-EOF
+            stdout.puts HighLine::BLUE + header + HighLine::CLEAR + GrenSnip::coloring(line, match_datas)
           end
 
           unless match_file
