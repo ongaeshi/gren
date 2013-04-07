@@ -109,37 +109,7 @@ module FindGrep
       end
     end
 
-    def and_expression(key, list)
-      sub = nil
-      
-      list.each do |word|
-        e = key =~ word
-        if sub.nil?
-          sub = e
-        else
-          sub &= e
-        end
-      end
-
-      sub
-    end
-
-    def suffix_expression(record)
-      sub = nil
-      
-      @option.suffixs.each do |word|
-        e = record.suffix =~ word
-        if sub.nil?
-          sub = e
-        else
-          sub |= e
-        end
-      end
-
-      sub
-    end
-    private :suffix_expression
-      
+    private
 
     def searchFromDir(stdout, dir, depth)
       if (@option.depth != -1 && depth > @option.depth)
