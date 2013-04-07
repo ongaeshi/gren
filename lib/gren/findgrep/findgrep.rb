@@ -79,7 +79,7 @@ module FindGrep
       unless Util.pipe?($stdin)
         searchFromDir(stdout, @option.directory, 0)
       else
-        searchData(stdout, $stdin.read.split($/), nil)
+        searchData(stdout, FindGrep::convline($stdin.read, @option.kcode).split($/), nil)
       end
 
       @result.time_stop
