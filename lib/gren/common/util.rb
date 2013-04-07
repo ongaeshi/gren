@@ -100,5 +100,9 @@ module Gren
       str == str.downcase
     end
 
+    def ruby19?
+      RUBY_VERSION >= '1.9.0'
+    end
+
   end
 end
