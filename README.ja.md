@@ -49,7 +49,7 @@ gren [option] pattern
 
 ## チュートリアル
 
-現在ディレクトリ以下にある全てのファイルを検索
+### ディレクトリ以下にある全てのファイルを検索
 
 ```
 $ cd ~/gren/test/data
@@ -58,9 +58,9 @@ abc.rb:1:def abc
 abc.rb:6:abc
 ```
 
-ヒューリスティックな大文字、小文字の区別
+### ヒューリスティックな大文字、小文字の区別
 
-```
+```shell
 # 全て小文字の場合は大文字、小文字の区別をしない
 $ gren testcase
 testcase.txt:1:testcase
@@ -74,26 +74,26 @@ testcase.txt:2:TestCase
 $ gren TESTCase
 Not found..
 
-# 厳密に小文字を検索したい時は --case-sensitive を使う
+# 厳密に小文字を検索したい時は --cs(--case-sensitive) を使う
 $ gren testcase --cs
 testcase.txt:1:testcase
 ```
 
-キーワードを重ねてAND検索
+### キーワードを重ねてAND検索
 
 ```
 $ gren abc def
 abc.rb:1:def abc
 ```
 
-NOT検索
+### NOT検索
 
 ```
 $ gren abc --not def
 abc.rb:6:abc
 ```
 
-OR検索
+### OR検索
 
 ```
 $ gren --or aaa --or bbb
@@ -101,14 +101,14 @@ aaa.txt:1:aaa
 bbb.txt:1:bbb
 ```
 
-検索開始ディレクトリを指定
+### 開始ディレクトリを指定
 
 ```
 $ gren ccc -d sub
 sub/ccc.txt:1:ccc
 ```
 
-ファイル名で絞り込み
+### ファイル名で絞り込み
 
 ```
 $ gren bb 
@@ -122,14 +122,14 @@ $ gren bb --if abc
 bbb.txt:1:bbb
 ```
 
-ディレクトリ名で絞り込み
+### ディレクトリ名で絞り込み
 
 ```
 $ gren ccc --id sub
 ccc.c:1:ccc
 ```
 
-詳細表示
+### 詳細表示
 
 ```
 $ gren a --verbose
@@ -142,7 +142,6 @@ dir   : /Users/ongaeshi/Documents/gren/test/data (0.0sec)
 files : 5 in 5 (54Byte in 54Byte)
 match : 2 files, 4 hit
 ```
-
 
 ## エディタとの連携
 ### Emacs
