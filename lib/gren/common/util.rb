@@ -93,7 +93,7 @@ module Gren
 
     # StringIO patch
     def pipe?(io)
-      io.instance_of?(IO) && File.pipe?(io)
+      !Platform.windows_os? && io.instance_of?(IO) && File.pipe?(io)
     end
 
     def downcase?(str)
