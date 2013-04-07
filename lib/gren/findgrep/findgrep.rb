@@ -69,7 +69,7 @@ module FindGrep
       strs.each do |v|
         option = 0
         option |= Regexp::IGNORECASE if (@option.ignoreCase || (!@option.caseSensitive && Util::downcase?(v)))
-        regs << Regexp.new(v, option)
+        regs << Regexp.new(FindGrep::convline(v, @option.kcode), option)
       end
 
       regs
@@ -79,7 +79,7 @@ module FindGrep
       unless Util.pipe?($stdin)
         searchFromDir(stdout, @option.directory, 0)
       else
-        searchData(stdout, $stdin.read.split("\n"), nil)
+        searchData(stdout, $stdin.read.split($/), nil)
       end
 
       @result.time_stop
@@ -236,33 +236,34 @@ module FindGrep
     def file2data(file)
       FindGrep::file2lines(file, @option.kcode)
     end
-    private :file2data
     
     def self.file2lines(file, kcode)
-      data = file.read
-      
-      unless Util::ruby19?
-        if (kcode != Kconv::NOCONV)
-          file_kcode = Kconv::guess(data)
+      convline(file.read, kcode).split($/)
+    end
 
-          if (file_kcode != kcode)
-            # puts "encode!! #{fpath} : #{kcode} <- #{file_kcode}"
-            data = data.kconv(kcode, file_kcode)
-          end
-        end
-      else
+    def self.convline(line, kcode)
+      if Util::ruby19?
         # @memo ファイルエンコーディングに相違が起きている可能性があるため対策
         #       本当はファイルを開く時にエンコーディングを指定するのが正しい
 
         # 方法1 : 強制的にバイナリ化
-        # data.force_encoding("Binary")
-        # data = data.kconv(kcode)
+        # line.force_encoding("Binary")
+        # line = line.kconv(kcode)
         
         # 方法2 : 入力エンコーディングを強制的に指定
-        data = data.kconv(kcode, Kconv::guess(data))
-      end
+        line.kconv(kcode, Kconv::guess(line))
+      else
+        if (kcode != Kconv::NOCONV)
+          file_kcode = Kconv::guess(line)
 
-      data = data.split($/)
+          if (file_kcode != kcode)
+            # puts "encode!! #{fpath} : #{kcode} <- #{file_kcode}"
+            line = line.kconv(kcode, file_kcode)
+          end
+        end
+        
+        line
+      end
     end
 
     def match?(line)
