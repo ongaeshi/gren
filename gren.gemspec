@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["ongaeshi0621@gmail.com"]
   gem.description   = %q{gren is a next grep tool.}
   gem.summary       = %q{gren is a next grep tool. The basis is find+grep.}
-  gem.homepage      = ""
+  gem.homepage      = "http://gren.ongaeshi.me"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

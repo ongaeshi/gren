@@ -93,11 +93,15 @@ module Gren
 
     # StringIO patch
     def pipe?(io)
-      io.instance_of?(IO) && File.pipe?(io)
+      !Platform.windows_os? && io.instance_of?(IO) && File.pipe?(io)
     end
 
     def downcase?(str)
       str == str.downcase
+    end
+
+    def ruby19?
+      RUBY_VERSION >= '1.9.0'
     end
 
   end

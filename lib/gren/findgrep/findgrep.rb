@@ -69,7 +69,7 @@ module FindGrep
       strs.each do |v|
         option = 0
         option |= Regexp::IGNORECASE if (@option.ignoreCase || (!@option.caseSensitive && Util::downcase?(v)))
-        regs << Regexp.new(v, option)
+        regs << Regexp.new(FindGrep::convline(v, @option.kcode), option)
       end
 
       regs
@@ -79,7 +79,11 @@ module FindGrep
       unless Util.pipe?($stdin)
         searchFromDir(stdout, @option.directory, 0)
       else
-        searchData(stdout, $stdin.read.split("\n"), nil)
+        begin
+          searchData(stdout, FindGrep::convline($stdin.read, @option.kcode).split($/), nil)
+        rescue ArgumentError
+          stdout.puts "invalid byte sequence : $stdin"
+        end
       end
 
       @result.time_stop
@@ -109,37 +113,7 @@ module FindGrep
       end
     end
 
-    def and_expression(key, list)
-      sub = nil
-      
-      list.each do |word|
-        e = key =~ word
-        if sub.nil?
-          sub = e
-        else
-          sub &= e
-        end
-      end
-
-      sub
-    end
-
-    def suffix_expression(record)
-      sub = nil
-      
-      @option.suffixs.each do |word|
-        e = record.suffix =~ word
-        if sub.nil?
-          sub = e
-        else
-          sub |= e
-        end
-      end
-
-      sub
-    end
-    private :suffix_expression
-      
+    private
 
     def searchFromDir(stdout, dir, depth)
       if (@option.depth != -1 && depth > @option.depth)
@@ -229,7 +203,11 @@ module FindGrep
       @result.search_files << fpath_disp if (@option.debugMode)
 
       open(fpath, "r") do |file|
-        searchData(stdout, file2data(file), fpath_disp)
+        begin
+          searchData(stdout, file2data(file), fpath_disp)
+        rescue ArgumentError
+          stdout.puts "invalid byte sequence : #{fpath}"
+        end
       end
     end
     private :searchFile
@@ -264,20 +242,37 @@ module FindGrep
     private :searchData
 
     def file2data(file)
-        data = file.read
+      FindGrep::file2lines(file, @option.kcode)
+    end
+    
+    def self.file2lines(file, kcode)
+      convline(file.read, kcode).split($/)
+    end
 
-        if (@option.kcode != Kconv::NOCONV)
-          file_kcode = Kconv::guess(data)
+    def self.convline(line, kcode)
+      if Util::ruby19?
+        # @memo ファイルエンコーディングに相違が起きている可能性があるため対策
+        #       本当はファイルを開く時にエンコーディングを指定するのが正しい
 
-          if (file_kcode != @option.kcode)
-#            puts "encode!! #{fpath} : #{@option.kcode} <- #{file_kcode}"
-            data = data.kconv(@option.kcode, file_kcode)
+        # 方法1 : 強制的にバイナリ化
+        # line.force_encoding("Binary")
+        # line = line.kconv(kcode)
+        
+        # 方法2 : 入力エンコーディングを強制的に指定
+        line.kconv(kcode, Kconv::guess(line))
+      else
+        if (kcode != Kconv::NOCONV)
+          file_kcode = Kconv::guess(line)
+
+          if (file_kcode != kcode)
+            # puts "encode!! #{fpath} : #{kcode} <- #{file_kcode}"
+            line = line.kconv(kcode, file_kcode)
           end
         end
-
-        data = data.split("\n");
+        
+        line
+      end
     end
-    private :file2data
 
     def match?(line)
       match_datas = []
