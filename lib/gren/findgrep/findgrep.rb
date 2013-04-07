@@ -79,7 +79,11 @@ module FindGrep
       unless Util.pipe?($stdin)
         searchFromDir(stdout, @option.directory, 0)
       else
-        searchData(stdout, FindGrep::convline($stdin.read, @option.kcode).split($/), nil)
+        begin
+          searchData(stdout, FindGrep::convline($stdin.read, @option.kcode).split($/), nil)
+        rescue ArgumentError
+          stdout.puts "invalid byte sequence : $stdin"
+        end
       end
 
       @result.time_stop
@@ -199,7 +203,11 @@ module FindGrep
       @result.search_files << fpath_disp if (@option.debugMode)
 
       open(fpath, "r") do |file|
-        searchData(stdout, file2data(file), fpath_disp)
+        begin
+          searchData(stdout, file2data(file), fpath_disp)
+        rescue ArgumentError
+          stdout.puts "invalid byte sequence : #{fpath}"
+        end
       end
     end
     private :searchFile
