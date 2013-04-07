@@ -1,3 +1,9 @@
+# 1.0.1 2013/04/08
+
+* Fix encoding error
+* Encode input string & stdin
+* Disable pipe? in Windows environment (because cygwin)
+
 # 1.0.0 2013/04/06
 
 * gren
