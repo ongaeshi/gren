@@ -1,57 +1,48 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="ja">
-
+<!DOCTYPE html>
 <head>
-<meta http-equiv="Content-Style-Type" content="text/css">
-<meta http-equiv="Content-Script-Type" content="text/javascript">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="Description" content="gren is a grep next tool, create by ruby.">
-<meta name="Keywords" content="grep,ruby,gem,next,tool,search">
-<meta http-equiv="Refresh" content="60; URL=ja">
-<title>gren - gren is a next grep tool.</title>
-<link rel="stylesheet" href="style.css" type="text/css" media="screen,tv">
-<script>
-<!--
-function browserLanguage() {
-  try {
-    return (navigator.browserLanguage || navigator.language || navigator.userLanguage).substr(0,2)
-  }
-  catch(e) {
-    return undefined;
-  }
-}
-
-if (browserLanguage() == 'ja') {
-    location.href = 'ja';
-} else {
-    location.href = 'en';
-}
-//-->
-</script> 
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <title>Gren - grep next</title>
+  <link rel="stylesheet" href="./css/style.css" type="text/css">
 </head>
 
 <body>
-<div id="wrapper">
+  <header>
+    <div id="title">
+      <a class="icon" href="/"><img width="100" height="100" src="./images/header.png"></a>
+      <h1>Gren</h1>
+    </div>
+    
+    <div id="toolbar">
+      <!-- <div id="github_button"><iframe src="http://ghbtns.com/github-btn.html?user=ongaeshi&repo=firelink&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110px" height="20px"></iframe></div> -->
+      <div id="tweet_button"><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://gren.ongaeshi.me" data-count="horizontal" data-text="Gren - grep next">Tweet</a><script type="text/javascript" src="//platform.twitter.com/widgets.js"></script></div>
+      <div id="hatena_button"><a href="http://b.hatena.ne.jp/entry/http://gren.ongaeshi.me" class="hatena-bookmark-button" data-hatena-bookmark-title="Gren - grep next" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></div>
+    </div>
+  </header>
 
-<div id="header">
-<h1><a href="ja">[Japanese]</a> <a href="en">[English]</a></h1>
-<p class="logo"><a href="index.html">gren</a></p>
-<p class="description">gren is a next grep tool.</p>
-</div><!-- / header end -->
+  <article>
+    <h2>What's this?</h2>
+    <p>gren is a next grep tool.</p>
+    <p><img width="65%" src="./images/openning.jpg"></p>
 
-<div id="contents">
-<h2>It will redirect it to a Japanese page in 60 seconds. </h2>
-<p>It jumps to the top page of each language by JavaScript. </p>
-<p>Invalidating : here please.</p>
-<p><a href="en">[English]</a></p>
-<p>
+    <h2>Install</h2>
+    <code>$ gem install gren</code>
 
-<h2>60秒後に日本語のページにリダイレクトします</h2>
-<p>JavaScriptによって各言語のトップページにジャンプします。</p>
-<p>無効になっている人はこちらからどうぞ。</p>
-<p><a href="ja">[Japanese]</a></p>
-</div><!-- / contents end -->
+    <h2>README</h2>
+    <ul>
+      <li><a href="https://github.com/ongaeshi/gren/blob/master/README.md">English</a></li>
+      <li><a href="https://github.com/ongaeshi/gren/blob/master/README.ja.md">日本語</a></li>
+    </ul>
 
-</div><!-- / wrapper end -->
+    <h2>Links</h2>
+    <ul>
+      <li><a href="https://rubygems.org/gems/gren">RubyGems</a></li>
+    </ul>
+
+  </article>
 </body>
+
+<footer>
+  <p>Copyright (c) 2011, 2012, 2013 ongaeshi - <a href="http://ongaeshi.me/">web</a></p>
+</footer>
+
 </html>
