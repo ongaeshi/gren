@@ -5,8 +5,8 @@
 ## 特徴
 
 * Rubyがあれば簡単にインストール可能
-  * Windowsでも使える
-* とにかく簡単
+  * Windowsでも使えます
+* 簡単に使える
   * ユーザーの指定する項目を最小限に
 * ディレクトリ以下の全てのファイルを検索
 * 不要なファイルは検索しない
@@ -14,7 +14,8 @@
 * AND、NOT、OR、正規表現
 * 複数の文字エンコードが混ざっていても大丈夫
   * utf-8, utf-16, sjis, euc ..
-* もっと高速に検索したい時は [Milkode](http://milkode.ongaeshi.me) をどうぞ
+
+大量のファイルを高速に検索したい時は [Milkode](http://milkode.ongaeshi.me) をどうぞ
 
 ## インストール
 
@@ -22,7 +23,8 @@
 $ gem install gren
 ```
 
-重たいgemは使っていないのでRubyが動けばどこでも使えるはずです。
+重たいgemは使っていないのでRubyが動けばどこでも使えます。Windowsも大丈夫。
+
 
 ## オプション
 
@@ -53,6 +55,7 @@ gren [option] pattern
 
 ```
 $ cd ~/gren/test/data
+
 $ gren abc
 abc.rb:1:def abc
 abc.rb:6:abc
@@ -61,7 +64,7 @@ abc.rb:6:abc
 ### ヒューリスティックな大文字、小文字の区別
 
 ```shell
-# 全て小文字の場合は大文字、小文字の区別をしない
+# 全て小文字の時は大文字、小文字の区別をしない
 $ gren testcase
 testcase.txt:1:testcase
 testcase.txt:2:TestCase
@@ -70,7 +73,6 @@ testcase.txt:3:TESTCASE
 # 大文字混じりの文字は厳密に検索
 $ gren TestCase
 testcase.txt:2:TestCase
-
 $ gren TESTCase
 Not found..
 
@@ -138,7 +140,7 @@ abc.rb:1:def abc
 abc.rb:3:a
 abc.rb:6:abc
 
-dir   : /Users/ongaeshi/Documents/gren/test/data (0.0sec)
+dir   : /path/to/gren/data/test (0.0sec)
 files : 5 in 5 (54Byte in 54Byte)
 match : 2 files, 4 hit
 ```
