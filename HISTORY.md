@@ -1,3 +1,7 @@
+# 1.0.1 2013/04/21
+
+* Faster startup. Don't require 'termcolor' not coloring.
+
 # 1.0.1 2013/04/08
 
 * Fix encoding error

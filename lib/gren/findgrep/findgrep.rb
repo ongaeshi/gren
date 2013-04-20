@@ -2,14 +2,13 @@
 require 'find'
 require 'gren/findgrep/result'
 require 'rubygems'
-require 'termcolor'
+# require 'termcolor'
 require 'kconv'
 require 'gren/common/platform'
 require 'gren/common/grenfiletest'
 require 'gren/common/grensnip'
 require 'gren/common/util'
 include Gren
-require 'cgi'
 
 module FindGrep
   class FindGrep
@@ -61,6 +60,8 @@ module FindGrep
       @ignoreFiles    = strs2regs(option.ignoreFiles)
       @ignoreDirs     = strs2regs(option.ignoreDirs)
       @result         = Result.new(option.directory)
+
+      require 'termcolor' if @option.colorHighlight
     end
 
     def strs2regs(strs)
